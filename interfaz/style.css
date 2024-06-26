@@ -1,0 +1,10 @@
+.busqueda{
+    width: 300px;
+    margin: 0%;
+}
+
+#barraDeBusqueda{
+    width: 100px;
+    padding: 10;
+    border: 1px solid #ccc;
+}
