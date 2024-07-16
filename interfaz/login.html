@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos/login.css">
+    <title>Inicio Sesion</title>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
+        <h1>AXIS</h1>
+    </header>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <label for="username">Usuario</label>
+            <input type="text" id="username" placeholder="Ingresa tu usuario">
+            
+            <label for="password">Contraseña</label>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña">
+            
+            <button type="button" id="boton">Ingresar</button>
+        </form>
+        <p id="mensaje"></p>
+        <div class="register-link">
+            <p>¿No tienes cuenta? <a href="registro.html">Regístrate</a></p>
+        </div>
+    </div>
+    <footer>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+    <script src="Logica/jquery-3.7.1.min.js"></script>
+    <script src="Logica/login.js"></script>
+</body>
+</html>
