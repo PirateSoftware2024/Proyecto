@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos/registro.css">
+    <title>Registro</title>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
+        <h1>AXIS</h1>
+    </header>
+    <div class="register-container">
+        <img src="images/fileCreacionCuenta.png" alt="" id="carpeta">
+        <h2>Registro</h2>
+        <form id="formulario">
+            <label for="nombreUsuario">Nombre</label>
+            <input type="text" id="nombre" placeholder="Ingresa tu nombre">
+            
+            <label for="apellidoUsuario">Apellido</label>
+            <input type="text" id="apellido" placeholder="Ingresa tu apellido">
+
+            <label for="telefonoUsuario">Telefono</label>
+            <input type="number" id="telefono" placeholder="Ingresa tu telefono">
+            
+            <label for="edadUsuario">Edad</label>
+            <input type="number" id="edad" placeholder="Ingresa su edad">
+
+            <label for="nombreUsuario">Departamento</label>
+            <select id="departamentos" name="departamentos" required>
+                <option value="" disabled selected>Seleccione un departamento</option>
+                <option value="artigas">Artigas</option>
+                <option value="canelones">Canelones</option>
+                <option value="cerro-largo">Cerro Largo</option>
+                <option value="colonia">Colonia</option>
+                <option value="durazno">Durazno</option>
+                <option value="flores">Flores</option>
+                <option value="florida">Florida</option>
+                <option value="lavalleja">Lavalleja</option>
+                <option value="maldonado">Maldonado</option>
+                <option value="montevideo">Montevideo</option>
+                <option value="paysandu">Paysandú</option>
+                <option value="rio-negro">Río Negro</option>
+                <option value="rivera">Rivera</option>
+                <option value="rocha">Rocha</option>
+                <option value="salto">Salto</option>
+                <option value="san-jose">San José</option>
+                <option value="soriano">Soriano</option>
+                <option value="tacuarembo">Tacuarembó</option>
+                <option value="treinta-y-tres">Treinta y Tres</option>
+            </select>
+
+            <label for="barrio">Barrio</label>
+            <input type="text" id="barrio" placeholder="Ingrese su barrio">
+
+            <label for="calleUsuario">Calle</label>
+            <input type="text" id="calle" placeholder="Ingresa tu calle">
+            
+            <label for="numeroPuerta">Numero</label>
+            <input type="number" id="numeroPuerta" placeholder="Numero de puerta">
+
+            <label for="apartamento">Nro Apartamento</label>
+            <input type="number" id="numeroApartamento" placeholder="Numero de apartamento">
+
+            <label for="codigoPostal">Codigo postal</label>
+            <input type="number" id="codigoPostal" placeholder="Ingrese codigo postal">
+
+            <label for="email">Correo Electrónico</label>
+            <input type="email" id="email" placeholder="Ingresa tu correo">
+            
+            <label for="contraseña">Contraseña</label>
+            <input type="password" id="password" placeholder="Ingresa tu contraseña">
+    
+            <button type="submit" id="boton">Registrarse</button>
+        </form>
+    </div>
+    <footer>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+    <script src="Logica/jquery-3.7.1.min.js"></script>
+    <script src="Logica/registro.js"></script>
+</body>
+</html>
