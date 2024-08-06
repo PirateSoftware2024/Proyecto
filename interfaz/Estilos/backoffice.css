@@ -17,11 +17,21 @@ form {
     padding-top: 10px;
     padding-left: 20px;
 }
+.buscar {
+    padding-left: 20px;
+}
+.boton-eliminar {
+    background-color: rgb(212, 97, 97);
+}
+.boton-editar {
+    background-color: rgb(204, 204, 105);
+}
 table {
     padding-left: 20px;
     width: 1000px;;
     margin-top: 20px;
     margin-bottom: 100px;
+    
 }
 th, td {
     border: 1px solid #ddd;
@@ -32,8 +42,9 @@ th {
     background-color: #f2f2f2;
 }
 button{
-    background-color: green;
+    background-color: rgb(101, 141, 101);
     border-radius: 10%;
+    cursor: pointer;
 }
 footer {
     text-align: center;

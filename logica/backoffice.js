@@ -2,15 +2,29 @@
    Busca en el localStorage si exite el item "productos" 
    lo convierte en JSON y lo almacena, de lo contrario crea un array productos
 */
-let productos = JSON.parse(localStorage.getItem('productos')) || [];
+let productos = [];
+function buscarDatos(){
+    fetch('../persistencia/obtenerProductos.php')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        productos = jsonData; // Una vez leido los datos acutalizamos
+        actualizar();
+    });
+}
 
 /* Asegura que el código dentro de la función 
    se ejecutará solo después de que el DOM 
    del documento esté completamente cargado
 */
 $(document).ready(function() {
-    actualizar();
     $("#agregar").click(tomarDatos);
+    $("#botonBuscar").click(buscarProducto);
+    $("#botonTodos").click(buscarDatos);
     $("#filas").on("click", ".boton-eliminar", eliminarFila); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
@@ -19,6 +33,27 @@ $(document).ready(function() {
     });
 });
 
+function buscarProducto(){
+    let nombre = $("#buscarProducto").val();
+
+    fetch('../persistencia/buscarPorNombre.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nombre: nombre })
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        productos = jsonData; // Una vez leido los datos acutalizamos
+        actualizar();
+    });
+}
 // Función para agregar un producto
 function agregar(id, nombre, descripcion, precio) {
     // Utilizamos push para agregar nuevos productos
@@ -39,7 +74,7 @@ function validacion(nombre, descripcion, precio){
     }
     $("#descripcion").css("border-color", "black");
 
-    if(precio < 1){
+    if (isNaN(precio) || precio < 1) {
         $("#precio").css("border-color", "red");
         return false;
     }
@@ -90,8 +125,8 @@ function actualizar() {
         $("#filas").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
     }
     $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
-    let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
-    localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
+    //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
+    //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
 }
 
 let idBoton; // Almacenaremos el id del producto
@@ -101,9 +136,11 @@ function eliminarFila(){
     idBoton = $(this).data("id"); // Guardamos el id del producto utilizando data(atributo personalizado)
 
     // Busca en el array productos un producto que tenga el mismo id y guarda su indice
-    index = productos.findIndex(producto => producto.id === idBoton);
+    index = productos.findIndex(producto => Number(producto.id) === idBoton);
+    //Pasamos producto.id a numero ya que viene como texto
     // Eliminamos producto
     productos.splice(index, 1);
+    eliminarProducto(idBoton);
     /* Ejemplo: 
     Queremos eliminar el producto con id 3:
     id=1, 2, 3, 4, 5 => El indice del 3 es 2 =>
@@ -111,8 +148,8 @@ function eliminarFila(){
     productos.splice(2, 1); */ 
     
     // Actualizar localStorage
-    let productosJSON = JSON.stringify(productos);
-    localStorage.setItem('productos', productosJSON);
+    //let productosJSON = JSON.stringify(productos);
+    //localStorage.setItem('productos', productosJSON);
     actualizar();
 }
 
@@ -121,7 +158,7 @@ function mostrarDatos(){
     cancelarBotones();
 
     idBoton = $(this).data("id");
-    index = productos.findIndex(producto => producto.id === idBoton);
+    index = productos.findIndex(producto => Number(producto.id) === idBoton);
     $("#nombre").css("border-color", "green"); // Cambiamos border color del input
     $("#descripcion").css("border-color", "green");
     $("#precio").css("border-color", "green");
@@ -136,19 +173,23 @@ function mostrarDatos(){
 
 function modificar(){
     // Almacenmos los nuevos datos en las variables
+    idBoton = $(this).data("id");
     let nombre = $("#nombre").val(); 
     let descripcion = $("#descripcion").val();
     let precio = Number($("#precio").val());
 
     if(validacion(nombre, descripcion, precio)){
          // Modificamos los datos del producto
-         productos[index].nombre = nombre;
-         productos[index].descripcion = descripcion;
-         productos[index].precio = precio;
-     
-         actualizar();
-         habilitarBotones();
-         $(".boton-modificar").attr("disabled", "disabled");
+        productos[index].nombre = nombre;
+        productos[index].descripcion = descripcion;
+        productos[index].precio = precio;
+        
+        //Modificamos en BD
+        modificarProducto(idBoton, nombre, descripcion, precio); 
+
+        actualizar();
+        habilitarBotones();
+        $(".boton-modificar").attr("disabled", "disabled");
     }else{
         alert("Los datos son erroneos");
     }
@@ -187,4 +228,36 @@ function verificarTexto(cadena){
         }
     }
     return false;
+}
+
+function eliminarProducto(idProducto) {
+    fetch('../persistencia/eliminarProducto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: idProducto })
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
+function modificarProducto(idProducto, nombre, descripcion, precio) {
+    console.log("Se ha enviado");
+    fetch('../persistencia/modificarProducto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idProducto,
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio
+        })
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
 }
