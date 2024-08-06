@@ -3,7 +3,7 @@
    lo convierte en JSON y lo almacena, de lo contrario crea un array productos
 */
 let productos = [];
-function buscarDatos(){
+function cargarDatos(){
     fetch('../persistencia/obtenerProductos.php')
     .then(response => response.text())
     .then(data => {
@@ -24,7 +24,7 @@ function buscarDatos(){
 $(document).ready(function() {
     $("#agregar").click(tomarDatos);
     $("#botonBuscar").click(buscarProducto);
-    $("#botonTodos").click(buscarDatos);
+    $("#botonTodos").click(cargarDatos);
     $("#filas").on("click", ".boton-eliminar", eliminarFila); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
@@ -55,10 +55,31 @@ function buscarProducto(){
     });
 }
 // Función para agregar un producto
-function agregar(id, nombre, descripcion, precio) {
+function agregar(nombre, descripcion, precio) {
     // Utilizamos push para agregar nuevos productos
-    productos.push({ id: id, nombre: nombre, descripcion: descripcion, precio: precio });
-    actualizar();
+    fetch('../persistencia/agregarProducto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Si el producto se agregó correctamente, actualizar la lista
+         cargarDatos();
+        } else {
+            console.error('Error al agregar el producto:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
 }
 
 function validacion(nombre, descripcion, precio){
@@ -91,8 +112,7 @@ function tomarDatos() {
 
     if(validacion(nombre, descripcion, precio)){
         // Llamamos a la funcion agregar y agregamos sus atributos
-        let id = generarId();
-        agregar(id, nombre, descripcion, precio); 
+        agregar(nombre, descripcion, precio); 
     }else{
         alert("Hay campos erroneos");
     }   
@@ -205,16 +225,6 @@ function habilitarBotones(){
     $(".boton-eliminar").removeAttr("disabled", "disabled");
     $(".boton-editar").removeAttr("disabled", "disabled");
     $("#agregar").removeAttr("disabled", "disabled");
-}
-
-function generarId(){
-    let id; // Almacenaremos el id del producto 
-    if(productos.length > 0){
-        id = productos[productos.length -1].id + 1; // Obtenemos el id del ultimo producto agregado
-    }else{
-        id = 1; // Asigna 1 si el array está vacío  
-    }
-    return id;
 }
 
 function verificarTexto(cadena){
