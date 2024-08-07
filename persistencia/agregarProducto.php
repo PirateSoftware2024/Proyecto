@@ -1,4 +1,3 @@
-
 <?php 
 header('Content-Type: application/json');
 $server = "localhost";
@@ -20,12 +19,16 @@ function obtenerDatos($conexion) {
     $nombre = $data['nombre'];
     $descripcion = $data['descripcion'];
     $precio = $data['precio'];
+    $condicion = $data['condicion'];
+    $stock = $data['stock'];
+    $oferta = $data['oferta'];
+    
 
 
     //$idProducto = mysqli_real_escape_string($conexion, $idProducto);
 
     // Consulta SQL para eliminar un registro
-    $sql = "INSERT INTO producto (nombre, descripcion, precio) VALUES ('$nombre', '$descripcion', $precio)";
+    $sql = "INSERT INTO producto (nombre, descripcion, precio, condicion, stock, oferta) VALUES ('$nombre', '$descripcion', $precio, '$condicion', $stock, '$oferta')";
 
     // Ejecutar la consulta
     if (mysqli_query($conexion, $sql)) {
