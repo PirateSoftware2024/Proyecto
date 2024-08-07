@@ -20,6 +20,9 @@ form {
 .buscar {
     padding-left: 20px;
 }
+.buscar input {
+    margin-bottom: 5px;
+}
 .boton-eliminar {
     background-color: rgb(212, 97, 97);
 }
