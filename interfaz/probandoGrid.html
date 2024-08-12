@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto</title>
+    <link rel="stylesheet" href="Estilos/probandoGrid.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+            <div class="search-container">
+                <button class="menu-toggle" aria-label="Toggle menu">
+                    <span class="menu-icon"></span>
+                </button>
+                <img src="images/logo.png" alt="Logo" class="logo">
+                <input type="text" placeholder="Buscar...">
+                <button class="search-button">Buscar</button>
+            </div>
+            <nav>
+                <ul class="nav-menu">
+                    <li><a href="login.html">Inicio sesión</a></li>
+                    <li><a href="historial.html">Mis compras</a></li>
+                    <li style="font-size: 25px"><a href="carrito.html" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
+                    <li><a href="seleccionRegistro.html">Crea tu cuenta</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+    <nav id="nav">
+        <div class="navbar">
+            <button class="nav-button">Todo</button>
+            <button class="nav-button">Electrónica</button>
+            <button class="nav-button">Ropa</button>
+            <button class="nav-button">Hogar</button>
+            <button class="nav-button">Deportes</button>
+        </div>
+    </nav>
+    <main>
+        <div class="product-container" id="productContainer">
+            <!-- Aquí se pueden añadir productos -->
+        </div>
+    </main>
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <h3>Contáctenos</h3>
+                <ul>
+                    <li>Email: piratesoftwareook@gmail.com</li>
+                    <li>Dirección: Regimiento 9, Montevideo, Uruguay</li>
+                    <li><a href="nosotros.html">Sobre Nosotros</a></li>
+                </ul>
+            </div>
+        </div>
+        <p id="copy" style="font-size: 10px;">© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+    <script src="../logica/jquery-3.7.1.min.js"></script>
+    <script src="../logica/main.js"></script>
+    <script>
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
