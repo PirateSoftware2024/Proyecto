@@ -28,6 +28,11 @@ header{
     padding: 10px;
     text-align: center;
 }
+
+.register-container:hover {
+    transform: scale(1.05);
+}
+
 #carpeta{
     align-items: center;
     width: 150px;

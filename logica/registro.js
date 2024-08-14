@@ -1,27 +1,56 @@
 $(document).ready(function() {
-    $("#formulario").submit(function(event) {
+    $('#uploadForm').on('submit', function(event) {
         event.preventDefault(); // Evita el envío del formulario por defecto
-        
-        const nombre = $("#nombre").val();
-        const apellido  =  $("#apellido").val();
-        const departamento = $("#departamento").val();
-        const calle = $("#calle").val();
-        const barrio = $("#barrio").val();
-        const correo = $("#email").val();
-        const password = $("#password").val();
-        const numeroPuerta = Number($("#numeroPuerta").val());
-        const codigoPostal = Number($("#codigoPostal").val());
-        const telefono = Number($("#telefono").val());
-        const edad = Number($("#edad").val());
+        // Crear un nuevo FormData con el formulario
+        var formData = new FormData(this); 
 
-        if(validacion(nombre, apellido, calle, barrio, correo, password, numeroPuerta, codigoPostal, telefono, edad)){
-            alert("Registrado correctamente");
-            this.submit();
-        }
-       
+        $.ajax({
+            url: '../persistencia/registroUsuario.php',
+            type: 'POST',
+            data: formData,
+            contentType: false, // No establecer el tipo de contenido
+            processData: false, // No procesar los datos (FormData se encarga)
+            dataType: 'json', // Asegurarse de que la respuesta sea interpretada como JSON
+            success: function(data) {
+                console.log('Respuesta del servidor:', data);
+                if (data.success) {
+                    $('#result').html('<p>Usuario registrado con éxito!</p>');
+                } else {
+                    $('#result').html('<p>Error al registrar el usuario: ' + data.error + '</p>');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error en la solicitud:', textStatus, errorThrown);
+                $('#result').html('<p>Error al registrar el usuario.</p>');
+            }
+        });
     });
 });
 
+/*function ingresar(formData){
+        //let nom = $("#nom").val();
+        //let desc = $("#desc").val();
+        console.log(formData+"  Aca esta");
+        $.ajax({
+            url: '../persistencia/registroUsuario.php',
+            type: 'POST',
+            data: formData,
+            contentType: false, // No establecer el tipo de contenido
+            processData: false, // No procesar los datos (FormData se encarga)
+            success: function(data) {
+                console.log('Respuesta del servidor:', data);
+                if (data.success) {
+                    $('#result').html('<p>Imagen subida con éxito!</p>');
+                } else {
+                    $('#result').html('<p>Error al subir la imagen: ' + data.error + '</p>');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error en la solicitud:', textStatus, errorThrown);
+                $('#result').html('<p>Error al subir la imagen.</p>');
+            }
+        });
+}
 function validacion(nombre, apellido, calle, barrio, correo, password, numeroPuerta, codigoPostal, telefono, edad){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
@@ -103,4 +132,4 @@ function verificarTexto(cadena){
         }
     }
     return false;
-}
+}*/

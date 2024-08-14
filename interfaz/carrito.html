@@ -11,12 +11,43 @@
             <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
             <h1>AXIS</h1>
         </header>
+
+        
+        <div id="cuadroInformacion" class="cuadro">
+            <p>Entrega pedido</p>
+            <select name="entrega" id="entrega">
+                <option value="opcion" disabled selected>Opciones</option>
+                <option value="1">Retira en local</option>
+                <option value="2">Domicilio</option>
+                <option value="3">Centro de recogida</option>
+            </select>
+            <p>Datos Entrega</p>
+            <p id="calle"></p>
+            <p id="nPuerta"></p>
+            <p id="departamento"></p>
+            <br><br>
+            <form id="paymentForm">
+                <input type="text" id="name" placeholder="Nombre" >
+                <input type="number" id="amount" placeholder="Monto" >
+                <button type="submit">Pagar</button>
+            </form>
+            <p>Nombre: <span id="nameDisplay"></span></p>
+            <p>Monto: <span id="amountDisplay"></span></p>
+            <button id="cerrarCuadro">Confirmar</button>
+        </div>
+        
+        
         <div class="cart-container" id="cartContainer"></div>
-        <button id="comprar">Comprar</button>
+        <div class="resumenPedido">
+            <h1>Resumen de Pedido</h1>
+            <div id="pedido"></div>
+            <button id="comprar">Comprar</button>
+        </div>
         <footer>
-            <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
         </footer>
-        <script src="Logica/jquery-3.7.1.min.js"></script>
-        <script src="Logica/carrito.js"></script>
+        <script src="../logica/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="../logica/carrito.js"></script>
     </body>
 </html>

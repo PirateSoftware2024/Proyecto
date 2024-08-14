@@ -24,6 +24,7 @@ function cargarDatos(){
 $(document).ready(function() {
     $("#agregar").click(tomarDatos);
     $("#botonBuscar").click(buscarProducto);
+    $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
     $("#filas").on("click", ".boton-eliminar", eliminarFila); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
@@ -32,6 +33,28 @@ $(document).ready(function() {
     event.preventDefault(); // Evita el envío del formulario por defecto    
     });
 });
+
+function buscarStock(){
+    let stock = $("#buscarProducto").val();
+
+    fetch('../persistencia/buscarPorStock.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ stock: stock })
+    })
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        productos = jsonData; // Una vez leido los datos acutalizamos
+        actualizar();
+    });
+}
 
 function buscarProducto(){
     let nombre = $("#buscarProducto").val();
@@ -72,7 +95,7 @@ function agregar(nombre, descripcion, precio) {
     .then(data => {
         if (data.success) {
             // Si el producto se agregó correctamente, actualizar la lista
-         cargarDatos();
+        cargarDatos();
         } else {
             console.error('Error al agregar el producto:', data.error);
         }

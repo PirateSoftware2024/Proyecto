@@ -1,33 +1,29 @@
 $(document).ready(function() {
-    $("#formulario").submit(function(event) {
-        event.preventDefault(); // Evita el envío del formulario por defecto
-        agregar();
-        console.log("Lo envio");
+    $('#uploadForm').on('submit', function(event) {
+        event.preventDefault(); // Evitar el envío del formulario por defecto
+
+        var formData = new FormData(this); // Crear un nuevo FormData con el formulario
+        //let nom = $("#nom").val();
+        //let desc = $("#desc").val();
+        console.log(formData+"  Aca esta");
+        $.ajax({
+            url: '../persistencia/agregarProducto.php',
+            type: 'POST',
+            data: formData,
+            contentType: false, // No establecer el tipo de contenido
+            processData: false, // No procesar los datos (FormData se encarga)
+            success: function(data) {
+                console.log('Respuesta del servidor:', data);
+                if (data.success) {
+                    $('#result').html('<p>Imagen subida con éxito!</p>');
+                } else {
+                    $('#result').html('<p>Error al subir la imagen: ' + data.error + '</p>');
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.error('Error en la solicitud:', textStatus, errorThrown);
+                $('#result').html('<p>Error al subir la imagen.</p>');
+            }
+        });
     });
 });
-
-
-function agregar() {
-    // Utilizamos push para agregar nuevos productos
-    const nombre = $("#nombre").val();
-    const descripcion = $("#descripcion").val();
-    const precio = Number($("#precio").val());
-    const condicion = $("#condicion").val();
-    const stock = Number($("#stock").val());
-    const oferta = $("#oferta").val();
-    
-    fetch('../persistencia/agregarProducto.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            nombre: nombre,
-            descripcion: descripcion,
-            precio: precio,
-            condicion: condicion,
-            stock: stock,
-            oferta: oferta
-        })
-    });
-}
