@@ -13,10 +13,6 @@ header {
     color: white;
     text-align: center;
 }
-section{
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
-}
 .carta {
     margin: 50px;
     display: inline-block;
@@ -34,12 +30,11 @@ section{
 form{
     padding: 20px 20px;
 }
-
-table{
-    padding: 20px 20px;
-}
 .buscar {
     padding-left: 20px;
+}
+.buscar input {
+    margin-bottom: 5px;
 }
 .boton-eliminar {
     background-color: rgb(212, 97, 97);
@@ -47,13 +42,11 @@ table{
 .boton-editar {
     background-color: rgb(204, 204, 105);
 }
-p{
-    font-size: 20px;
-    text-align: center;
-}
 table {
-    font-size: 15px;
-    width: 100%;;
+    padding-left: 20px;
+    width: 1000px;;
+    margin-top: 20px;
+    margin-bottom: 100px;
     
 }
 th, td {
