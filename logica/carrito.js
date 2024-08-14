@@ -6,28 +6,92 @@
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 let orden = JSON.parse(localStorage.getItem('orden')) || [];
 
-$(document).ready(function() {      
+$(document).ready(function() {
     mostrarProductosEnCarrito();
+    resumenPedido();
     $("#cartContainer").on("click", ".boton-eliminar", eliminar);     // Controlador de eventos que
     $("#cartContainer").on("click", ".boton-mas", sumarCantidad);     // responde a los clicks en cualquier elemento con la     
     $("#cartContainer").on("click", ".boton-menos", restarCantidad);  // clase .boton-"accion" que esté dentro del elemento con id "cartContainer".
     $("#comprar").click(comprar);
-});
+    ////////////////////////////////////////
+    // -Codigo cuadrado boton "comprar"
+    $('#comprar').click(function() {
+        $('#cuadroInformacion').fadeIn();
+        $('body').addClass('modal-open');
+    });
 
-    // Función para mostrar los productos en el carrito
+    $('#cerrarCuadro').click(function() {
+        $('#cuadroInformacion').fadeOut();
+        $('body').removeClass('modal-open');
+        agregamosPedido();
+    });
+
+    $('#entrega').change(function() {
+        var seleccion = $(this).val();
+        var resultadoDiv = $('#resultado');
+    
+        if (seleccion === "1") {
+            entregaPedido(1);
+        } else if (seleccion === "2") {
+            entregaPedido(2);
+        }else{
+            entregaPedido(3);
+        }
+    });
+    
+    /////////////////////////////////////////
+    // COOKIE
+    $('#paymentForm').on('submit', function(e) {
+        e.preventDefault();
+
+        var name = $('#name').val();
+        var amount = $('#amount').val();
+
+        // Guardar los datos en una cookie
+        $.cookie('paymentInfo', JSON.stringify({ name: name, amount: amount }), { path: '/', expires: 1 }); // La cookie durará 1 día
+        devolver();
+    });
+});
+    ///////////////////////////////////////////////////////////
+    function devolver(){
+        $.ajax({
+            url: '../persistencia/pedidoUsuario.php', // Ruta al archivo PHP
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                if (data.error) {
+                    console.log(data.error);
+                } else {
+                    // Procesar los datos
+                    console.log('Nombre: ' + data.name);
+                    console.log('Monto: ' + data.amount);
+                    
+                    // Puedes mostrar los datos en la página, por ejemplo:
+                    $('#nameDisplay').text(data.name);
+                    $('#amountDisplay').text(data.amount);
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Error en la solicitud: ' + textStatus + ' - ' + errorThrown);
+            }
+        });
+    }
+    ////////////////////////////////////////////////////////////
+    // Función para mostrar  los productos en el carrito
     function mostrarProductosEnCarrito() {
     // Vacia el contenedor antes de agregar los productos
     $("#cartContainer").empty();
-
     // Recorrer el array carrito y creamos un div
     for (let i = 0; i < carrito.length; i++) {
         const producto = carrito[i];
-        let precio = producto.price * producto.cantidad;
+        
+        //producto.precio.replaceAll('.', '')
+        //let precio = producto.precio * producto.cantidad; <div class="price">$${new Intl.NumberFormat().format(precio)}</div>
         const $productCard = $(`
         <div class="product-card">
-            <img src="${producto.image}" width="125" height="125">
-            <h3>${producto.name}</h3>
-            <div class="price">$${precio}</div>
+            <img src="${producto.file_path}" width="125" height="125">
+            <h3>${producto.nombre}</h3>
+            <div class="price">$${producto.precio}</div>
             <p>Cantidad: ${producto.cantidad}</p>
             <button class="boton-eliminar" data-id="${producto.id}">Eliminar</button>
             <button class="boton-mas" data-id="${producto.id}">+</button>
@@ -36,14 +100,15 @@ $(document).ready(function() {
         // Agregar el producto al contenedor del carrito
         $("#cartContainer").append($productCard);
     }
+    resumenPedido();
 }
 
 // Funcion para eliminar productos del carrito
 function eliminar() {
     const idBoton = $(this).data("id");
-
+    console.log(idBoton);
     // Filtrar el carrito para eliminar el producto con el ID correspondiente
-    const index = carrito.findIndex(producto => producto.id === idBoton);
+    const index = carrito.findIndex(producto => Number(producto.id) === idBoton);
     carrito.splice(index, 1);
 
     // Actualizar localStorage y volver a renderizar el carrito
@@ -54,7 +119,7 @@ function eliminar() {
 // Funcion para aumentar la cantidad de un producto en el carrito
 function sumarCantidad() {
     const idBoton = $(this).data("id");
-    const index = carrito.findIndex(producto => producto.id === idBoton);
+    const index = carrito.findIndex(producto => Number(producto.id)  === idBoton);
     carrito[index].cantidad++;
     
     // Actualizar localStorage y volver a renderizar el carrito
@@ -64,7 +129,7 @@ function sumarCantidad() {
 
 function restarCantidad() {
     const idBoton = $(this).data("id");
-    const index = carrito.findIndex(producto => producto.id === idBoton);
+    const index = carrito.findIndex(producto => Number(producto.id) === idBoton);
 
     if(carrito[index].cantidad > 1){
         carrito[index].cantidad--;
@@ -83,8 +148,8 @@ function comprar() {
     for (let i = 0; i < carrito.length; i++) {
         const producto = carrito[i];
         datosOrden.push({
-            name: producto.name,
-            price: producto.price,
+            name: producto.nombre,
+            price: producto.precio,
             cantidad: producto.cantidad
         });
 }
@@ -101,4 +166,120 @@ function comprar() {
     // Convertir la orden a JSON y guardar en localStorage
     const ordenJSON = JSON.stringify(orden);
     localStorage.setItem('orden', ordenJSON);
+}
+
+
+function resumenPedido(){
+    let html = '';
+    let total = 30; // Es igula a 30 por el empaque y la tarifa de Axie
+    let elementoHtml = '<ul class="order-items">';
+        
+    // Recorrer cada producto en la orden actual
+    for (let j = 0; j < carrito.length; j++) {
+        const item = carrito[j];
+            
+        // Calcula el subtotal del producto y agregarlo al total del pedido
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+            
+        // Agregar el producto a la lista de elementos 
+        elementoHtml += `
+            <li class="order-item">
+                <span>${item.nombre} (x${item.cantidad})</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            </li>`;
+        }
+        
+
+        // Cerramos la lista
+        elementoHtml += `
+                <li class="order-item">
+                    <span>Empaque</span>
+                    <span>$10.00</span>
+                </li>
+                <li class="order-item">
+                    <span>Tarifa Axis Markets</span>
+                    <span>$20.00</span>
+                </li>
+                <li class="order-item">
+                    <span>Impuestos</span>
+                    <span> Calcular los impuestos :)</span>
+                </li>
+            </ul>
+        `;
+        html += `
+                <div class="order">
+                ${elementoHtml}
+                <div class="total">Total: $${total.toFixed(2)}</div>
+            </div>
+        `;
+    
+    $("#pedido").html(html);
+}
+
+let empresa = [];
+let usuario = [];
+function entregaPedido(tipo){
+    if(tipo == 1){
+        fetch('../persistencia/datosEmpresa.php')
+        .then(response => response.text())
+        .then(data => {
+            console.log('Datos recibidos:', data);
+            //Pasamos datos a JSON
+            const jsonData = JSON.parse(data);
+    
+            console.log('Datos JSON:', jsonData);
+            empresa = jsonData; // Una vez leido los datos acutalizamos
+    
+            let direccion = empresa[0];
+            $("#calle").html("Calle: "+direccion.calle);
+            $("#nPuerta").html("Numero puerta: "+direccion.numero);
+            $("#departamento").html("Departamento: "+direccion.departamento);
+        });
+
+    }else if(tipo == 2){
+        fetch('../persistencia/datosUsuario.php')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        usuario = jsonData; // Una vez leido los datos acutalizamos
+
+        let direccion = usuario[0];
+        $("#calle").html("Calle: "+direccion.calle);
+        $("#nPuerta").html("Numero puerta: "+direccion.nPuerta);
+        $("#departamento").html("Departamento: "+direccion.departamento);
+    });
+    }else{
+        $("#domicilio").html("Ciudad vieja CALLE, NUMERO PUERTA");
+    }
+}
+
+function agregamosPedido(){
+    let cantidad = 0;
+    let total = 30;
+
+    for(let i=0;i<carrito.length;i++){
+        let producto = carrito[i];
+        total += Number(producto.precio) * Number(producto.cantidad);
+        cantidad += Number(producto.cantidad);
+    }
+
+    fetch('../persistencia/agregarPedido.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            cantidad: cantidad,
+            total: total,
+            idUsuario: 1
+        })
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
 }
