@@ -13,40 +13,37 @@
         </header>
         <section>
         <div class="carta">
-            <form id="formulario">
+            <form id="uploadForm" enctype="multipart/form-data">
                 <p>Publicar Producto</p>
                 <label for="nombreProducto">Nombre del Producto:</label><br>
                 <input type="text" id="nombre" name="nombre"><br><br>
-
-                <label for="descripcionProducto">Descripcion:</label><br>
+                
+                <label for="descripcion">Descripcion:</label><br>
                 <input type="text" id="descripcion" name="descripcion"><br><br>
 
-                <label for="precioProducto">Precio:</label><br>
+                <label for="precio">Precio:</label><br>
                 <input type="number" id="precio" name="precio" min="1" step="1"><br><br>
-
-                <label for="condicion">Condicion: </label><br>
-                <select id="condicion" name="opcion">
-                    <option value="opcion" disabled selected>Opciones</option>
-                    <option value="Nuevo">Nuevo</option>
-                    <option value="Usado">Usado</option>
-                </select><br><br>
-
+            
                 <label for="stock">Stock disponible:</label><br>
                 <input type="number" id="stock" name="stock" min="1" ><br><br>
-
-
+                
                 <label for="oferta">Aplica a oferta:</label><br>
                 <select id="oferta" name="oferta">
                     <option value="opcion" disabled selected>Opciones</option>
                     <option value="Si">SI</option>
                     <option value="No">NO</option>
                 </select><br><br>
+        
+                <label for="condicion">Condicion: </label><br>
+                <select id="condicion" name="condicion">
+                    <option value="opcion" disabled selected>Opciones</option>
+                    <option value="Nuevo">Nuevo</option>
+                    <option value="Usado">Usado</option>
+                </select><br><br>
 
-                <label for="imagen">Imagen articulo:</label>
-                <input type="file" id="image"/>
-                
-                
-                <button type="submit" id="agregar">Agregar Producto</button>
+                <label for="image">Imagen: </label><br>
+                <input type="file" name="image" id="image" required><br><br>
+                <button type="submit" id="boton">Subir Imagen</button>
             </form>
         </div>
         <div class="carta">
