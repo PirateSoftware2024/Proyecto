@@ -30,6 +30,7 @@
         </div>
     </header>
     <nav id="nav">
+<<<<<<< HEAD
         <button id="left-arrow" class="nav-arrow"><i class="bi bi-chevron-left"></i></button>
         <div class="navbar" id="nav-bar">
             <button class="nav-button">Todo</button>
@@ -38,6 +39,16 @@
         <button id="right-arrow" class="nav-arrow"><i class="bi bi-chevron-right"></i></button>
     </nav>
     
+=======
+        <div class="navbar">
+            <button class="nav-button">Todo</button>
+            <button class="nav-button">Electrónica</button>
+            <button class="nav-button">Ropa</button>
+            <button class="nav-button">Hogar</button>
+            <button class="nav-button">Deportes</button>
+        </div>
+    </nav>
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     <main>
         <div class="product-container" id="productContainer">
             <!-- Aquí se pueden añadir productos -->
@@ -59,6 +70,7 @@
     <script src="../logica/jquery-3.7.1.min.js"></script>
     <script src="../logica/main.js"></script>
     <script>
+<<<<<<< HEAD
         $(document).ready(function() {
             const translations = {
                 es: {
@@ -110,6 +122,10 @@
                 $('#about-link').text(translations[language].aboutLink);
                 $('#copy').text(translations[language].copy);
             });
+=======
+        document.querySelector('.menu-toggle').addEventListener('click', function() {
+            document.querySelector('.nav-menu').classList.toggle('active');
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
         });
     </script>
 </body>

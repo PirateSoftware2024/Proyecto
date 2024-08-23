@@ -33,6 +33,7 @@ $(document).ready(function() {
         if (seleccion === "1") {
             entregaPedido(1);
         } else if (seleccion === "2") {
+<<<<<<< HEAD
             pago();
         }else{
             entregaPedido(3);
@@ -90,6 +91,14 @@ $(document).ready(function() {
         $("#direccionUsuario").html(datos);
     }
 
+=======
+            entregaPedido(2);
+        }else{
+            entregaPedido(3);
+        }
+    });
+    
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     /////////////////////////////////////////
     // COOKIE
     $('#paymentForm').on('submit', function(e) {
@@ -157,7 +166,7 @@ $(document).ready(function() {
 // Funcion para eliminar productos del carrito
 function eliminar() {
     const idBoton = $(this).data("id");
-
+    console.log(idBoton);
     // Filtrar el carrito para eliminar el producto con el ID correspondiente
     const index = carrito.findIndex(producto => Number(producto.id) === idBoton);
     carrito.splice(index, 1);
@@ -339,6 +348,7 @@ function entregaPedido(tipo){
     }
 }
 
+<<<<<<< HEAD
 
 function modificarCarrito(){
     console.log("Holaa");
@@ -411,6 +421,9 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
 }
 /*function agregamosPedido(){
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+=======
+function agregamosPedido(){
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     let cantidad = 0;
     let total = 30;
 
@@ -420,20 +433,30 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
         cantidad += Number(producto.cantidad);
     }
 
+<<<<<<< HEAD
     fetch('../persistencia/modificarCarrito.php', {
+=======
+    fetch('../persistencia/agregarPedido.php', {
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+<<<<<<< HEAD
             cantidadArticulos: cantidad,
             precioTotal: total,
+=======
+            cantidad: cantidad,
+            total: total,
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
             idUsuario: 1
         })
     })
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
+<<<<<<< HEAD
 }*/
 
 let totalCarrito = () => {
@@ -483,3 +506,6 @@ paypal.Buttons({
         });
     }
 }).render('#paypal-button-container');
+=======
+}
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a

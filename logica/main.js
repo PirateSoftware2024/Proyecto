@@ -1,5 +1,9 @@
 let products = [];
+<<<<<<< HEAD
 let categorias = [];
+=======
+
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
 
 function cargarDatos(){
     fetch('../persistencia/obtenerProductos.php')
@@ -12,6 +16,7 @@ function cargarDatos(){
     });
 }
 
+<<<<<<< HEAD
 function cargarCategorias(){
     fetch('../persistencia/obtenerCategorias.php')
     .then(response => response.text())
@@ -74,6 +79,13 @@ $(document).ready(function() {
 
 });
 
+=======
+$(document).ready(function() {
+    cargarDatos();
+    $("#productContainer").on("click", ".boton-producto", añadir);
+});
+
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
 function actualizar(){
     // Generamos las tarjetas de productos
     $("#productContainer").html("");
@@ -95,6 +107,7 @@ function actualizar(){
     }   
 }
 
+<<<<<<< HEAD
 
 function nuevoCarrito() {
     fetch('../persistencia/agregarPedido.php', {
@@ -115,6 +128,20 @@ function nuevoCarrito() {
             localStorage.setItem('carrito', productosJSON);
         } else {
             console.error('Error:', data.error);
+=======
+function añadir(){
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    
+    const idBoton = $(this).data("id");  // Obtenemos atributo data-id del botón clickeado
+    const producto = products.find(producto => Number(producto.id) === idBoton); //Guardamos el producto 
+
+    let index;
+    if(carrito.some(products => products.id == idBoton)){
+        for(let i=0;i<carrito.length;i++){
+            if(carrito[i].id == idBoton){
+                index=i;
+            }
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
         }
     })
     .catch(error => {
@@ -177,11 +204,17 @@ function añadir(){
     if(index !== -1){
         // Si el producto ya está en el carrito, incrementamos su cantidad
         carrito[index].cantidad++;
+<<<<<<< HEAD
     } else {
         // Si el producto no está en el carrito, lo agregamos
         producto.cantidad = 1; 
         carrito.push(producto);
         index = carrito.length - 1; // Actualizamos el índice al último producto añadido
+=======
+    }else{
+        producto.cantidad = 1; //Agregamos el atributo cantidad
+        carrito.push(producto);
+>>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     }
 
     // Convertir el carrito actual a JSON y guardar en localStorage
