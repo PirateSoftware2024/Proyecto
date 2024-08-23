@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="Estilos/completarInformacion.css">
+        <title>Gestión de Productos</title>
+    </head>
+    <body>
+        <header>
+            <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
+            <h1>AXIS</h1>
+        </header>
+        <h2>Información de Envío</h2>
+        <div class="carta" id="informacion">
+            <label for="nombreUsuario">Departamento</label><br>
+            <select id="departamentos" name="departamentos" required>
+                <option value="" disabled selected>Seleccione un departamento</option>
+                <option value="Artigas">Artigas</option>
+                <option value="Canelones">Canelones</option>
+                <option value="Cerro-largo">Cerro Largo</option>
+                <option value="Colonia">Colonia</option>
+                <option value="Durazno">Durazno</option>
+                <option value="Flores">Flores</option>
+                <option value="Florida">Florida</option>
+                <option value="Lavalleja">Lavalleja</option>
+                <option value="Maldonado">Maldonado</option>
+                <option value="Montevideo">Montevideo</option>
+                <option value="Paysandu">Paysandú</option>
+                <option value="Rio-negro">Río Negro</option>
+                <option value="Rivera">Rivera</option>
+                <option value="Rocha">Rocha</option>
+                <option value="Salto">Salto</option>
+                <option value="San-jose">San José</option>
+                <option value="Soriano">Soriano</option>
+                <option value="Tacuarembo">Tacuarembó</option>
+                <option value="Treinta-y-tres">Treinta y Tres</option>
+            </select><br><br>
+
+            <label for="barrio">Barrio</label><br>
+            <input type="text" id="barrio" name="barrio" placeholder="Ingrese su barrio"><br><br>
+
+            <label for="calleUsuario">Calle</label><br>
+            <input type="text" id="calle" name="calle" placeholder="Ingresa tu calle"><br><br>
+            
+            <label for="numeroPuerta">Numero</label><br>
+            <input type="number" id="numeroPuerta" name="numeroPuerta" placeholder="Numero de puerta"><br><br>
+
+            <label for="numeroApartamento">Numero apartamento</label><br>
+            <input type="number" id="numeroApartamento" name="numeroApartamento" placeholder="Numero de apartamento"><br><br>
+
+            <label for="codigoPostal">Codigo postal</label><br>
+            <input type="number" id="codigoPostal" name="codigoPostal" placeholder="Ingrese codigo postal"><br>
+
+            <label for="telefono">Telefono</label><br>
+            <input type="number" id="telefono" name="telefono" placeholder="Ingrese Telefono"><br>
+
+            <label for="correo">Correo</label><br>
+            <input type="mail" id="correo" name="correo" placeholder="Ingrese su correo"><br><br>
+
+            
+            <button id="botonSiguiente">Siguiente</button>
+        </div>
+        
+        <footer>
+            <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+        </footer>
+        <script src="../logica/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+        <script src="https://www.paypal.com/sdk/js?client-id=AZuQJAbevwIB5JecKzMpiSut_kE4BXGSHL0AICEl2YeRuMeIQBCRM1_vF0bTah2g1fb3kKK8HZpCemHz&currency=USD"></script>
+        <script src="../logica/completarInfo.js"></script>
+</body>
+</html>

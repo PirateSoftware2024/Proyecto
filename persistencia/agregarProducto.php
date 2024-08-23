@@ -27,7 +27,7 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
     if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
         $uploadFile = '../interfaz/images/imagenesProductos/' . basename($file['name']);
         // Insertar información de la imagen en la base de datos
-        $sql = "INSERT INTO producto (nombre, descripcion, precio, stock, oferta, condicion, file_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $sql = "INSERT INTO producto (nombre, descripcion, precio, stock, oferta, condicion, file_path, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conexion->prepare($sql);
         
         // Obtener valores de POST
@@ -37,9 +37,10 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $stock = $_POST['stock'];
         $oferta = $_POST['oferta'];
         $condicion = $_POST['condicion'];
+        $categoria = $_POST['cat'];
         
         // Vincular parámetros correctamente
-        $stmt->bind_param('ssiisss', $nombre, $descripcion, $precio, $stock, $oferta, $condicion, $uploadFile);
+        $stmt->bind_param('ssiissss', $nombre, $descripcion, $precio, $stock, $oferta, $condicion, $uploadFile, $categoria);
 
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);

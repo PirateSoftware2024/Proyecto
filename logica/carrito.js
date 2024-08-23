@@ -33,12 +33,63 @@ $(document).ready(function() {
         if (seleccion === "1") {
             entregaPedido(1);
         } else if (seleccion === "2") {
-            entregaPedido(2);
+            pago();
         }else{
             entregaPedido(3);
         }
+    
     });
     
+    let pago = () => {
+        let datos = $(`
+            <label for="nombreUsuario">Departamento</label><br>
+            <select id="departamentos" name="departamentos" required>
+                <option value="" disabled selected>Seleccione un departamento</option>
+                <option value="Artigas">Artigas</option>
+                <option value="Canelones">Canelones</option>
+                <option value="Cerro-largo">Cerro Largo</option>
+                <option value="Colonia">Colonia</option>
+                <option value="Durazno">Durazno</option>
+                <option value="Flores">Flores</option>
+                <option value="Florida">Florida</option>
+                <option value="Lavalleja">Lavalleja</option>
+                <option value="Maldonado">Maldonado</option>
+                <option value="Montevideo">Montevideo</option>
+                <option value="Paysandu">Paysandú</option>
+                <option value="Rio-negro">Río Negro</option>
+                <option value="Rivera">Rivera</option>
+                <option value="Rocha">Rocha</option>
+                <option value="Salto">Salto</option>
+                <option value="San-jose">San José</option>
+                <option value="Soriano">Soriano</option>
+                <option value="Tacuarembo">Tacuarembó</option>
+                <option value="Treinta-y-tres">Treinta y Tres</option>
+            </select><br><br>
+
+            <label for="barrio">Barrio</label><br>
+            <input type="text" id="barrio" name="barrio" placeholder="Ingrese su barrio"><br><br>
+
+            <label for="calleUsuario">Calle</label><br>
+            <input type="text" id="calle" name="calle" placeholder="Ingresa tu calle"><br><br>
+            
+            <label for="numeroPuerta">Numero</label><br>
+            <input type="number" id="numeroPuerta" name="numeroPuerta" placeholder="Numero de puerta"><br><br>
+
+            <label for="numeroApartamento">Numero apartamento</label><br>
+            <input type="number" id="numeroApartamento" name="numeroApartamento" placeholder="Numero de apartamento"><br><br>
+
+            <label for="codigoPostal">Codigo postal</label><br>
+            <input type="number" id="codigoPostal" name="codigoPostal" placeholder="Ingrese codigo postal"><br>
+
+            <label for="telefono">Telefono</label><br>
+            <input type="number" id="telefono" name="telefono" placeholder="Ingrese Telefono"><br>
+
+            <label for="correo">Correo</label><br>
+            <input type="mail" id="correo" name="correo" placeholder="Ingrese su correo"><br><br>
+        `);
+        $("#direccionUsuario").html(datos);
+    }
+
     /////////////////////////////////////////
     // COOKIE
     $('#paymentForm').on('submit', function(e) {
@@ -106,16 +157,40 @@ $(document).ready(function() {
 // Funcion para eliminar productos del carrito
 function eliminar() {
     const idBoton = $(this).data("id");
-    console.log(idBoton);
+
     // Filtrar el carrito para eliminar el producto con el ID correspondiente
     const index = carrito.findIndex(producto => Number(producto.id) === idBoton);
     carrito.splice(index, 1);
 
+    elimiarDelCarrito(idBoton);
+    mostrarProductosEnCarrito();
     // Actualizar localStorage y volver a renderizar el carrito
     localStorage.setItem('carrito', JSON.stringify(carrito));
-    mostrarProductosEnCarrito();
+    modificarCarrito();
 }
 
+function elimiarDelCarrito(idProducto) {
+    fetch('../persistencia/eliminarDelCarrito.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idProducto
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
 // Funcion para aumentar la cantidad de un producto en el carrito
 function sumarCantidad() {
     const idBoton = $(this).data("id");
@@ -125,6 +200,9 @@ function sumarCantidad() {
     // Actualizar localStorage y volver a renderizar el carrito
     localStorage.setItem('carrito', JSON.stringify(carrito));
     mostrarProductosEnCarrito();
+    
+    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+    modificarCarrito();
 }
 
 function restarCantidad() {
@@ -139,6 +217,9 @@ function restarCantidad() {
     }else{
         alert("La cantidad no puede ser menor a 1");
     }
+
+    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+    modificarCarrito();
 }
 
 // Funcion para comprar y generar un ticket de compra 
@@ -258,7 +339,78 @@ function entregaPedido(tipo){
     }
 }
 
-function agregamosPedido(){
+
+function modificarCarrito(){
+    console.log("Holaa");
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+    let total = 30; 
+    let cantidad = 0;
+    // Recorrer cada producto en el carrito
+    for (let j = 0; j < carrito.length; j++) {
+        const item = carrito[j];
+            
+        // Calcula el subtotal del producto y agregarlo al total del carrito
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+        cantidad += item.cantidad;
+    }
+    fetch('../persistencia/modificarCarrito.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            idCarrito: 30,
+            cantidadProductos: cantidad,
+            precioTotal: total
+        })
+    })
+    .then(response => {
+        // Revisa si la respuesta es JSON
+        return response.json().catch(error => {
+            console.error('Respuesta no es JSON:', response);
+            throw error;
+        });
+    })
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });    
+}
+
+function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
+    fetch('../persistencia/obtenerCarrito.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            idCarrito: 30,
+            id: idProducto,
+            cantidad: cantidad,
+            precio: precio
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+/*function agregamosPedido(){
+    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     let cantidad = 0;
     let total = 30;
 
@@ -268,18 +420,66 @@ function agregamosPedido(){
         cantidad += Number(producto.cantidad);
     }
 
-    fetch('../persistencia/agregarPedido.php', {
+    fetch('../persistencia/modificarCarrito.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            cantidad: cantidad,
-            total: total,
+            cantidadArticulos: cantidad,
+            precioTotal: total,
             idUsuario: 1
         })
     })
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
+}*/
+
+let totalCarrito = () => {
+    let total = 0; 
+    // Recorrer cada producto en el carrito
+    for (let j = 0; j < carrito.length; j++) {
+        const item = carrito[j];
+            
+        // Calcula el subtotal del producto y agregarlo al total del carrito
+        const subtotal = item.precio * item.cantidad;
+        total += subtotal;
+    }
+    // Convertir el total a dólares
+    let aDolar = total / 40.26; // Redondear a dos decimales
+    return aDolar; // Convertir a número flotante
 }
+
+let cantidadArticulos = () => {
+    let total = 0; 
+    // Recorrer cada producto en el carrito
+    for (let j = 0; j < carrito.length; j++) {
+        const item = carrito[j];
+            
+        // Calcula el subtotal del producto y agregarlo al total del carrito
+        total += item.cantidad;
+    }
+    return total; // Convertir a número flotante
+}
+
+paypal.Buttons({
+    createOrder: function(data, actions) {
+        // Configura el pago
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    currency_code: 'USD', // Asegúrate de que la moneda sea USD
+                    value: totalCarrito().toFixed(2) // Total en dólares
+                }
+            }]
+        });
+    },
+    onApprove: function(data, actions) {
+        // Captura el pago
+        return actions.order.capture().then(function(details) {
+            alert('Pago realizado con éxito por ' + details.payer.name.given_name);
+            // Aquí puedes redirigir al usuario o guardar la información del pago
+        });
+    }
+}).render('#paypal-button-container');

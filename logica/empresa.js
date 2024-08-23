@@ -1,4 +1,5 @@
 $(document).ready(function() {
+    cargarCategorias();
     $('#uploadForm').on('submit', function(event) {
         event.preventDefault(); // Evitar el envío del formulario por defecto
 
@@ -26,4 +27,29 @@ $(document).ready(function() {
             }
         });
     });
+
+
 });
+
+let categorias = [];
+function cargarCategorias(){
+    console.log("asdasd");
+    fetch('../persistencia/obtenerCategorias.php')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        categorias = jsonData; // Una vez leido los datos acutalizamos
+        // Generamos categorias
+        console.log(jsonData);
+        actualizarCategorias();
+    });
+}
+
+function actualizarCategorias(){
+    for (let i = 0; i < categorias.length; i++) {
+        const categoria = categorias[i];
+        const $categoriaButton = $(`<option value="${categoria.nombre}">${categoria.nombre}</option>`);
+        $("#categoria").append($categoriaButton);
+    }
+}
