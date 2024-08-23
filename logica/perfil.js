@@ -65,10 +65,7 @@ function cargarDatos(){
 // Función para generar las filas de la tabla
 function actualizar() {
     let usuario = usuarios[0];
-<<<<<<< HEAD
     console.log(usuario.password);
-=======
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     $("#nombre").val(usuario.nombre);
     $("#apellido").val(usuario.apellido);
     $("#telefono").val(usuario.telefono);
@@ -79,11 +76,7 @@ function actualizar() {
     //$("#numeroPuerta").html(usuario.nPuerta);
     //$("#codigoPostal").html(usuario.cPostal);
     $("#correo").val(usuario.correo);
-<<<<<<< HEAD
     $("#contraseña").val(usuario.password);
-=======
-    $("#contraseña").val(usuario.contraseña);
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
 }
 
 // Función para tomar los datos del formulario

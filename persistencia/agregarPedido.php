@@ -17,7 +17,6 @@ function obtenerDatos($conexion) {
     $data = json_decode(file_get_contents('php://input'), true);
     
     // Validar datos recibidos
-<<<<<<< HEAD
     if (isset($data['idUsuario'], $data['estadoCarrito'])) {
         $estadoCarrito = $data['estadoCarrito'];
         $idUsuario = $data['idUsuario'];
@@ -78,34 +77,6 @@ function obtenerDatos($conexion) {
 
         // Cerrar la declaración de verificación
         $stmtVerificacion->close();
-=======
-    if (isset($data['idUsuario'], $data['cantidad'], $data['total'])) {
-        $idUser = $data['idUsuario'];
-        $cantidad = $data['cantidad'];
-        $total = $data['total'];
-        $estadoCarrito = 'En proceso';
-        // Preparar la consulta
-        $sql = "INSERT INTO carrito (cantidadArticulos, precioTotal, idUsuario, estadoCarrito) VALUES (?, ?, ?, ?)";
-        $stmt = $conexion->prepare($sql);
-        
-        if ($stmt === false) {
-            die(json_encode(['success' => false, 'error' => 'Error en la preparación de la consulta: ' . $conexion->error]));
-        }
-
-        // Vincular parámetros
-        $estadoCarrito = 'En proceso';
-        $stmt->bind_param('iiis', $cantidad, $total, $idUser, $estadoCarrito);
-
-        // Ejecutar la consulta
-        if ($stmt->execute()) {
-            echo json_encode(['success' => true]);
-        } else {
-            echo json_encode(['success' => false, 'error' => $stmt->error]);
-        }
-
-        // Cerrar la declaración y la conexión
-        $stmt->close();
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     } else {
         echo json_encode(['success' => false, 'error' => 'Datos incompletos']);
     }
@@ -113,7 +84,3 @@ function obtenerDatos($conexion) {
     $conexion->close();
 }
 ?>
-<<<<<<< HEAD
-=======
-
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a

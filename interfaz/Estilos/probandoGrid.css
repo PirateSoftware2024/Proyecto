@@ -106,7 +106,6 @@ a{
 }
 
 /* Estilos para la barra de navegación secundaria */
-<<<<<<< HEAD
 #nav {
     display: flex;
     align-items: center;
@@ -158,31 +157,6 @@ a{
 }
 
 .nav-arrow:hover {
-=======
-.navbar {
-    background-color: #333;
-    overflow: hidden;
-    text-align: center;
-}
-
-.nav-button {
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 14px 20px;
-    font-size: 13px;
-    cursor: pointer;
-    margin: 5px;
-    border-radius: 50px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 150px;
-    display: inline-block; 
-}
-
-.nav-button:hover {
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     background-color: #ddd;
     color: black;
 }

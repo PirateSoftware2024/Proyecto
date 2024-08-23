@@ -120,23 +120,15 @@ footer {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-<<<<<<< HEAD
     padding: 25px;
     background-color: #f9f9f9; /* Color de fondo más suave */
     border-radius: 10px; /* Bordes redondeados */
     border: 2px solid #007bff; /* Borde azul elegante */
     box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-=======
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ccc;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
     z-index: 1000; /* Asegura que esté por encima de otros elementos */
 }
 
 #cuadroInformacion {
-<<<<<<< HEAD
     width: 450px; /* Un poco más ancho */
     height: auto; /* Ajuste automático */
     max-height: 80vh; /* Limita la altura máxima */
@@ -173,15 +165,6 @@ footer {
 
 #cuadroInformacion button:hover {
     background-color: #0056b3; /* Color al pasar el mouse */
-=======
-    width: 400px;
-    height: 500px;
-    text-align: center;
-}
-
-#cuadroInformacion p{
-    text-align: left;
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
 }
 
 body::before {
@@ -199,7 +182,3 @@ body::before {
 body.modal-open::before {
     display: block;
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 4a936129e1927df03bb185b193dd95b921d6b95a
