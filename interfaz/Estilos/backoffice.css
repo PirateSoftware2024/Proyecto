@@ -17,6 +17,13 @@ form {
     padding-top: 10px;
     padding-left: 20px;
 }
+
+.buscarPedido {
+    padding-left: 20px;
+}
+.buscarPedido input {
+    margin-bottom: 5px;
+}
 .buscar {
     padding-left: 20px;
 }

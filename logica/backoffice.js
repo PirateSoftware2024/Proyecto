@@ -26,6 +26,7 @@ $(document).ready(function() {
     $("#botonBuscar").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
+    $("#botonTodos2").click(cargarDatosPedido);
     $("#filas").on("click", ".boton-eliminar", eliminarFila); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
@@ -293,4 +294,50 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
+}
+
+
+let pedidos = [];
+function cargarDatosPedido(){
+    fetch('../persistencia/obtenerPedidos.php')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        pedidos = jsonData; // Una vez leido los datos acutalizamos
+        actualizarPedidos();
+    });
+}
+function actualizarPedidos() {
+    //$("#filas2").empty(); // Limpiar las filas anteriores
+
+    //$("#buscarProducto").val(''); // Limpiamos los campos (input)
+    //$("#fechaPedido").val('');
+
+    // Generar filas para cada producto
+    for (let i = 0; i < pedidos.length; i++) {
+        const pedido = pedidos[i];
+        let fila = $(`
+            <tr>
+                <td>${pedido.idCarrito}</td>
+                <td>${pedido.idUsuario}</td>
+                <td>${pedido.fecha}</td>
+                <td>${pedido.cantidadProductos}</td>
+                <td>${pedido.precioTotal}</td>
+                <td>${pedido.idPaquete}</td>
+                <td>
+                <button class="boton-eliminar" data-id="${pedido.idCarrito}">Eliminar</button>
+                <button class="boton-editar" data-id="${pedido.idCarrito}">Editar</button>
+                <button class="boton-modificar" data-id="${pedido.idCarrito}">Modificar</button>
+                </td>
+            </tr>
+        `);
+        $("#filas2").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
+    }
+    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
+    //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
+    //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
 }

@@ -11,8 +11,9 @@
             <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
             <h1>AXIS</h1>
         </header>
-        <h2>Gestión de Productos</h2>
+        <!--GESTION DE PRODUCTOS-->
         <form id="formulario">
+            <h2>Gestión de Productos</h2>
             <label for="nombreProducto">Nombre del Producto:</label><br>
             <input type="text" id="nombre" name="nombre"><br><br>
             <label for="descripcionProducto">Descripcion:</label><br>
@@ -40,6 +41,31 @@
                 </tr>
             </thead>
             <tbody id="filas"></tbody>
+        </table>
+        <!--GESTION DE PEDIDOS-->
+        <div class="buscarPedido">
+            <h2>Gestión de Pedidos</h2>
+            <label for="buscarProducto">Buscar Pedido (Por idCarrito o idUsuario)</label><br>
+            <input type="text" id="buscarProducto" placeholder="Ingrese dato..."><br>
+            <button id="botonBuscar">Buscar</button><br><br>
+            <label for="fechaPedido">Buscar pedido por fecha</label><br>
+            <input type="date" id="fechaPedido" name="fechaPedido"><br>
+            <button id="botonFecha">Buscar por fecha</button><br><br>
+            <button id="botonTodos2">Todos</button>
+        </div>
+        <table id="tablaPedido">
+            <thead>
+                <tr>
+                    <th>IdCarrito</th>
+                    <th>IdUsuario</th>
+                    <th>Fecha</th>
+                    <th>Cant Productos</th>
+                    <th>Precio total</th>
+                    <th>IdPaquete</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="filas2"></tbody>
         </table>
         <footer>
             <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
