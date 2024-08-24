@@ -12,7 +12,7 @@ $(document).ready(function() {
     $("#cartContainer").on("click", ".boton-eliminar", eliminar);     // Controlador de eventos que
     $("#cartContainer").on("click", ".boton-mas", sumarCantidad);     // responde a los clicks en cualquier elemento con la     
     $("#cartContainer").on("click", ".boton-menos", restarCantidad);  // clase .boton-"accion" que esté dentro del elemento con id "cartContainer".
-    $("#comprar").click(comprar);
+    $("#comprar").click();
     ////////////////////////////////////////
     // -Codigo cuadrado boton "comprar"
     $('#comprar').click(function() {
@@ -409,32 +409,6 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
         console.error('Error en la solicitud:', error);
     });
 }
-/*function agregamosPedido(){
-    let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-    let cantidad = 0;
-    let total = 30;
-
-    for(let i=0;i<carrito.length;i++){
-        let producto = carrito[i];
-        total += Number(producto.precio) * Number(producto.cantidad);
-        cantidad += Number(producto.cantidad);
-    }
-
-    fetch('../persistencia/modificarCarrito.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            cantidadArticulos: cantidad,
-            precioTotal: total,
-            idUsuario: 1
-        })
-    })
-    .catch(error => {
-        console.error('Error al obtener los datos:', error);
-    });
-}*/
 
 let totalCarrito = () => {
     let total = 0; 
@@ -479,7 +453,32 @@ paypal.Buttons({
         // Captura el pago
         return actions.order.capture().then(function(details) {
             alert('Pago realizado con éxito por ' + details.payer.name.given_name);
-            // Aquí puedes redirigir al usuario o guardar la información del pago
+            generarOrden();
+            comprar();
         });
     }
 }).render('#paypal-button-container');
+
+
+function generarOrden(){
+    fetch('../persistencia/generarOrden.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            idCarrito: 30,
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}

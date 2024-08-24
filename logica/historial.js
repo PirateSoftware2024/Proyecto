@@ -21,7 +21,7 @@ function generarHistorial() {
     // Recorrer cada orden en el array de órdenes
     for (let i = 0; i < ordenes.length; i++) {
         const order = ordenes[i];
-        let total = 0;
+        let total = 30;
         let elementoHtml = '<ul class="order-items">';
         
         // Recorrer cada producto en la orden actual
