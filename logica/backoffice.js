@@ -22,12 +22,14 @@ function cargarDatos(){
    del documento esté completamente cargado
 */
 $(document).ready(function() {
+    $("#filas4").on("click", ".opcionValidar", subirValidacion);
+    $("#botonValidar").click(validar);
     $("#agregar").click(tomarDatos);
     $("#botonBuscar").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
-    $("#botonTodos2").click(cargarDatosPedido);
-    $("#filas").on("click", ".boton-eliminar", eliminarFila); // Controlador de eventos que 
+    $("#botonUsuarioTodos").click(cargarDatosUsuario);
+    $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
     $("#formulario").submit(function(event) {
@@ -176,15 +178,12 @@ function actualizar() {
 let idBoton; // Almacenaremos el id del producto
 let index;  // Almacenaremos el indice del producto
 
-function eliminarFila(){
-    idBoton = $(this).data("id"); // Guardamos el id del producto utilizando data(atributo personalizado)
-
+function eliminarFila(idBoton){
     // Busca en el array productos un producto que tenga el mismo id y guarda su indice
     index = productos.findIndex(producto => Number(producto.id) === idBoton);
     //Pasamos producto.id a numero ya que viene como texto
     // Eliminamos producto
     productos.splice(index, 1);
-    eliminarProducto(idBoton);
     /* Ejemplo: 
     Queremos eliminar el producto con id 3:
     id=1, 2, 3, 4, 5 => El indice del 3 es 2 =>
@@ -224,10 +223,6 @@ function modificar(){
 
     if(validacion(nombre, descripcion, precio)){
          // Modificamos los datos del producto
-        productos[index].nombre = nombre;
-        productos[index].descripcion = descripcion;
-        productos[index].precio = precio;
-        
         //Modificamos en BD
         modificarProducto(idBoton, nombre, descripcion, precio); 
 
@@ -264,7 +259,8 @@ function verificarTexto(cadena){
     return false;
 }
 
-function eliminarProducto(idProducto) {
+function eliminarProducto() {
+    idProducto = $(this).data("id");
     fetch('../persistencia/eliminarProducto.php', {
         method: 'POST',
         headers: {
@@ -272,13 +268,23 @@ function eliminarProducto(idProducto) {
         },
         body: JSON.stringify({ id: idProducto })
     })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            console.log('Producto eliminado exitosamente');
+            eliminarFila(idProducto);
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
     .catch(error => {
         console.error('Error al obtener los datos:', error);
     });
 }
 
+
 function modificarProducto(idProducto, nombre, descripcion, precio) {
-    console.log("Se ha enviado");
     fetch('../persistencia/modificarProducto.php', {
         method: 'POST',
         headers: {
@@ -291,10 +297,25 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
             precio: precio
         })
     })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Si la modificación fue exitosa
+            alert("Producto modificado con éxito");
+            productos[index].nombre = nombre;
+            productos[index].descripcion = descripcion;
+            productos[index].precio = precio;
+            // Puedes actualizar la interfaz aquí si es necesario
+        } else {
+            // Si hubo un error en la modificación
+            alert(data.error);
+        }
+    })
     .catch(error => {
-        console.error('Error al obtener los datos:', error);
+        alert('Ocurrió un error inesperado al intentar modificar el producto.');
     });
 }
+
 
 
 let pedidos = [];
@@ -341,3 +362,126 @@ function actualizarPedidos() {
     //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
     //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
 }
+
+let usuarios = [];
+function cargarDatosUsuario(){
+    fetch('../persistencia/obtenerDatosUsuario.php')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        usuarios = jsonData; // Una vez leido los datos acutalizamos
+        actualizarUsuarios();
+    });
+}
+function actualizarUsuarios() {
+    $("#filas3").empty(); // Limpiar las filas anteriores
+
+    // Generar filas para cada producto
+    for (let i = 0; i < usuarios.length; i++) {
+        const usuario = usuarios[i];
+        let fila = $(`
+            <tr>
+                <td>${usuario.idUsuario}</td>
+                <td>${usuario.nombre}</td>
+                <td>${usuario.apellido}</td>
+                <td>${usuario.telefono}</td>
+                <td>${usuario.correo}</td>
+                <td>${usuario.password}</td>
+                <td>${usuario.fechaNac}</td>
+                <td>
+                <button class="boton-eliminar-usuario" data-id="${usuario.idUsuario}">Eliminar</button>
+                <button class="boton-editar-usuario" data-id="${usuario.idUsuario}">Editar</button>
+                <button class="boton-modificar-usuario" data-id="${usuario.idUsuario}">Modificar</button>
+                </td>
+            </tr>
+        `);
+        $("#filas3").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
+    }
+    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
+    //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
+    //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
+}
+
+let usuariosParaValidar = [];
+function validar(){
+    fetch('../persistencia/obtenerUsuariosAValidar.php')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        usuariosParaValidar = jsonData; // Una vez leido los datos acutalizamos
+        usuariosValidar();
+    });
+}
+
+function usuariosValidar() {
+    $("#filas4").empty(); // Limpiar las filas anteriores
+    for (let i = 0; i < usuariosParaValidar.length; i++) {
+        const usuario = usuariosParaValidar[i];
+        let fila = $(`
+            <tr>
+                <td>${usuario.idUsuario}</td>
+                <td>${usuario.nombre}</td>
+                <td>${usuario.apellido}</td>
+                <td>${usuario.telefono}</td>
+                <td>${usuario.correo}</td>
+                <td>${usuario.fechaNac}</td>
+                <td>
+                    <select id="selectValidacion">
+                        <option value="Si">Si</option>
+                        <option value="No">No</option>
+                    </select>
+                </td>
+                <td><button class="opcionValidar" data-id=${usuario.idUsuario}>Validar</button></td>
+            </tr>
+    `);
+        $("#filas4").append(fila);
+    }
+}
+
+function subirValidacion() {
+    // Obtener la opción seleccionada y el idUsuario del botón
+    console.log("Entreeeee");
+    let opcion = $("#selectValidacion").val();
+    let idUsuario = $(this).data("id");
+
+    // Enviar los datos al archivo PHP
+    fetch('../persistencia/validarUsuario.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idUsuario,
+            opcion: opcion
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log('Datos recibidos del servidor:', data);
+        if (data.success) {
+            alert('Validación exitosa');
+            $("#filas4").empty();
+        } else {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error al enviar los datos:', error);
+    });
+}
+
+// Asegúrate de añadir un manejador de eventos al botón
+$(document).on('click', '.boton-validar', subirValidacion);

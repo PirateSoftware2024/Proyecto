@@ -11,6 +11,45 @@
             <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
             <h1>AXIS</h1>
         </header>
+        <!--GESTION DE USUARIOS-->
+        <div class="buscarUsuario">
+            <h2>Gestión de Usuarios</h2>
+            <label for="buscarUsuario">Buscar Usuario (Por id o nombre)</label><br>
+            <input type="text" id="buscarUsuario1" placeholder="Ingrese dato...">
+            <button id="botonBuscar">Buscar</button><button id="botonUsuarioTodos">Todos</button><br><br>
+            <table id="tablaUsuario">
+                <thead>
+                    <tr>
+                        <th>IdUsuario</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Telefono</th>
+                        <th>Correo</th>
+                        <th>Contraseña</th>
+                        <th>fecha de nacimiento</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="filas3"></tbody>
+            </table>
+            <label for="buscarUsuario">Usuarios para validar</label><br>
+            <button id="botonValidar">Mostrar</button>
+        </div>
+        <table id="tablaUsuarioValidacion">
+            <thead>
+                <tr>
+                    <th>IdUsuario</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Telefono</th>
+                    <th>Correo</th>
+                    <th>fecha de nacimiento</th>
+                    <th>Validar</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="filas4"></tbody>
+        </table>
         <!--GESTION DE PRODUCTOS-->
         <form id="formulario">
             <h2>Gestión de Productos</h2>

@@ -3,6 +3,7 @@ body {
     margin: 0;
     padding: 0;
 }
+
 header {
     display: flex;
     align-items: center;
@@ -13,49 +14,51 @@ header {
     color: white;
     text-align: center;
 }
+
 form {
     padding-top: 10px;
     padding-left: 20px;
 }
 
-.buscarPedido {
+.buscarPedido, .buscarUsuario, .buscar {
     padding-left: 20px;
 }
-.buscarPedido input {
+
+.buscarPedido input, .buscarUsuario input, .buscar input {
     margin-bottom: 5px;
 }
-.buscar {
-    padding-left: 20px;
-}
-.buscar input {
-    margin-bottom: 5px;
-}
-.boton-eliminar {
+
+table .boton-eliminar, table .boton-eliminar-usuario {
     background-color: rgb(212, 97, 97);
 }
-.boton-editar {
+
+table .boton-editar, table .boton-editar-usuario {
     background-color: rgb(204, 204, 105);
 }
+
 table {
     padding-left: 20px;
-    width: 1000px;;
+    width: 1000px;
     margin-top: 20px;
     margin-bottom: 100px;
-    
 }
+
 th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
 }
+
 th {
     background-color: #f2f2f2;
 }
-button{
+
+button {
     background-color: rgb(101, 141, 101);
     border-radius: 10%;
     cursor: pointer;
 }
+
 footer {
     text-align: center;
     background-color: #333;
@@ -64,5 +67,5 @@ footer {
     position: fixed;
     bottom: 0;
     width: 100%;
-    margin-top: 50px; 
+    margin-top: 50px;
 }
