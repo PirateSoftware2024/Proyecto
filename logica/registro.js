@@ -2,56 +2,43 @@ $(document).ready(function() {
     $('#uploadForm').on('submit', function(event) {
         event.preventDefault(); // Evita el envío del formulario por defecto
         // Crear un nuevo FormData con el formulario
-        var formData = new FormData(this); 
+        let nombre = $("#nombre").val();
+        let apellido = $("#apellido").val();
+        let telefono = Number($("#telefono").val());
+        let correo =  $("#email").val();
+        let password = $("#password").val();
+        let fecha = $("#fecha").val();
 
-        $.ajax({
-            url: '../persistencia/registroUsuario.php',
-            type: 'POST',
-            data: formData,
-            contentType: false, // No establecer el tipo de contenido
-            processData: false, // No procesar los datos (FormData se encarga)
-            dataType: 'json', // Asegurarse de que la respuesta sea interpretada como JSON
-            success: function(data) {
-                console.log('Respuesta del servidor:', data);
-                if (data.success) {
-                    $('#result').html('<p>Usuario registrado con éxito!</p>');
-                } else {
-                    $('#result').html('<p>Error al registrar el usuario: ' + data.error + '</p>');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error en la solicitud:', textStatus, errorThrown);
-                $('#result').html('<p>Error al registrar el usuario.</p>');
-            }
-        });
+        if(validacion(nombre, apellido, telefono, correo, password, fecha)){
+        var formData = new FormData(this); 
+        registrar(formData);
+        }
     });
 });
 
-/*function ingresar(formData){
-        //let nom = $("#nom").val();
-        //let desc = $("#desc").val();
-        console.log(formData+"  Aca esta");
-        $.ajax({
-            url: '../persistencia/registroUsuario.php',
-            type: 'POST',
-            data: formData,
-            contentType: false, // No establecer el tipo de contenido
-            processData: false, // No procesar los datos (FormData se encarga)
-            success: function(data) {
-                console.log('Respuesta del servidor:', data);
-                if (data.success) {
-                    $('#result').html('<p>Imagen subida con éxito!</p>');
-                } else {
-                    $('#result').html('<p>Error al subir la imagen: ' + data.error + '</p>');
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.error('Error en la solicitud:', textStatus, errorThrown);
-                $('#result').html('<p>Error al subir la imagen.</p>');
+function registrar(formData) {
+    $.ajax({
+        url: '../persistencia/registroUsuario.php',
+        type: 'POST',
+        data: formData,
+        contentType: false, // No establecer el tipo de contenido
+        processData: false, // No procesar los datos (FormData se encarga)
+        dataType: 'json', // Asegurarse de que la respuesta sea interpretada como JSON
+        success: function(data) {
+            if (data.success) {
+                $("#result").html("Usuario registrado con éxito!");
+                limpiarCampos();
+            } else {
+                $("#result").html(data.error);
             }
-        });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            $("#result").html("Error al registrar el usuario");
+        }
+    });
 }
-function validacion(nombre, apellido, calle, barrio, correo, password, numeroPuerta, codigoPostal, telefono, edad){
+
+function validacion(nombre, apellido, telefono, correo, password, fecha){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
         return false;
@@ -65,20 +52,27 @@ function validacion(nombre, apellido, calle, barrio, correo, password, numeroPue
     $("#apellido").css("border-color", "#ddd");
 
     if(telefono > 99999999 || telefono < 90000000){
-        alert("El telefono ingresado no existe"); //Verificar luego
+        $("#result").html("El telefono ingresado no existe"); //Verificar luego
         $("#telefono").css("border-color", "red");
         return false;
     }
     $("#telefono").css("border-color", "#ddd");
 
-    if(edad <18){
-        alert("La edad debe ser mayor a 18");
-        $("#edad").css("border-color", "red");
+    if(!fecha){
+        $("#result").html("Por favor, ingrese su fecha de nacimiento.");
+        $("#fecha").css("border-color", "red");
         return false;
     }
-    $("#edad").css("border-color", "#ddd");
+    $("#fecha").css("border-color", "#ddd");
 
-    if(verificarTexto(barrio)){
+    if(esMayorDe18(fecha)){
+        $("#result").html("Edad no valida");
+        $("#fecha").css("border-color", "red");
+        return false;
+    }
+    $("#fecha").css("border-color", "#ddd");
+
+    /*if(verificarTexto(barrio)){
         $("#barrio").css("border-color", "red");
         return false;
     }
@@ -101,7 +95,7 @@ function validacion(nombre, apellido, calle, barrio, correo, password, numeroPue
         $("#codigoPostal").css("border-color", "red");
         return false;
     }
-    $("#codigoPostal").css("border-color", "#ddd");
+    $("#codigoPostal").css("border-color", "#ddd");*/
 
     var re = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|yahoo\.com)$/i; 
     if(!re.test(correo)){
@@ -111,7 +105,7 @@ function validacion(nombre, apellido, calle, barrio, correo, password, numeroPue
     $("#email").css("border-color", "#ddd");
 
     if(password.length > 20 || password.length < 10){//Hacer esto con todas las variables de texto
-        alert("La contraseña debe contener de 10 a 20 caracteres");
+        $("#result").html("La contraseña debe contener de 10 a 20 caracteres");
         $("#password").css("border-color", "red");
         return false;
     }
@@ -132,4 +126,36 @@ function verificarTexto(cadena){
         }
     }
     return false;
-}*/
+}
+
+function obtenerEdad(fechaNacimiento) {
+    const hoy = new Date();
+    const fechaNac = new Date(fechaNacimiento);
+    // Calcular la diferencia en años
+    let edad = hoy.getFullYear() - fechaNac.getFullYear(); //Restamos año actual (2024) y año ingresado
+    // Ajustar la edad si el cumpleaños no ha ocurrido este año
+    const mesActual = hoy.getMonth(); // Mes actual
+    const diaActual = hoy.getDate(); // Dia actual
+    const mesNac = fechaNac.getMonth(); // Mes ingresado
+    const diaNac = fechaNac.getDate(); // Dia ingresado
+
+    // Si el mes o el dia actual son menores a los ingresados
+    // le restamos 1 a edad ya que aun no ha cumplido años
+    if (mesActual < mesNac || (mesActual === mesNac && diaActual < diaNac)) {
+        edad--;
+    }
+    console.log(edad);
+    return edad;
+}
+
+function esMayorDe18(fechaNacimiento) {
+    let edad = obtenerEdad(fechaNacimiento);
+    return edad <= 18 || edad >= 100 || edad == "NaN";
+}
+
+function limpiarCampos(){
+    let campos = ["nombre", "apellido", "telefono", "fecha", "email", "password"];
+    for(let i=0;i<6;i++){
+        $("#"+campos[i]).val("");
+    }
+}
