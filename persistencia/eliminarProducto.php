@@ -18,18 +18,24 @@ function obtenerDatos($conexion) {
     $data = json_decode(file_get_contents('php://input'), true);
     $idProducto = $data['id'];
 
-    
+    // Verificar si el producto está en la tabla carrito
+    $verificarSql = "SELECT COUNT(*) AS conteo FROM almacena WHERE id = '$idProducto'";
+    $result = mysqli_query($conexion, $verificarSql);
+    $row = mysqli_fetch_assoc($result);
 
-    // Consulta SQL para eliminar un registro
-    $sql = "DELETE FROM producto WHERE id = '$idProducto'";
-
-    // Ejecutar la consulta
-    if (mysqli_query($conexion, $sql)) {
-        // Consulta exitosa
-        echo json_encode(['success' => true]);
+    if ($row['conteo'] > 0) {
+        // Producto está en uso en la tabla carrito
+        echo json_encode(['success' => false, 'error' => 'No se puede eliminar el producto porque está en un carrito.']);
     } else {
-        // Error en la consulta
-        echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
+        // Eliminar el producto
+        $sql = "DELETE FROM producto WHERE id = '$idProducto'";
+        if (mysqli_query($conexion, $sql)) {
+            // Consulta exitosa
+            echo json_encode(['success' => true]);
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
+        }
     }
 
     // Cerrar la conexión

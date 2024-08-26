@@ -1,4 +1,3 @@
-
 <?php 
 header('Content-Type: application/json');
 $server = "localhost";
@@ -22,10 +21,26 @@ function obtenerDatos($conexion) {
     $descripcion = $data['descripcion'];
     $precio = $data['precio'];
 
+    // Verificar si el producto está en un carrito
+    $verificarCarritoSql = "SELECT COUNT(*) as count FROM almacena WHERE id = $idProducto";
+    $resultado = $conexion->query($verificarCarritoSql);
 
-    //$idProducto = mysqli_real_escape_string($conexion, $idProducto);
+    if ($resultado) {
+        $fila = $resultado->fetch_assoc();
+        if ($fila['count'] > 0) {
+            // Producto está en un carrito, no se puede modificar el precio
+            echo json_encode(['success' => false, 'error' => 'No se puede modificar el precio porque el producto está en un carrito.']);
+            mysqli_close($conexion);
+            return;
+        }
+    } else {
+        // Error al verificar la existencia del producto en un carrito
+        echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito: ' . mysqli_error($conexion)]);
+        mysqli_close($conexion);
+        return;
+    }
 
-    // Consulta SQL para eliminar un registro
+    // Consulta SQL para actualizar el producto
     $sql = "UPDATE producto SET nombre = '$nombre', descripcion = '$descripcion', precio = $precio WHERE id = $idProducto";
 
     // Ejecutar la consulta

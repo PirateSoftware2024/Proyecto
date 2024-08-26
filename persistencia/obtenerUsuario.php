@@ -18,7 +18,7 @@ $correo = $_POST['correo'];
 $contraseña = $_POST['contraseña'];
 
 // Preparar la consulta SQL
-$sql = "SELECT COUNT(*) AS count FROM usuario WHERE correo = ? AND contraseña = ?"; // Retorna columnas con ese correo y contraseña
+$sql = "SELECT COUNT(*) AS count FROM usuario WHERE correo = ? AND password = ? AND validacion = 'Si'"; // Retorna columnas con ese correo y contraseña
 $stmt = $conexion->prepare($sql);
 
 // Verificar si la preparación de la declaración SQL fue exitosa
