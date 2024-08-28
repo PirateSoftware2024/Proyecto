@@ -3,53 +3,80 @@
    lo convierte en JSON y lo almacena, de lo contrario crea un array ordenes
    lo mismo con orden.
 */
-let ordenes = JSON.parse(localStorage.getItem('orden')) || [];
+//let ordenes = JSON.parse(localStorage.getItem('orden')) || [];
 
 document.addEventListener('DOMContentLoaded', function() {
     generarHistorial();
+
 });
 
-function mostrarHistorial(html){
-    $("#orderHistory").append(html);
-    const productosJSON = JSON.stringify(ordenes);
-    localStorage.setItem('orden', productosJSON);
+function mostrarHistorial(){
+    ordenesListas.forEach(orden  => $("#orderHistory").append(orden));
 }
 
-function generarHistorial() {
-    let html = '';
 
+let ordenes = [];
+function generarHistorial() {
+    idUsuario = 1;
+    fetch('../persistencia/historial.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id: idUsuario })
+})
+.then(response => response.json())
+.then(data => {
+    if (data.success) {
+        ordenes = data.data;  // Una vez leido los datos actualizamos
+        console.log(ordenes);
+        mostrar();
+    } else {
+        console.error('Error:', data.error);
+    }
+})
+.catch(error => {
+    console.error('Error en la solicitud:', error);
+});
+}
+
+
+let ordenesListas = [];
+function mostrar() {
+    let elementoHtml = '';
+    let total = 30;
     // Recorrer cada orden en el array de órdenes
     for (let i = 0; i < ordenes.length; i++) {
         const order = ordenes[i];
-        let total = 30;
-        let elementoHtml = '<ul class="order-items">';
-        
-        // Recorrer cada producto en la orden actual
-        for (let j = 0; j < order.productos.length; j++) {
-            const item = order.productos[j];
-            
-            // Calcula el subtotal del producto y agregarlo al total del pedido
-            const subtotal = item.price * item.cantidad;
+        const proximoProducto = ordenes[i + 1];
+
+        let subtotal = order.precio * order.cantidad;
+        if (Number(order.idCarrito) !== Number(proximoProducto?.idCarrito)) {
             total += subtotal;
-            
-            // Agregar el producto a la lista de elementos 
             elementoHtml += `
-                <li class="order-item">
-                    <span>${item.name} (x${item.cantidad})</span>
-                    <span>$${subtotal.toFixed(2)}</span>
-                </li>`;
-        }
-        
-        // Cerramos la lista
-        elementoHtml += '</ul>';
-        html += `
+            <li class="order-item">
+                <span>${order.nombre} (x${order.cantidad})</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            </li>`;
+            elementoHtml += '</ul>';
+            let html = `
             <div class="order">
                 <h2>Pedido #${order.id}</h2>
-                <p>Fecha: ${order.date}</p>
+                <p>Fecha: ${order.fecha}</p>
                 ${elementoHtml}
                 <div class="total">Total: $${total.toFixed(2)}</div>
-            </div>
-        `;
+            </div>`;
+            ordenesListas.push(html);
+            elementoHtml ="";
+            total=30;
+        } else {
+            total += subtotal;
+            elementoHtml += `
+            <li class="order-item">
+                <span>${order.nombre} (x${order.cantidad})</span>
+                <span>$${subtotal.toFixed(2)}</span>
+            </li>`;
+        }
     }
-    mostrarHistorial(html);
+    mostrarHistorial();
 }

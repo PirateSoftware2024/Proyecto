@@ -56,9 +56,10 @@ function buscar(){
 }
 
 $(document).ready(function() {
-    cargarCategorias();
-    cargarDatos();
-    nuevoCarrito();
+    cargarCategorias(); //Obtenemos categorias de la BD
+    cargarDatos(); // Obtenemos productos de la BD
+    nuevoCarrito();// Verificamos si el usuario tiene un  carrito "Pendiente", si es asi obtenemos los productos
+    
     $("#productContainer").on("click", ".boton-producto", añadir);
 
     $("#nav-bar").on("click", ".nav-button", buscar);
@@ -71,7 +72,6 @@ $(document).ready(function() {
     $("#left-arrow").on("click", function() {
         $(".navbar").animate({scrollLeft: '-=150px'}, 300);
     });    
-
 });
 
 function actualizar(){
@@ -167,7 +167,7 @@ function añadir(){
     const producto = products.find(producto => Number(producto.id) === idBoton); // Buscamos el producto
 
     if (!producto) {
-        console.error('Producto no encontrado con id:', idBoton);
+        alert("Producto no encontrado con id: "+idBoton);
         return; // Si no se encuentra el producto, salimos de la función
     }
 
@@ -191,18 +191,6 @@ function añadir(){
     agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
     modificarCarrito();
 }
-
-/*let cantidadArticulos = () => {
-    let total = 0; 
-    // Recorrer cada producto en el carrito
-    for (let j = 0; j < carrito.length; j++) {
-        const item = carrito[j];
-            
-        // Calcula el subtotal del producto y agregarlo al total del carrito
-        total += item.cantidad;
-    }
-    return total; // Convertir a número flotante
-}*/
 
 
 function modificarCarrito(){

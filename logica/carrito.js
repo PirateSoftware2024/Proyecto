@@ -1,10 +1,9 @@
 /* Array para almacenar los productos del carrito.
-   Busca en el localStorage si exite el item "carrito" 
-   lo convierte en JSON y lo almacena, de lo contrario crea un array productos
-   lo mismo con orden.
+Busca en el localStorage si exite el item "carrito" 
+lo convierte en JSON y lo almacena, de lo contrario crea un array productos
+lo mismo con orden.
 */
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
-let orden = JSON.parse(localStorage.getItem('orden')) || [];
 
 $(document).ready(function() {
     mostrarProductosEnCarrito();
@@ -223,7 +222,7 @@ function restarCantidad() {
 }
 
 // Funcion para comprar y generar un ticket de compra 
-function comprar() {
+/*function comprar() {
     let datosOrden = [];
     // Recorrer el carrito para construir los datos de la orden
     for (let i = 0; i < carrito.length; i++) {
@@ -247,7 +246,7 @@ function comprar() {
     // Convertir la orden a JSON y guardar en localStorage
     const ordenJSON = JSON.stringify(orden);
     localStorage.setItem('orden', ordenJSON);
-}
+}*/
 
 
 function resumenPedido(){
@@ -454,7 +453,6 @@ paypal.Buttons({
         return actions.order.capture().then(function(details) {
             alert('Pago realizado con éxito por ' + details.payer.name.given_name);
             generarOrden();
-            comprar();
         });
     }
 }).render('#paypal-button-container');

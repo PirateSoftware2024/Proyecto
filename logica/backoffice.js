@@ -1,18 +1,13 @@
-/* Array para almacenar los productos.
-   Busca en el localStorage si exite el item "productos" 
-   lo convierte en JSON y lo almacena, de lo contrario crea un array productos
-*/
+
 let productos = [];
+// Obtenemos productos de la BD
 function cargarDatos(){
     fetch('../persistencia/obtenerProductos.php')
     .then(response => response.text())
     .then(data => {
-        console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
-        productos = jsonData; // Una vez leido los datos acutalizamos
+        productos = jsonData; // Guardamos productos
         actualizar();
     });
 }
@@ -25,7 +20,7 @@ $(document).ready(function() {
     $("#filas4").on("click", ".opcionValidar", subirValidacion);
     $("#botonValidar").click(validar);
     $("#agregar").click(tomarDatos);
-    $("#botonBuscar").click(buscarProducto);
+    $("#botonBuscarNombre").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
     $("#botonUsuarioTodos").click(cargarDatosUsuario);
@@ -39,7 +34,9 @@ $(document).ready(function() {
 
 function buscarStock(){
     let stock = $("#buscarProducto").val();
-
+    if(isNaN(stock)){
+        alert("Debe ingresar un numero!");
+    }else{
     fetch('../persistencia/buscarPorStock.php', {
         method: 'POST',
         headers: {
@@ -57,6 +54,7 @@ function buscarStock(){
         productos = jsonData; // Una vez leido los datos acutalizamos
         actualizar();
     });
+}
 }
 
 function buscarProducto(){
@@ -108,27 +106,6 @@ function agregar(nombre, descripcion, precio) {
     });
 }
 
-function validacion(nombre, descripcion, precio){
-    if(verificarTexto(nombre)){
-        $("#nombre").css("border-color", "red");
-        return false;
-    }
-    $("#nombre").css("border-color", "black");
-
-    if(descripcion.length > 50){
-        $("#descripcion").css("border-color", "red");
-        return false;
-    }
-    $("#descripcion").css("border-color", "black");
-
-    if (isNaN(precio) || precio < 1) {
-        $("#precio").css("border-color", "red");
-        return false;
-    }
-    $("#precio").css("border-color", "black");
-    
-    return true;
-}
 
 // Función para tomar los datos del formulario
 function tomarDatos() {
@@ -171,28 +148,14 @@ function actualizar() {
         $("#filas").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
     }
     $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
-    //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
-    //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
 }
 
 let idBoton; // Almacenaremos el id del producto
 let index;  // Almacenaremos el indice del producto
 
 function eliminarFila(idBoton){
-    // Busca en el array productos un producto que tenga el mismo id y guarda su indice
     index = productos.findIndex(producto => Number(producto.id) === idBoton);
-    //Pasamos producto.id a numero ya que viene como texto
-    // Eliminamos producto
     productos.splice(index, 1);
-    /* Ejemplo: 
-    Queremos eliminar el producto con id 3:
-    id=1, 2, 3, 4, 5 => El indice del 3 es 2 =>
-    Por ende eliminara 1 elemento a partir del incice 2 =>
-    productos.splice(2, 1); */ 
-    
-    // Actualizar localStorage
-    //let productosJSON = JSON.stringify(productos);
-    //localStorage.setItem('productos', productosJSON);
     actualizar();
 }
 
@@ -202,6 +165,7 @@ function mostrarDatos(){
 
     idBoton = $(this).data("id");
     index = productos.findIndex(producto => Number(producto.id) === idBoton);
+    
     $("#nombre").css("border-color", "green"); // Cambiamos border color del input
     $("#descripcion").css("border-color", "green");
     $("#precio").css("border-color", "green");
@@ -214,9 +178,24 @@ function mostrarDatos(){
     $('.boton-modificar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
 }   
 
+
+
+function cancelarBotones(){
+    $(".boton-eliminar").attr("disabled", "disabled");
+    $(".boton-editar").attr("disabled", "disabled");
+    $("#agregar").attr("disabled", "disabled");
+}
+
+function habilitarBotones(){
+    $(".boton-eliminar").removeAttr("disabled", "disabled");
+    $(".boton-editar").removeAttr("disabled", "disabled");
+    $("#agregar").removeAttr("disabled", "disabled");
+}
+
 function modificar(){
     // Almacenmos los nuevos datos en las variables
     idBoton = $(this).data("id");
+
     let nombre = $("#nombre").val(); 
     let descripcion = $("#descripcion").val();
     let precio = Number($("#precio").val());
@@ -234,22 +213,34 @@ function modificar(){
     }
 }
 
-function cancelarBotones(){
-    $(".boton-eliminar").attr("disabled", "disabled");
-    $(".boton-editar").attr("disabled", "disabled");
-    $("#agregar").attr("disabled", "disabled");
-}
+function validacion(nombre, descripcion, precio){
+    if(verificarTexto(nombre)){
+        $("#nombre").css("border-color", "red");
+        return false;
+    }
+    $("#nombre").css("border-color", "black");
 
-function habilitarBotones(){
-    $(".boton-eliminar").removeAttr("disabled", "disabled");
-    $(".boton-editar").removeAttr("disabled", "disabled");
-    $("#agregar").removeAttr("disabled", "disabled");
+    if(descripcion.length < 10 || descripcion.length > 20){
+        $("#descripcion").css("border-color", "red");
+        return false;
+    }
+    $("#descripcion").css("border-color", "black");
+
+    
+    if(isNaN(precio) || precio < 1) {
+        $("#precio").css("border-color", "red");
+        return false;
+    }
+    $("#precio").css("border-color", "black");
+    
+    return true;
 }
 
 function verificarTexto(cadena){
     if(cadena.length < 1){
         return true;
     }
+
     for(var i = 0; i < cadena.length; i++) {
         //"!isNan" (is Not a Number) 
         if(!isNaN(cadena[i])) {

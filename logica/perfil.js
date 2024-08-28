@@ -37,9 +37,9 @@ $(document).ready(function() {
 
 
 function modificar(input, boton) {
-    if($(`#${input}`).attr("disabled")){
-        $(`#${input}`).attr("disabled", false);
-        $(`#${boton}`).text("Aceptar");
+    if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
+        $(`#${input}`).attr("disabled", false);// Habilita el boton
+        $(`#${boton}`).text("Aceptar");// Cambia el texto del boton por "Aceptar"
     }else{
         console.log("Paso");
         $(`#${input}`).attr("disabled", true);
@@ -55,7 +55,6 @@ function cargarDatos(){
         console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-        console.log('Datos JSON:', jsonData);
         usuarios = jsonData; // Una vez leido los datos acutalizamos
         actualizar();
     });
@@ -70,18 +69,12 @@ function actualizar() {
     $("#apellido").val(usuario.apellido);
     $("#telefono").val(usuario.telefono);
     $("#fechaNac").val(usuario.fechaNac);
-    //$("#departamentos").html(usuario.departamento);
-    //$("#barrio").html(usuario.barrio);
-    //$("#calleUsuario").html(usuario.calle);
-    //$("#numeroPuerta").html(usuario.nPuerta);
-    //$("#codigoPostal").html(usuario.cPostal);
     $("#correo").val(usuario.correo);
     $("#contraseña").val(usuario.password);
 }
 
 // Función para tomar los datos del formulario
 function tomarDato(input) {
-    console.log("Buenas aaaa");
     let dato;
     if(input == "telefono"){
         dato = Number($("#telefono").val());
@@ -90,13 +83,6 @@ function tomarDato(input) {
     }
 
     modificarProducto(1, dato, input);
-
-    /*if(validacion(nombre, descripcion, precio)){
-        // Llamamos a la funcion agregar y agregamos sus atributos
-        agregar(nombre, descripcion, precio); 
-    }else{
-        alert("Hay campos erroneos");
-    }*/
 }
 
 function modificarProducto(idUser, dato, columna) {

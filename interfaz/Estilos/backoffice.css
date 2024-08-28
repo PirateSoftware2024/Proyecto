@@ -20,7 +20,7 @@ form {
     padding-left: 20px;
 }
 
-.buscarPedido, .buscarUsuario, .buscar {
+.buscarPedido, .buscarUsuario, .buscar, .validarUsuario, .tablaProducto {
     padding-left: 20px;
 }
 
@@ -37,10 +37,8 @@ table .boton-editar, table .boton-editar-usuario {
 }
 
 table {
-    padding-left: 20px;
-    width: 1000px;
-    margin-top: 20px;
-    margin-bottom: 100px;
+    width: 100%;
+    margin-bottom: 50px;
 }
 
 th, td {
@@ -68,4 +66,20 @@ footer {
     bottom: 0;
     width: 100%;
     margin-top: 50px;
+}
+
+.carta {
+    margin: 50px;
+    display: block;
+    text-align: left;
+    max-width: 600px;
+    width: 90%;
+    background-color: #f0f0f0;
+    border-radius: 15px;
+    padding: 10px;
+    transition: transform 0.3s ease;
+    font-size: 12px;
+}
+.carta:hover {
+    transform: scale(1.05);
 }
