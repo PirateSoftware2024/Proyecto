@@ -23,6 +23,9 @@ $(document).ready(function() {
     $("#botonBuscarNombre").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
+    $("#botonTodos2").click(cargarDatosPedido);
+    $("#buscarPedido").click(pedidoBuscar);
+    $("#botonFecha").click(buscarPorFecha);
     $("#botonUsuarioTodos").click(cargarDatosUsuario);
     $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
@@ -307,24 +310,64 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
     });
 }
 
-
+function buscarPorFecha(){
+    let fecha = $("#fechaPedido").val();
+    fetch('../persistencia/obtenerPedidoFecha.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            fecha : fecha
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // El idCarrito o idUsuario no existe
+            alert(data.error);
+        } else {
+            pedidos = data;
+            actualizarPedidos();
+        }
+    })
+}
+function pedidoBuscar(){
+    let dato = Number($("#buscarOrden").val());
+    fetch('../persistencia/buscarPedido.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            dato : dato
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            // El idCarrito o idUsuario no existe
+            alert(data.error);
+        } else {
+            pedidos = data;
+            actualizarPedidos();
+        }
+    })
+}
 
 let pedidos = [];
 function cargarDatosPedido(){
     fetch('../persistencia/obtenerPedidos.php')
     .then(response => response.text())
     .then(data => {
-        console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
         pedidos = jsonData; // Una vez leido los datos acutalizamos
         actualizarPedidos();
     });
 }
 function actualizarPedidos() {
-    //$("#filas2").empty(); // Limpiar las filas anteriores
+    $("#filas2").empty(); // Limpiar las filas anteriores
 
     //$("#buscarProducto").val(''); // Limpiamos los campos (input)
     //$("#fechaPedido").val('');
@@ -473,6 +516,3 @@ function subirValidacion() {
         console.error('Error al enviar los datos:', error);
     });
 }
-
-// Asegúrate de añadir un manejador de eventos al botón
-$(document).on('click', '.boton-validar', subirValidacion);
