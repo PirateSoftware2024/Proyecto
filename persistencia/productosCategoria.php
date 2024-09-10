@@ -18,7 +18,11 @@ function obtenerDatos($conexion) {
     $data = json_decode(file_get_contents('php://input'), true);
     $nombreProducto = $data['nombre'];
 
-    $sql = "SELECT * FROM producto WHERE categoria = '$nombreProducto'";
+    if ($nombreProducto === 'Todo'){
+        $sql = "SELECT * FROM producto";
+    }else{
+        $sql = "SELECT * FROM producto WHERE categoria = '$nombreProducto'";
+    }
     $datos = mysqli_query($conexion, $sql);
     
     // Obtener todos los datos como un array de arrays asociativos

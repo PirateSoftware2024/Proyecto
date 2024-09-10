@@ -19,8 +19,6 @@ function obtenerDatos($conexion) {
     $idProducto = $data['id'];
 
     
-
-    // Consulta SQL para eliminar un registro
     $sql = "DELETE FROM almacena WHERE id = '$idProducto'";
 
     // Ejecutar la consulta

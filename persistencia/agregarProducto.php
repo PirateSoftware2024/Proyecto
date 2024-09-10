@@ -1,19 +1,17 @@
 <?php
-// Configuración de la base de datos
+
 $host = 'localhost'; 
 $user = 'root'; 
 $pass = ''; 
 $dbname = 'producto'; 
 
-// Crear conexión a la base de datos
 $conexion = new mysqli($host, $user, $pass, $dbname);
 
-// Verificar conexión
+
 if ($conexion->connect_error) {
     die('Error de conexión: ' . $conexion->connect_error);
 }
 
-// Verificar si se ha enviado un archivo
 if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
     $file = $_FILES['image'];
     $uploadDir = '../interfaz/images/imagenesProductos/'; // Directorio para almacenar imágenes
@@ -39,7 +37,7 @@ if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
         $condicion = $_POST['condicion'];
         $categoria = $_POST['cat'];
         
-        // Vincular parámetros correctamente
+        
         $stmt->bind_param('ssiissss', $nombre, $descripcion, $precio, $stock, $oferta, $condicion, $uploadFile, $categoria);
 
         if ($stmt->execute()) {

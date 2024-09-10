@@ -71,11 +71,11 @@ function obtenerDatos($conexion) {
                 echo json_encode(['success' => false, 'error' => $stmt->error]);
             }
 
-            // Cerrar la declaración
+            
             $stmt->close();
         }
 
-        // Cerrar la declaración de verificación
+        
         $stmtVerificacion->close();
     } else {
         echo json_encode(['success' => false, 'error' => 'Datos incompletos']);

@@ -6,10 +6,10 @@ $user = "root";
 $pass = "";
 $db = "producto";
 
-// Crear conexión
+
 $conexion = new mysqli($server, $user, $pass, $db);
 
-// Verificar conexión
+
 if ($conexion->connect_errno) {
     echo json_encode(['error' => 'Conexión fallida: ' . $conexion->connect_error]);
     exit;
@@ -63,7 +63,6 @@ function obtenerDatos($conexion) {
     $arrayDatos = mysqli_fetch_all($datos, MYSQLI_ASSOC);
     echo json_encode($arrayDatos); // Devolver solo el array de datos
 
-    // Cerrar la conexión
     mysqli_close($conexion);
 }
 

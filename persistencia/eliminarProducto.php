@@ -24,16 +24,13 @@ function obtenerDatos($conexion) {
     $row = mysqli_fetch_assoc($result);
 
     if ($row['conteo'] > 0) {
-        // Producto está en uso en la tabla carrito
         echo json_encode(['success' => false, 'error' => 'No se puede eliminar el producto porque está en un carrito.']);
     } else {
         // Eliminar el producto
         $sql = "DELETE FROM producto WHERE id = '$idProducto'";
         if (mysqli_query($conexion, $sql)) {
-            // Consulta exitosa
             echo json_encode(['success' => true]);
         } else {
-            // Error en la consulta
             echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
         }
     }
