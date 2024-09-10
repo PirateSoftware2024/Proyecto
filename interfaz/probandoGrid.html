@@ -32,15 +32,14 @@
     <nav id="nav">
         <button id="left-arrow" class="nav-arrow"><i class="bi bi-chevron-left"></i></button>
         <div class="navbar" id="nav-bar">
-            <button class="nav-button">Todo</button>
-            <!-- Más botones si es necesario -->
+            <button class="nav-button" data-id="Todo">Todo</button>
         </div>
         <button id="right-arrow" class="nav-arrow"><i class="bi bi-chevron-right"></i></button>
     </nav>
     
     <main>
         <div class="product-container" id="productContainer">
-            <!-- Aquí se pueden añadir productos -->
+            <!-- Aca estaran lo productos -->
         </div>
     </main>
     <footer class="footer">
@@ -58,59 +57,5 @@
     </footer>
     <script src="../logica/jquery-3.7.1.min.js"></script>
     <script src="../logica/main.js"></script>
-    <script>
-        $(document).ready(function() {
-            const translations = {
-                es: {
-                    title: "Proyecto",
-                    searchPlaceholder: "Buscar...",
-                    searchButton: "Buscar",
-                    loginLink: "Inicio sesión",
-                    historyLink: "Mis compras",
-                    profileLink: "Mi perfil",
-                    registerLink: "Crea tu cuenta",
-                    allButton: "Todo",
-                    contactHeading: "Contáctenos",
-                    email: "Email: piratesoftwareook@gmail.com",
-                    address: "Dirección: Regimiento 9, Montevideo, Uruguay",
-                    aboutLink: "Sobre Nosotros",
-                    copy: "© 2024 Pirate Software. Todos los derechos reservados."
-                },
-                en: {
-                    title: "Project",
-                    searchPlaceholder: "Search...",
-                    searchButton: "Search",
-                    loginLink: "Login",
-                    historyLink: "My Purchases",
-                    profileLink: "My Profile",
-                    registerLink: "Create Account",
-                    allButton: "All",
-                    contactHeading: "Contact Us",
-                    email: "Email: piratesoftwareook@gmail.com",
-                    address: "Address: Regimiento 9, Montevideo, Uruguay",
-                    aboutLink: "About Us",
-                    copy: "© 2024 Pirate Software. All rights reserved."
-                }
-            };
-
-            $('#language-switch').change(function() {
-                const language = $(this).is(':checked') ? 'en' : 'es';
-
-                $('#page-title').text(translations[language].title);
-                $('#search-input').attr('placeholder', translations[language].searchPlaceholder);
-                $('#search-button').text(translations[language].searchButton);
-                $('#login-link').text(translations[language].loginLink);
-                $('#history-link').text(translations[language].historyLink);
-                $('#profile-link').text(translations[language].profileLink);
-                $('#register-link').text(translations[language].registerLink);
-                $('#all-button').text(translations[language].allButton);
-                $('#contact-heading').text(translations[language].contactHeading);
-                $('#email').text(translations[language].email);
-                $('#address').text(translations[language].address);
-                $('#about-link').text(translations[language].aboutLink);
-                $('#copy').text(translations[language].copy);
-            });
-        });
-    </script>
 </body>
 </html>
