@@ -1,9 +1,7 @@
-
 let usuarios = [];
 
 $(document).ready(function() {
     cargarDatos();
-
     $("#nom").click(function (){
         modificar("nombre", "nom");
     });
@@ -20,16 +18,16 @@ $(document).ready(function() {
         modificar("correo", "mail");
     });
     $("#contra").click(function (){
-        modificar("contraseña", "contra");
+        modificar("password", "contra");
     });
     $("#verContraseña").click(function (){
-        if ($("#contraseña").attr("type") === "password") {
+        if ($("#password").attr("type") === "password") {
             // Cambiamos el tipo del input a texto
-            $("#contraseña").attr("type", "text");
+            $("#password").attr("type", "text");
             $(this).text("Ocultar");
         } else {
             // Cambia el tipo a contraseña
-            $("#contraseña").attr("type", "password");
+            $("#password").attr("type", "password");
             $(this).text("Mostrar");
         }
     });
@@ -70,7 +68,7 @@ function actualizar() {
     $("#telefono").val(usuario.telefono);
     $("#fechaNac").val(usuario.fechaNac);
     $("#correo").val(usuario.correo);
-    $("#contraseña").val(usuario.password);
+    $("#password").val(usuario.password);
 }
 
 // Función para tomar los datos del formulario
