@@ -16,26 +16,25 @@ if ($conexion->connect_errno) {
 function obtenerDatos($conexion) {   
     // Obtener los datos de la solicitud POST
     $data = json_decode(file_get_contents('php://input'), true);
-    $idUsuario = $data['id'];
+    session_start();
+    $id = $_SESSION['usuario'][0]['idUsuario'];
+    $idUsuario = intval($id);
 
     // Verificar si hay un carrito confirmado para el usuario
-    $verificarSql = "SELECT idCarrito FROM carrito WHERE idUsuario = ? AND estadoCarrito = 'Confirmado'";
+    $verificarSql = "SELECT idCarrito FROM carrito WHERE idUsuario = $idUsuario AND estadoCarrito = 'Confirmado'";
     if ($stmt = $conexion->prepare($verificarSql)) {
-        $stmt->bind_param('i', $idUsuario);
         $stmt->execute();
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $idCarrito = $row['idCarrito'];
-        
         if ($idCarrito) {
             // Si existe un carrito confirmado, obtener los detalles
-            $sql = "SELECT p.nombre, a.precio, a.cantidad, a.idCarrito, c.fecha
+            $sql = "SELECT p.nombre, a.precio, a.cantidad, a.idCarrito, c.fecha, p.id
                     FROM almacena a
                     JOIN carrito c ON a.idCarrito = c.idCarrito
                     JOIN producto p ON a.id = p.id
-                    WHERE c.idUsuario = ?;";
+                    WHERE c.idUsuario = $idUsuario;";
             if ($stmt = $conexion->prepare($sql)) {
-                $stmt->bind_param('i', $idUsuario);
                 $stmt->execute();
                 $result = $stmt->get_result();
                 $carritos = $result->fetch_all(MYSQLI_ASSOC);

@@ -6,7 +6,7 @@ $pass = "";
 $db = "producto";
 
 $conexion = new mysqli($server, $user, $pass, $db);
-
+session_start();
 if ($conexion->connect_errno) {
     die(json_encode(['success' => false, 'error' => 'Conexión fallida: ' . $conexion->connect_error]));
 } else {
@@ -17,12 +17,12 @@ function manejarProductoEnCarrito($conexion) {
     $data = json_decode(file_get_contents('php://input'), true);
     
     // Validar datos recibidos
-    if (isset($data['idCarrito'], $data['id'], $data['cantidad'], $data['precio'])) {
-        $idCarrito = $data['idCarrito'];
+    if (isset($data['id'], $data['cantidad'], $data['precio'])) {
         $id = $data['id'];
         $cantidad = $data['cantidad'];
         $precio = $data['precio'];
-        
+        session_start();
+        $idCarrito = $_SESSION['usuario'][0]['idCarrito'];
         // Verificar si el producto ya está en el carrito
         $sqlVerificacion = "SELECT cantidad FROM almacena WHERE idCarrito = ? AND id = ?";
         $stmtVerificacion = $conexion->prepare($sqlVerificacion);

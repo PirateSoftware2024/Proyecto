@@ -21,8 +21,9 @@ function obtenerDatos($conexion) {
     $data = json_decode(file_get_contents('php://input'), true);
 
     // Validar datos recibidos
-    if (isset($data['idCarrito'], $data['cantidadProductos'], $data['precioTotal'])) {
-        $idCarrito = $data['idCarrito'];
+    if (isset($data['cantidadProductos'], $data['precioTotal'])) {
+        session_start();
+        $idCarrito = $_SESSION['usuario'][0]['idCarrito'];
         $cantidadProductos = $data['cantidadProductos'];
         $precioTotal = $data['precioTotal'];
 
