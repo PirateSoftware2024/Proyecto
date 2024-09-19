@@ -1,5 +1,11 @@
 $(document).ready(function() {
+    obtenerVentas();
+    obtenerProductos();
     cargarCategorias();
+    $("#filasProductos").on("click", ".boton-editar", redirigir);
+    $("#filasProductos").on("click", ".boton-editar", mostrarDatos);   
+    $("#filasProductos").on("click", ".boton-modificar", modificar);
+    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
     $('#uploadForm').on('submit', function(event) {
         event.preventDefault(); // Evitar el envío del formulario por defecto
 
@@ -27,13 +33,86 @@ $(document).ready(function() {
             }
         });
     });
-
-
 });
+
+function obtenerVentas(){
+    fetch('../persistencia/ventasEmpresa.php')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        const datosVentas = jsonData;
+        ventas(datosVentas);
+    });
+}
+
+let datosProductos = [];
+function obtenerProductos(){
+    fetch('../persistencia/obtenerProductosEmpresa.php')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        datosProductos = jsonData;
+        productos(datosProductos);
+    });
+}
+
+
+function productos(productos){
+    $("#filasProductos").empty(); // Limpiar las filas anteriores
+    for (let i = 0; i < productos.length; i++) {
+        const producto = productos[i];
+        let fila = $(`
+            <tr>
+                <td>${producto.nombre}</td>
+                <td>${producto.descripcion}</td>
+                <td>${producto.precio}</td>
+                <td>${producto.stock}</td>
+                <td>${producto.oferta}</td>
+                <td>${producto.condicion}</td>
+                <td>${producto.categoria}</td>
+                <td><img src="${producto.file_path}" width=50 height=50></td>
+                <td>
+                    <button class="boton-eliminar" data-id="${producto.id}">Eliminar</button>
+                    <button class="boton-editar" data-id="${producto.id}">Editar</button>
+                    <button class="boton-modificar" data-id="${producto.id}">Modificar</button>
+                </td>
+            </tr>
+    `);
+        $("#filasProductos").append(fila);
+    }
+}
+
+function ventas(ventas){
+$("#filasVentas").empty(); // Limpiar las filas anteriores
+for (let i = 0; i < ventas.length; i++) {
+    const venta = ventas[i];
+    let fila = $(`
+        <tr>
+            <td>${venta.idCarrito}</td>
+            <td>${venta.nomUsuario}</td>
+            <td>${venta.nomProducto}</td>
+            <td>${venta.cantidad}</td>
+            <td>${venta.total}</td>
+            <td>${venta.idPaquete}</td>
+            <td>${venta.fecha}</td>
+        </tr>
+`);
+    $("#filasVentas").append(fila);
+}
+}
+/*
+SELECT c.idCarrito, u.nombre, p.nombre, a.cantidad, a.cantidad * a.precio Total, c.idPaquete, c.fecha
+FROM almacena a
+JOIN producto p ON p.id = a.id
+JOIN carrito c ON c.idCarrito = a.idCarrito
+JOIN usuario u ON u.idUsuario = c.idUsuario
+WHERE c.estadoCarrito = 'Confirmado' AND idEmpresa = 1;
+*/
 
 let categorias = [];
 function cargarCategorias(){
-    console.log("asdasd");
     fetch('../persistencia/obtenerCategorias.php')
     .then(response => response.text())
     .then(data => {
@@ -41,7 +120,6 @@ function cargarCategorias(){
         const jsonData = JSON.parse(data);
         categorias = jsonData; // Una vez leido los datos acutalizamos
         // Generamos categorias
-        console.log(jsonData);
         actualizarCategorias();
     });
 }
@@ -52,4 +130,129 @@ function actualizarCategorias(){
         const $categoriaButton = $(`<option value="${categoria.nombre}">${categoria.nombre}</option>`);
         $("#categoria").append($categoriaButton);
     }
+}
+
+function redirigir() {
+    const loader = document.getElementById('modificar'); // Obtenemos el elemento
+    loader.style.display = 'block'; // Mostramos
+    // Esperar 2 segundos antes de redirigir
+    idBoton = $(this).data("id");
+    index = datosProductos.findIndex(producto => Number(producto.id) === idBoton);
+    mostrarDatos();
+}
+
+
+let idBoton; // Almacenaremos el id del producto
+let index;  // Almacenaremos el indice del producto
+
+function eliminarFila(idBoton){
+    index = datosProductos.findIndex(producto => Number(producto.id) === idBoton);
+    datosProductos.splice(index, 1);
+    actualizar();
+}
+
+function mostrarDatos(){
+    //Cancelamos botones
+    cancelarBotones();
+    $("#nombreProducto").css("border-color", "green"); // Cambiamos border color del input
+    $("#descripcionProducto").css("border-color", "green");
+    $("#precioProducto").css("border-color", "green");
+
+    // Seteamos datos del producto en los input
+    $("#nombreProducto").val(datosProductos[index].nombre);
+    $("#descripcionProducto").val(datosProductos[index].descripcion);
+    $("#precioProducto").val(datosProductos[index].precio);
+
+    $('.boton-modificar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
+}   
+
+function cancelarBotones(){
+    $(".boton-eliminar").attr("disabled", "disabled");
+    $(".boton-editar").attr("disabled", "disabled");
+    $("#agregar").attr("disabled", "disabled");
+}
+
+function habilitarBotones(){
+    $(".boton-eliminar").removeAttr("disabled", "disabled");
+    $(".boton-editar").removeAttr("disabled", "disabled");
+    $("#agregar").removeAttr("disabled", "disabled");
+}
+
+function modificar(){
+    // Almacenmos los nuevos datos en las variables
+    idBoton = $(this).data("id");
+
+    let nombre = $("#nombre").val(); 
+    let descripcion = $("#descripcion").val();
+    let precio = Number($("#precio").val());
+
+    if(validacion(nombre, descripcion, precio)){
+         // Modificamos los datos del producto
+        //Modificamos en BD
+        modificarProducto(idBoton, nombre, descripcion, precio); 
+
+        actualizar();
+        habilitarBotones();
+        $(".boton-modificar").attr("disabled", "disabled");
+    }else{
+        alert("Los datos son erroneos");
+    }
+}
+
+
+function eliminarProducto() {
+    idProducto = $(this).data("id");
+    fetch('../persistencia/eliminarProducto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: idProducto })
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            console.log('Producto eliminado exitosamente');
+            eliminarFila(idProducto);
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
+
+function modificarProducto(idProducto, nombre, descripcion, precio) {
+    fetch('../persistencia/modificarProducto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idProducto,
+            nombre: nombre,
+            descripcion: descripcion,
+            precio: precio
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Si la modificación fue exitosa
+            alert("Producto modificado con éxito");
+            datosProductos[index].nombre = nombre;
+            datosProductos[index].descripcion = descripcion;
+            datosProductos[index].precio = precio;
+            // Puedes actualizar la interfaz aquí si es necesario
+        } else {
+            // Si hubo un error en la modificación
+            alert(data.error);
+        }
+    })
+    .catch(error => {
+        alert('Ocurrió un error inesperado al intentar modificar el producto.');
+    });
 }

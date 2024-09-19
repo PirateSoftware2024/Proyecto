@@ -61,6 +61,13 @@ $(document).ready(function() {
     nuevoCarrito();// Verificamos si el usuario tiene un  carrito "Pendiente", si es asi obtenemos los productos
     
     $("#productContainer").on("click", ".boton-producto", añadir);
+    $("#cuadroInformacion").on("click", ".boton-producto", añadir);
+    $("#productContainer").on("click", ".boton-reseña", function() {
+        $('#cuadroInformacion').fadeIn();
+        $('body').addClass('modal-open');
+        const idBoton = Number($(this).data("id"));  // Convertimos el data-id a número
+        obtenerReseñas(idBoton);
+    });
 
     $("#nav-bar").on("click", ".nav-button", buscar);
 
@@ -71,8 +78,62 @@ $(document).ready(function() {
     
     $("#left-arrow").on("click", function() {
         $(".navbar").animate({scrollLeft: '-=150px'}, 300);
-    });    
+    });
+    
+    // Cuadro ver mas
+    $('#cerrarCuadro').click(function() {
+        $('#cuadroInformacion').fadeOut();
+        $('body').removeClass('modal-open');
+    });
 });
+
+function obtenerReseñas(idProducto){
+    fetch('../persistencia/obtenerReseñas.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idProducto
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let datos = data.reseñas;
+            reseñas = datos;
+            verMas(idProducto);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+
+let reseñas = [];
+function verMas(idBoton){
+    const producto = products.find(producto => Number(producto.id) === idBoton);
+    
+    let reseñasProducto = "<ul>";
+    // Con map convertimos cada elemenot del array en una cadena html, y se convierte en un array de cadenas
+    // Con join('') concatenamos todas las cadenas en un solo string
+    reseñasProducto += reseñas.map(reseña => `<li>${reseña}</li>`).join('');
+    reseñasProducto += "</ul>";
+
+    const $productCard = $(`
+            <div class="image-container">
+                <img src="${producto.file_path}" width=150 heigth=150>
+            </div>
+            <div class="reseñas">${reseñasProducto}</div>
+            <h3>${producto.nombre}</h3>
+            <p>${producto.descripcion}</p>
+            <div class="price">$${producto.precio}</div>
+            <button class="boton-producto" data-id="${producto.id}">Añadir al carrito</button>
+    `);
+    $("#infoProducto").html($productCard);
+}   
 
 function actualizar(){
     // Generamos las tarjetas de productos
@@ -88,6 +149,7 @@ function actualizar(){
                 <p>${product.descripcion}</p>
                 <div class="price">$${product.precio}</div>
                 <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
+                <button class="boton-reseña" data-id="${product.id}">Ver más</button>
             </div>
         `);
         
@@ -101,11 +163,7 @@ function nuevoCarrito() {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            estadoCarrito: 'Pendiente',
-            idUsuario: 1
-        })
+        }
     })
     .then(response => response.json())
     .then(data => {
@@ -118,7 +176,7 @@ function nuevoCarrito() {
         }
     })
     .catch(error => {
-        console.error('Error en la solicitud:', error);
+        console.alert('Error en la solicitud:', error);
     });
 }
 
@@ -143,7 +201,6 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            idCarrito: 30,
             id: idProducto,
             cantidad: cantidad,
             precio: precio
@@ -212,7 +269,6 @@ function modificarCarrito(){
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            idCarrito: 30,
             cantidadProductos: cantidad,
             precioTotal: total
         })

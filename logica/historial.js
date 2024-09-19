@@ -5,9 +5,22 @@
 */
 //let ordenes = JSON.parse(localStorage.getItem('orden')) || [];
 
+let idBoton;
 document.addEventListener('DOMContentLoaded', function() {
     generarHistorial();
 
+    // -Codigo cuadrado boton "comprar"
+    $("#orderHistory").on("click", ".reseña", function() {
+        $('#cuadroInformacion').fadeIn();
+        $('body').addClass('modal-open');
+        idBoton = Number($(this).data("id"));
+        reseña();
+    });
+
+    $('#cerrarCuadro').click(function() {
+        $('#cuadroInformacion').fadeOut();
+        $('body').removeClass('modal-open');
+    });
 });
 
 function mostrarHistorial(){
@@ -17,19 +30,15 @@ function mostrarHistorial(){
 
 let ordenes = [];
 function generarHistorial() {
-    idUsuario = 1;
     fetch('../persistencia/historial.php', {
-    method: 'POST',
     headers: {
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ id: idUsuario })
+        'Content-Type': 'application/json'
+    }
 })
 .then(response => response.json())
 .then(data => {
     if (data.success) {
         ordenes = data.data;  // Una vez leido los datos actualizamos
-        console.log(ordenes);
         mostrar();
     } else {
         console.error('Error:', data.error);
@@ -55,7 +64,7 @@ function mostrar() {
             total += subtotal;
             elementoHtml += `
             <li class="order-item">
-                <span>${order.nombre} (x${order.cantidad})</span>
+                <button class="reseña" data-id=${order.id} >Reseña</button> <span>${order.nombre} (x${order.cantidad})</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </li>`;
             elementoHtml += '</ul>';
@@ -73,10 +82,48 @@ function mostrar() {
             total += subtotal;
             elementoHtml += `
             <li class="order-item">
-                <span>${order.nombre} (x${order.cantidad})</span>
+                <button class="reseña" data-id=${order.id}>Reseña</button> <span>${order.nombre} (x${order.cantidad})</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </li>`;
         }
     }
     mostrarHistorial();
+}
+
+function reseña(){
+    const $productCard = $(`
+            <h3>Reseña</h3>
+            <input type="text" id="reseña">
+            <button id="botonReseña">Enviar</button>
+        </div>
+    `);
+    $("#infoProducto").html($productCard);
+
+    $("#botonReseña").click(enviarReseña);
+}   
+
+function enviarReseña() {
+    let reseña = $("#reseña").val();
+    fetch('../persistencia/ingresarReseña.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+            idProducto: idBoton,
+            reseña: reseña
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log(data.message);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+
 }
