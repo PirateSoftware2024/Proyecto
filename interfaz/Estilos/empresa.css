@@ -1,104 +1,142 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f9;
 }
+
 header {
     display: flex;
-    align-items: center; /* Alinea verticalmente los elementos */
-    justify-content: space-between; /* Espacia los elementos entre los bordes */
-    padding: 1px;
-    width: 100%;
-    height: 85px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
     background-color: #333;
     color: white;
 }
 
-header .logo {
-    margin-left: 20px;
+header .logo img {
+    margin-right: 20px;
 }
 
 header h1 {
-    margin-left: 20px;
-    flex-grow: 1; /* Ocupa el espacio restante entre el logo y los enlaces */
+    flex-grow: 1;
 }
 
-header a {
+nav a {
     color: white;
     text-decoration: none;
-    margin-right: 20px;
+    margin-left: 20px;
     padding: 10px 15px;
     border-radius: 5px;
     transition: background-color 0.3s ease;
 }
 
-header a:hover {
-    background-color: #555;
+nav a:hover {
+    background-color: #4d4a4a;
 }
 
-section{
-    display: flex;
-    justify-content: center; /* Centra horizontalmente */
+main {
+    padding: 20px;
+    max-width: 1200px; /* Limita el ancho máximo del contenedor */
+    margin: 0 auto; /* Centra el contenido */
 }
+
+.form-section, .table-section {
+    margin: 20px 0;
+}
+
 .carta {
-    margin: 50px;
-    display: inline-block;
-    text-align: left;
-    max-width: 600px;
-    width: 90%;
-    background-color: #f0f0f0;
-    border-radius: 15px;
-    padding: 10px;
-    transition: transform 0.3s ease;
-}
-.carta:hover {
-    transform: scale(1.05);
-}
-form{
-    padding: 20px 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
 }
 
-table{
-    padding: 20px 20px;
+h2 {
+    margin-bottom: 15px;
 }
-.buscar {
-    padding-left: 20px;
+
+label {
+    margin-top: 16px;
+    font-weight: bold;
 }
-.boton-eliminar {
-    background-color: rgb(212, 97, 97);
+
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select {
+    width: 98%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
 }
-.boton-editar {
-    background-color: rgb(204, 204, 105);
+
+#oferta, #categoria, #condicion {
+    width: 100%;
 }
-p{
-    font-size: 20px;
-    text-align: center;
+
+button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s ease;
 }
+
+button:hover {
+    background-color: #218838;
+}
+
 table {
-    font-size: 15px;
-    width: 100%;;
-    
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
 }
+
 th, td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
     text-align: left;
 }
+
 th {
-    background-color: #f2f2f2;
+    background-color: #333;
+    color: white;
 }
-button{
-    background-color: rgb(101, 141, 101);
-    border-radius: 10%;
-    cursor: pointer;
-}
+
 footer {
     text-align: center;
     background-color: #333;
     color: #fff;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
+    padding: 15px;
+    position: relative;
     width: 100%;
-    margin-top: 50px; 
+    margin-top: 20px;
+}
+
+.boton-eliminar{
+    background-color: rgb(212, 21, 21);
+}
+
+.boton-editar{
+    background-color: rgb(230, 206, 27);
+}
+
+.boton-eliminar:hover{
+    background-color: #711512;
+}
+
+.boton-editar:hover {
+    background-color: #7a6713;
+}
+
+#modificar {
+    display: none;
 }

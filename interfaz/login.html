@@ -11,9 +11,17 @@
         <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
         <h1>AXIES</h1>
     </header>
+
+    <div id="loader" class="loader">Cargando...</div>
+    
     <div class="login-container">
         <h2>Login</h2>
         <form id="uploadForm" enctype="multipart/form-data">
+            <select name="tipoCuenta" id="tipoUsuario">
+                <option value="" disabled selected>Tipo Usuario</option>
+                <option value="comprador">Comprador</option>
+                <option value="empresa">Empresa</option>
+            </select>
             <label for="username">Correo</label>
             <input type="text" id="username" name="correo" placeholder="Ingresa tu usuario">
             

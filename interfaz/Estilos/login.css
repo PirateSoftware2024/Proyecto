@@ -90,4 +90,39 @@ footer {
     width: 100%;
 }
 
+#tipoUsuario {
+    width: 100%;
+    padding: 15px;
+    margin: 5px 0 20px;
+    background-color: #333;
+    border: none;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 14px;
+    appearance: none; 
+    cursor: pointer;
+}
 
+#tipoUsuario:focus {
+    outline: none; 
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.5); 
+}
+
+#tipoUsuario option {
+    background-color: #1c1c1c;
+    color: #fff; 
+}
+
+
+.loader {
+    font-size: 24px;
+    color: #fff;
+    display: none; /* Lo ocultamos */
+    position: absolute; /* Posicionamos sobre otros elementos */
+    top: 50%; /* Centro vertical */
+    left: 50%; /* Centro horizontal */
+    transform: translate(-50%, -50%); /* Ajusta el centro */
+    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente opcional */
+    padding: 20px; /* Espaciado */
+    border-radius: 10px;
+}
