@@ -129,6 +129,10 @@ footer {
     background-color: rgb(230, 206, 27);
 }
 
+.boton-reseña{
+    background-color: rgb(17, 33, 207);
+}
+
 .boton-eliminar:hover{
     background-color: #711512;
 }
@@ -137,6 +141,89 @@ footer {
     background-color: #7a6713;
 }
 
+.boton-reseña:hover{
+    background-color: #30388f;
+} 
+
 #modificar {
     display: none;
 }
+
+/* ################################### */
+/* CUADRO INFO */
+/* ######################################################## */
+.cuadro {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 25px;
+    background-color: #f9f9f9; /* Color de fondo más suave */
+    border-radius: 10px; /* Bordes redondeados */
+    border: 2px solid #007bff; /* Borde azul elegante */
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+#cuadroInformacion {
+    width: 600px; /* Un poco más ancho */
+    height: auto; /* Ajuste automático */
+    max-height: 80vh; /* Limita la altura máxima */
+    overflow-y: auto; /* Scroll si es necesario */
+}
+
+#cuadroInformacion p {
+    text-align: left;
+    color: #333; /* Color de texto más oscuro */
+    font-family: 'Arial', sans-serif; /* Fuente más estilizada */
+    margin-bottom: 10px;
+    font-size: 16px; /* Tamaño de letra más grande */
+}
+
+#cuadroInformacion select, 
+#cuadroInformacion input, 
+#cuadroInformacion button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    text-align: center;
+}
+
+#cuadroInformacion button {
+    background-color: #007bff; /* Botón azul */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#cuadroInformacion button:hover {
+    background-color: #0056b3; /* Color al pasar el mouse */
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+body.modal-open::before {
+    display: block;
+}
+
+#infoProducto {
+    text-align: left;
+}
+
+/* ////////////////// */

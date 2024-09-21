@@ -7,24 +7,33 @@
     <link rel="stylesheet" href="Estilos/probandoGrid.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
 </head>
-<body>
+<body> 
     <header>
         <div class="header-container">
             <div class="search-container">
                 <button class="menu-toggle" aria-label="Toggle menu">
                     <span class="menu-icon"></span>
                 </button>
-                <img src="images/logo.png" alt="Logo" class="logo">
+                <a href="index.php"><img src="images/logo.png" alt="Logo" class="logo"></a>
                 <input type="text" placeholder="Buscar...">
                 <button class="search-button">Buscar</button>
             </div>
             <nav>
-                <ul class="nav-menu">
-                    <li><a href="login.html">Inicio sesión</a></li>
+                <ul class="nav-menu"  id="nav-links">
                     <li><a href="historial.html">Mis compras</a></li>
                     <li><a href="perfil.html">Mi perfil</a></li>
                     <li style="font-size: 25px"><a href="carrito.html" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
-                    <li><a href="registro.html">Crea tu cuenta</a></li>
+                    
+                    <?php 
+                    session_start();
+                    if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
+                    <!-- Si el usuario no esta logueado mostramos los enlaces de "Crear cuenta" y "Login" -->
+                        <li id="crearCuenta"><a href="registro.html">Crea tu cuenta</a></li>
+                        <li id="login"><a href="login.html">Inicio sesión</a></li>
+                    <?php else: ?>
+                    <!-- Si el usuario esta logueado, mostramos el enlace de "Salir" -->
+                        <button id="salir">Salir</a></button>
+                    <?php endif; ?>
                 </ul>
             </nav>
         </div>
@@ -38,6 +47,7 @@
     </nav>
     
     <main>
+        <div id="loader" class="loader">Saliendo...</div>
         <!-- CUADRO VER MAS -->
         <div id="cuadroInformacion" class="cuadro">
             <p>Información Producto</p>
