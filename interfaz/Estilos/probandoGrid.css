@@ -659,8 +659,26 @@ body.modal-open::before {
     position: absolute; /* Posicionamos sobre otros elementos */
     top: 50%; /* Centro vertical */
     left: 50%; /* Centro horizontal */
-    transform: transl	ate(-50%, -50%); /* Ajusta el centro */
+    transform: translate(-50%, -50%);
     background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente opcional */
     padding: 20px; /* Espaciado */
     border-radius: 10px;
 }
+
+#salir {
+    background-color: white;
+    color: rgb(223, 65, 65);
+    padding: 8px 13px;
+    border: none; 
+    border-radius: 5px;
+    font-size: 16px; /* Tamaño de fuente */
+    cursor: pointer; /* Cambia el cursor cuando se pasa sobre el botón */
+    transition: background-color 0.5s ; /* Transición suave al hacer hover */
+}
+
+#salir:hover {
+    background-color: rgb(223, 65, 65);; /* Color de fondo más oscuro al hacer hover */
+    color: white;
+}
+
+

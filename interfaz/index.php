@@ -45,9 +45,8 @@
         </div>
         <button id="right-arrow" class="nav-arrow"><i class="bi bi-chevron-right"></i></button>
     </nav>
-    
+    <div id="loader" class="loader">Saliendo...</div>
     <main>
-        <div id="loader" class="loader">Saliendo...</div>
         <!-- CUADRO VER MAS -->
         <div id="cuadroInformacion" class="cuadro">
             <p>Información Producto</p>
