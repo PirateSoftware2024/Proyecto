@@ -13,8 +13,12 @@ if ($conexion->connect_errno) {
     obtenerDatos($conexion);
 }
 
-function obtenerDatos($conexion) {   
-    $sql = "SELECT * FROM usuario WHERE idUsuario = 1";
+
+
+function obtenerDatos($conexion) {
+    session_start();
+    $idUsuario = $_SESSION['usuario'][0]['idUsuario']; 
+    $sql = "SELECT * FROM usuario WHERE idUsuario = $idUsuario";
     $datos = mysqli_query($conexion, $sql);
     
     

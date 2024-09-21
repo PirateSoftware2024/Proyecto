@@ -17,7 +17,8 @@ if ($conexion->connect_errno) {
 function obtenerDatos($conexion) {   
     $data = json_decode(file_get_contents('php://input'), true);
     // Obtener los datos de la solicitud POST
-    $idUser = $data['idUser'];
+    session_start();
+    $idUser = $_SESSION['usuario'][0]['idUsuario'];
     $dato = $data['dato'];
     $columna = $data['columna'];
 

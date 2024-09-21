@@ -62,6 +62,8 @@ function obtenerDatosComprador($conexion) {
 
     $arrayDatos = mysqli_fetch_all($datos, MYSQLI_ASSOC); // Obtenemos los datos como array asociativo
     $_SESSION['usuario'] = $arrayDatos; // Los guardamos en la session usuario
+    $_SESSION['loggedin'] = true;
+    //echo $_SESSION['usuario'][0]['nombre'];
 }
 
 ?>
