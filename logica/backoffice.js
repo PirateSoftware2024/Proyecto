@@ -27,6 +27,8 @@ $(document).ready(function() {
     $("#buscarPedido").click(pedidoBuscar);
     $("#botonFecha").click(buscarPorFecha);
     $("#botonUsuarioTodos").click(cargarDatosUsuario);
+    $("#filas5").on("click", ".boton-eliminar-reseña", eliminarReseña);
+    $("#botonReseñas").click(cargarDatosReseñas);
     $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
@@ -514,5 +516,63 @@ function subirValidacion() {
     })
     .catch(error => {
         console.error('Error al enviar los datos:', error);
+    });
+}
+
+// Reseñas
+let reseñas = [];
+function cargarDatosReseñas(){
+    fetch('../persistencia/obtenerReseñasTodas.php')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        console.log(jsonData);
+        reseñas = jsonData; // Una vez leido los datos acutalizamos
+        actualizarReseñas();
+    });
+}
+function actualizarReseñas() {
+    $("#filas5").empty();
+    
+    for (let i = 0; i < reseñas.length; i++) {
+        const reseña = reseñas[i];
+        let fila = $(`
+            <tr>
+                <td>${reseña.idReseña}</td>
+                <td>${reseña.idProducto}</td>
+                <td>${reseña.idUsuario}</td>
+                <td>${reseña.reseña}</td>
+                <td>
+                <button class="boton-eliminar-reseña" data-id="${reseña.idReseña}">Eliminar</button>
+                </td>
+            </tr>
+        `);
+        $("#filas5").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
+    }
+}
+
+function eliminarReseña() {
+    idReseña = $(this).data("id");
+    fetch('../persistencia/eliminarReseña.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id: idReseña })
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            index = reseñas.findIndex(reseña => Number(reseña.idReseña) === idReseña);
+            reseñas.splice(index, 1);
+            actualizarReseñas();
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
     });
 }

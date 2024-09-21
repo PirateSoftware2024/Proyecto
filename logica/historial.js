@@ -117,7 +117,9 @@ function enviarReseña() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log(data.message);
+            alert("Reseña realizada con exito!")
+            $('#cuadroInformacion').fadeOut();
+            $('body').removeClass('modal-open');
         } else {
             console.error('Error:', data.error);
         }

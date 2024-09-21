@@ -116,7 +116,9 @@ function obtenerReseñas(idProducto){
             reseñas = datos;
             verMas(idProducto);
         } else {
-            console.error('Error:', data.error);
+            let datos = data.error;
+            reseñas = datos;
+            verMas(idProducto);
         }
     })
     .catch(error => {
@@ -127,12 +129,15 @@ function obtenerReseñas(idProducto){
 let reseñas = [];
 function verMas(idBoton){
     const producto = products.find(producto => Number(producto.id) === idBoton);
-    
     let reseñasProducto = "<ul>";
-    // Con map convertimos cada elemenot del array en una cadena html, y se convierte en un array de cadenas
-    // Con join('') concatenamos todas las cadenas en un solo string
-    reseñasProducto += reseñas.map(reseña => `<li>${reseña}</li>`).join('');
-    reseñasProducto += "</ul>";
+    if(reseñas === 'Sin reseñas'){
+        reseñasProducto = 'Sin reseñas';
+    }else{
+        // Con map convertimos cada elemento del array en una cadena html, y se convierte en un array de cadenas
+        // Con join('') concatenamos todas las cadenas en un solo string
+        reseñasProducto += reseñas.map(reseña => `<li>${reseña}</li>`).join('');
+        reseñasProducto += "</ul>";
+    }
 
     const $productCard = $(`
             <div class="image-container">
