@@ -2,10 +2,26 @@ $(document).ready(function() {
     obtenerVentas();
     obtenerProductos();
     cargarCategorias();
+
+
     $("#filasProductos").on("click", ".boton-editar", redirigir);
-    $("#filasProductos").on("click", ".boton-editar", mostrarDatos);   
     $("#filasProductos").on("click", ".boton-modificar", modificar);
-    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
+    $("#actualizarProductos").click(obtenerProductos);
+
+    // ####################################################################################
+    $("#filasProductos").on("click", ".boton-reseña", function () {
+        console.log("Holaa");
+        $('#cuadroInformacion').fadeIn();
+        $('body').addClass('modal-open');
+        let idBoton = Number($(this).data("id"));  // Convertimos el data-id a número
+        obtenerReseñas(idBoton);
+    });
+
+    $('#cerrarCuadro').click(function() {
+        $('#cuadroInformacion').fadeOut();
+        $('body').removeClass('modal-open');
+    });
+    
     $('#uploadForm').on('submit', function(event) {
         event.preventDefault(); // Evitar el envío del formulario por defecto
 
@@ -20,11 +36,10 @@ $(document).ready(function() {
             contentType: false, // No establecer el tipo de contenido
             processData: false, // No procesar los datos (FormData se encarga)
             success: function(data) {
-                console.log('Respuesta del servidor:', data);
                 if (data.success) {
-                    $('#result').html('<p>Imagen subida con éxito!</p>');
+                    alert("Producto publicado!")
                 } else {
-                    $('#result').html('<p>Error al subir la imagen: ' + data.error + '</p>');
+                    alert("Error: "+data.error);
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -54,15 +69,15 @@ function obtenerProductos(){
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
         datosProductos = jsonData;
-        productos(datosProductos);
+        productos();
     });
 }
 
 
-function productos(productos){
+function productos(){
     $("#filasProductos").empty(); // Limpiar las filas anteriores
-    for (let i = 0; i < productos.length; i++) {
-        const producto = productos[i];
+    for (let i = 0; i < datosProductos.length; i++) {
+        const producto = datosProductos[i];
         let fila = $(`
             <tr>
                 <td>${producto.nombre}</td>
@@ -74,14 +89,16 @@ function productos(productos){
                 <td>${producto.categoria}</td>
                 <td><img src="${producto.file_path}" width=50 height=50></td>
                 <td>
-                    <button class="boton-eliminar" data-id="${producto.id}">Eliminar</button>
-                    <button class="boton-editar" data-id="${producto.id}">Editar</button>
-                    <button class="boton-modificar" data-id="${producto.id}">Modificar</button>
+                    <button class="boton-eliminar" data-id="${producto.id}"><i class="bi bi-trash-fill"></i></button>
+                    <button class="boton-editar" data-id="${producto.id}"><i class="bi bi-pencil-fill"></i></button>
+                    <button class="boton-modificar" data-id="${producto.id}" disabled><i class="bi bi-check-circle"></i></button>
+                    <button class="boton-reseña" data-id="${producto.id}"><i class="bi bi-three-dots-vertical"></i></button>
                 </td>
             </tr>
     `);
         $("#filasProductos").append(fila);
     }
+    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
 }
 
 function ventas(ventas){
@@ -180,18 +197,18 @@ function habilitarBotones(){
 
 function modificar(){
     // Almacenmos los nuevos datos en las variables
-    idBoton = $(this).data("id");
 
-    let nombre = $("#nombre").val(); 
-    let descripcion = $("#descripcion").val();
-    let precio = Number($("#precio").val());
+    idBoton = $(this).data("id");
+    let nombre = $("#nombreProducto").val(); 
+    let descripcion = $("#descripcionProducto").val();
+    let precio = Number($("#precioProducto").val());
 
     if(validacion(nombre, descripcion, precio)){
          // Modificamos los datos del producto
         //Modificamos en BD
         modificarProducto(idBoton, nombre, descripcion, precio); 
 
-        actualizar();
+        productos();
         habilitarBotones();
         $(".boton-modificar").attr("disabled", "disabled");
     }else{
@@ -255,4 +272,85 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
     .catch(error => {
         alert('Ocurrió un error inesperado al intentar modificar el producto.');
     });
+    const loader = document.getElementById('modificar');
+    loader.style.display = 'none'; // "Deshabilitamos" el section para que no este visible  
 }
+
+function validacion(nombre, descripcion, precio){
+    if(verificarTexto(nombre)){
+        $("#nombreProducto").css("border-color", "red");
+        return false;
+    }
+    $("#nombreProducto").css("border-color", "black");
+
+    if(descripcion.length < 10 || descripcion.length > 20){
+        $("#descripcionProducto").css("border-color", "red");
+        return false;
+    }
+    $("#descripcionProducto").css("border-color", "black");
+
+    
+    if(isNaN(precio) || precio < 1) {
+        $("#precioProducto").css("border-color", "red");
+        return false;
+    }
+    $("#precioProducto").css("border-color", "black");
+    
+    return true;
+}
+
+function verificarTexto(cadena){
+    if(cadena.length < 1){
+        return true;
+    }
+
+    for(var i = 0; i < cadena.length; i++) {
+        //"!isNan" (is Not a Number) 
+        if(!isNaN(cadena[i])) {
+            return true;
+        }
+    }
+    return false;
+}
+
+
+let reseñas = [];
+function obtenerReseñas(idProducto){
+    fetch('../persistencia/obtenerReseñas.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            id: idProducto
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            let datos = data.reseñas;
+            reseñas = datos;
+            verMas(idProducto);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+
+function verMas(idBoton){
+    const producto = datosProductos.find(producto => Number(producto.id) === idBoton);
+    
+    let reseñasProducto = "<ul>";
+    // Con map convertimos cada elemenot del array en una cadena html, y se convierte en un array de cadenas
+    // Con join('') concatenamos todas las cadenas en un solo string
+    reseñasProducto += reseñas.map(reseña => `<li>${reseña}</li>`).join('');
+    reseñasProducto += "</ul>";
+
+    const $productCard = $(`
+            <div class="reseñas">${reseñasProducto}</div>
+    `);
+    $("#infoProducto").html($productCard);
+}   

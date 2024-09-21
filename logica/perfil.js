@@ -39,7 +39,6 @@ function modificar(input, boton) {
         $(`#${input}`).attr("disabled", false);// Habilita el boton
         $(`#${boton}`).text("Aceptar");// Cambia el texto del boton por "Aceptar"
     }else{
-        console.log("Paso");
         $(`#${input}`).attr("disabled", true);
         $(`#${boton}`).text("Editar");
         tomarDato(input);
@@ -50,7 +49,6 @@ function cargarDatos(){
     fetch('../persistencia/datosUsuario.php')
     .then(response => response.text())
     .then(data => {
-        console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
         usuarios = jsonData; // Una vez leido los datos acutalizamos
@@ -62,7 +60,6 @@ function cargarDatos(){
 // Función para generar las filas de la tabla
 function actualizar() {
     let usuario = usuarios[0];
-    console.log(usuario.password);
     $("#nombre").val(usuario.nombre);
     $("#apellido").val(usuario.apellido);
     $("#telefono").val(usuario.telefono);
@@ -80,18 +77,16 @@ function tomarDato(input) {
         dato = $(`#${input}`).val();
     }
 
-    modificarProducto(1, dato, input);
+    modificarProducto(dato, input);
 }
 
-function modificarProducto(idUser, dato, columna) {
-    console.log("id: "+idUser+" dato: "+dato+"  columna: "+columna);
+function modificarProducto(dato, columna) {
     fetch('../persistencia/modificarUsuario.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            idUser : idUser,
             columna : columna, //Almacenamos el nombre de la columna a modificar
             dato : dato
         })

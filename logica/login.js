@@ -42,7 +42,7 @@ $(document).ready(function() {
 function redirigir(tipoUser) {
     const loader = document.getElementById('loader'); // Obtenemos el elemento
     loader.style.display = 'flex'; // Mostramos
-
+    
     if(tipoUser === "comprador"){
         setTimeout(function() {
             window.location.href = "../interfaz/";

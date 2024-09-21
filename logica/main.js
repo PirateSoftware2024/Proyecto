@@ -55,11 +55,23 @@ function buscar(){
     });
 }
 
+/////////////////////////////////////////////////////////////
+function pantallaCarga() {
+    const loader = document.getElementById('loader'); // Obtenemos el elemento
+    loader.style.display = 'flex'; // Mostramos
+    
+    setTimeout(function() {
+    window.location.href = "../interfaz/logout.php";
+        }, 2000);
+}
+/////////////////////////////////////////////////////////////
+
 $(document).ready(function() {
     cargarCategorias(); //Obtenemos categorias de la BD
     cargarDatos(); // Obtenemos productos de la BD
     nuevoCarrito();// Verificamos si el usuario tiene un  carrito "Pendiente", si es asi obtenemos los productos
     
+    $("#salir").click(pantallaCarga);
     $("#productContainer").on("click", ".boton-producto", añadir);
     $("#cuadroInformacion").on("click", ".boton-producto", añadir);
     $("#productContainer").on("click", ".boton-reseña", function() {
