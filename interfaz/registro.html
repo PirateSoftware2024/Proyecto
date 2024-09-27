@@ -13,7 +13,7 @@
     </header>
     <div class="register-container">
         <img src="images/fileCreacionCuenta.png" alt="" id="carpeta">
-        <h2>Registro</h2>
+        <h2>Datos personales</h2>
         <form id="uploadForm" enctype="multipart/form-data">
             
             <label for="nombreUsuario">Nombre</label>
@@ -33,7 +33,54 @@
             
             <label for="contraseña">Contraseña</label>
             <input type="password" id="password" name="contraseña" placeholder="Ingresa tu contraseña">
-    
+
+            <h2>Dirección</h2>
+
+            <label for="departamentos">Departamento</label>
+            <select id="departamentos" name="departamentos">
+                <option value="" selected>Seleccione un departamento</option>
+                <option value="artigas">Artigas</option>
+                <option value="canelones">Canelones</option>
+                <option value="cerro-largo">Cerro Largo</option>
+                <option value="colonia">Colonia</option>
+                <option value="durazno">Durazno</option>
+                <option value="flores">Flores</option>
+                <option value="florida">Florida</option>
+                <option value="lavalleja">Lavalleja</option>
+                <option value="maldonado">Maldonado</option>
+                <option value="montevideo">Montevideo</option>
+                <option value="paysandu">Paysandú</option>
+                <option value="rio-negro">Río Negro</option>
+                <option value="rivera">Rivera</option>
+                <option value="rocha">Rocha</option>
+                <option value="salto">Salto</option>
+                <option value="san-jose">San José</option>
+                <option value="soriano">Soriano</option>
+                <option value="tacuarembo">Tacuarembó</option>
+                <option value="treinta-y-tres">Treinta y Tres</option>
+            </select>
+
+            <label for="localidad">Localidad</label>
+            <input type="text" id="localidad" name="localidad" placeholder="Ingresa su localidad">
+
+            <label for="calle">Calle</label>
+            <input type="text" id="calle" name="calle" placeholder="Ingresa su calle">
+            
+            <label for="esquina">Esquina</label>
+            <input type="text" id="esquina" name="esquina" placeholder="Ingresa su esquina">
+
+            <label for="nPuerta">N° Puerta</label>
+            <input type="text" id="nPuerta" name="nPuerta" placeholder="Ingresa su numero de puerta">
+
+            <label for="nApartamento">N° Apartamento</label>
+            <input type="text" id="nApartamento" name="nApartamento" placeholder="Ingrese numero de apartamento">
+
+            <label for="cPostal">Codigo Postal</label>
+            <input type="text" id="cPostal" name="cPostal" placeholder="Ingresa su codigo postal">
+
+            <label for="indicaciones">Indicaciones</label>
+            <input type="text" id="indicaciones" name="indicaciones" placeholder="Ingresa indicaciones">
+
             <button type="submit" id="boton">Registrarse</button>
         </form>
         <p id="result"></p>
