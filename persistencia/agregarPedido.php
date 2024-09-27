@@ -78,7 +78,7 @@
     }
 
 
-    function obtenerId($ididUsuario){
+    /*function obtenerId($ididUsuario){
     $sqlVerificacion = "SELECT idCarrito FROM carrito WHERE idUsuario = ? AND estadoCarrito = 'Pendiente'";
             $stmtVerificacion = $conexion->prepare($sqlVerificacion);
             $stmtVerificacion->bind_param('i', $idUsuario);
@@ -91,5 +91,5 @@
                 $stmtVerificacion->fetch();
                 $_SESSION['usuario'][0]['idCarrito'] = $idCarrito;
             }
-        }       
+        }   */    
 ?>

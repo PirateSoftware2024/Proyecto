@@ -16,7 +16,8 @@ if ($conexion->connect_errno) {
 function obtenerDatos($conexion) {   
     // Obtener los datos de la solicitud POST
     $data = json_decode(file_get_contents('php://input'), true);
-    $idCarrito = $data['idCarrito'];
+    session_start();
+    $idCarrito = $_SESSION['usuario'][0]['idCarrito'];
 
     $sql = "UPDATE carrito SET estadoCarrito = 'Confirmado' WHERE idCarrito = $idCarrito";
 

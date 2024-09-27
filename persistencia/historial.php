@@ -33,7 +33,8 @@ function obtenerDatos($conexion) {
                     FROM almacena a
                     JOIN carrito c ON a.idCarrito = c.idCarrito
                     JOIN producto p ON a.id = p.id
-                    WHERE c.idUsuario = $idUsuario;";
+                    WHERE c.idUsuario = $idUsuario AND c.estadoCarrito = 'Confirmado'
+                    ORDER BY a.idCarrito;";
             if ($stmt = $conexion->prepare($sql)) {
                 $stmt->execute();
                 $result = $stmt->get_result();

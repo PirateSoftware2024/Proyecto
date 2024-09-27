@@ -58,12 +58,14 @@ $conexion->close();
 function obtenerDatosComprador($conexion) {   
     session_start(); // Iniciamos la sesion, con los datos del usuario
     $sql = "SELECT * FROM usuario WHERE validacion = 'Si'";
+    //$sql = "SELECT * FROM usuario WHERE correo = ? AND password = ? AND validacion = 'Si'";
     $datos = mysqli_query($conexion, $sql);
-
     $arrayDatos = mysqli_fetch_all($datos, MYSQLI_ASSOC); // Obtenemos los datos como array asociativo
+    //var_dump($arrayDatos);
     $_SESSION['usuario'] = $arrayDatos; // Los guardamos en la session usuario
     $_SESSION['loggedin'] = true;
     //echo $_SESSION['usuario'][0]['nombre'];
 }
+
 
 ?>

@@ -15,12 +15,26 @@ if ($conexion->connect_error) {
 }
 
 // Obtener valores de POST
+// Datos Personales
 $nombre = $_POST['nombre'];
 $apellido = $_POST['apellido'];
 $telefono = $_POST['telefono'];
 $fechaNac = $_POST['fecha'];
 $contraseña = $_POST['contraseña'];
 $correo = $_POST['correo'];
+/////////////////////////////////////
+// Dirección
+$departamento = $_POST['departamentos'];
+$localidad = $_POST['localidad'];
+$calle = $_POST['calle'];
+$esquina = $_POST['esquina'];
+$nPuerta = $_POST['nPuerta'];
+$nApartamento = $_POST['nApartamento'];
+$cPostal = $_POST['cPostal'];
+$indicaciones = $_POST['indicaciones'];
+/////////////////////////////////////
+
+
 
 // Verificar si el correo ya existe
 $sqlCheck = "SELECT idUsuario FROM usuario WHERE correo = ? OR telefono = ?";
@@ -34,7 +48,7 @@ if ($stmtCheck->num_rows > 0) {
     echo json_encode(['success' => false, 'error' => 'El correo o el teléfono ya está registrado.']);
 } else {
     // Insertar información de la imagen en la base de datos
-    $sql = "INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion) VALUES (?, ?, ?, ?, ?, ?, 'Espera')";
+    $sql = "INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion, departamento, localidad, calle, esquina, numeroPuerta, apto, codigoPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, 'Espera', ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
 
     // Verificar si la preparación de la declaración SQL fue exitosa
@@ -44,7 +58,7 @@ if ($stmtCheck->num_rows > 0) {
     }
 
     // Vincular parámetros correctamente
-    $stmt->bind_param('ssisss', $nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo);
+    $stmt->bind_param('ssisssssssssss', $nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true]);
