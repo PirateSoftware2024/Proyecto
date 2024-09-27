@@ -6,12 +6,13 @@ lo mismo con orden.
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 $(document).ready(function() {
+    nuevoCarrito();
     mostrarProductosEnCarrito();
     resumenPedido();
     $("#cartContainer").on("click", ".boton-eliminar", eliminar);     // Controlador de eventos que
     $("#cartContainer").on("click", ".boton-mas", sumarCantidad);     // responde a los clicks en cualquier elemento con la     
     $("#cartContainer").on("click", ".boton-menos", restarCantidad);  // clase .boton-"accion" que esté dentro del elemento con id "cartContainer".
-    $("#comprar").click();
+    //$("#comprar").click();
     ////////////////////////////////////////
     // -Codigo cuadrado boton "comprar"
     $('#comprar').click(function() {
@@ -30,11 +31,11 @@ $(document).ready(function() {
         var resultadoDiv = $('#resultado');
     
         if (seleccion === "1") {
-            entregaPedido(1);
-        } else if (seleccion === "2") {
             pago();
+        } else if (seleccion === "2") {
+            entregaPedido(1);
         }else{
-            entregaPedido(3);
+            alert("Debe seleccionar un metodo de envio");
         }
     
     });
@@ -253,7 +254,13 @@ function resumenPedido(){
     let html = '';
     let total = 30; // Es igula a 30 por el empaque y la tarifa de Axie
     let elementoHtml = '<ul class="order-items">';
-        
+    
+    if(carrito.length<1){
+        $("#titulo").html("No tiene productos agregados...");
+        $("#comprar").css("display", "none");
+        $("#pedido").html("");
+    }else{
+    $("#comprar").css("display", "flex");
     // Recorrer cada producto en la orden actual
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
@@ -295,6 +302,7 @@ function resumenPedido(){
         `;
     
     $("#pedido").html(html);
+    }
 }
 
 let empresa = [];
@@ -359,7 +367,6 @@ function modificarCarrito(){
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            idCarrito: 30,
             cantidadProductos: cantidad,
             precioTotal: total
         })
@@ -390,7 +397,6 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            idCarrito: 30,
             id: idProducto,
             cantidad: cantidad,
             precio: precio
@@ -453,6 +459,9 @@ paypal.Buttons({
         return actions.order.capture().then(function(details) {
             alert('Pago realizado con éxito por ' + details.payer.name.given_name);
             generarOrden();
+            setTimeout(function() {
+                window.location.href = "../interfaz/historial.html";
+            }, 2000);
         });
     }
 }).render('#paypal-button-container');
@@ -463,10 +472,7 @@ function generarOrden(){
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            idCarrito: 30,
-        })
+        }
     })
     .then(response => response.json())
     .then(data => {
@@ -478,5 +484,27 @@ function generarOrden(){
     })
     .catch(error => {
         console.error('Error en la solicitud:', error);
+    });
+}
+
+function nuevoCarrito() {
+    fetch('../persistencia/agregarPedido.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Guardar los datos en el localStorage
+            const productosJSON = JSON.stringify(data.productos);
+            localStorage.setItem('carrito', productosJSON);
+        } else {
+            console.error('Error:', data.error);
+        }
+    })
+    .catch(error => {
+        console.log("Nose");
     });
 }

@@ -60,7 +60,8 @@ function mostrar() {
         const proximoProducto = ordenes[i + 1];
 
         let subtotal = order.precio * order.cantidad;
-        if (Number(order.idCarrito) !== Number(proximoProducto?.idCarrito)) {
+        // !proximoProducto retorna true si proximoProducto es undefined o null
+        if (!proximoProducto || Number(order.idCarrito) !== Number(proximoProducto.idCarrito)) {
             total += subtotal;
             elementoHtml += `
             <li class="order-item">
@@ -70,7 +71,7 @@ function mostrar() {
             elementoHtml += '</ul>';
             let html = `
             <div class="order">
-                <h2>Pedido #${order.id}</h2>
+                <h2>Pedido #${order.idCarrito}</h2>
                 <p>Fecha: ${order.fecha}</p>
                 ${elementoHtml}
                 <div class="total">Total: $${total.toFixed(2)}</div>

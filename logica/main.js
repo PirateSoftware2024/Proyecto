@@ -193,7 +193,7 @@ function nuevoCarrito() {
         }
     })
     .catch(error => {
-        console.alert('Error en la solicitud:', error);
+        console.log("Nose");
     });
 }
 

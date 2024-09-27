@@ -7,9 +7,16 @@ $(document).ready(function() {
         let telefono = Number($("#telefono").val());
         let correo =  $("#email").val();
         let password = $("#password").val();
-        let fecha = $("#fecha").val();
+        let calle = $("#calle").val();
+        let esquina = $("#esquina").val();
+        let localidad = $("#localidad").val();
+        let departamento = $("#departamentos").val();
+        let nPuerta = $("#nPuerta").val();
+        let nApartamento = $("#nApartamento").val();
+        let cPostal = $("#cPostal").val();
+        let indicaciones = $("#indicaciones").val();
 
-        if(validacion(nombre, apellido, telefono, correo, password, fecha)){
+        if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina, indicaciones)){
         var formData = new FormData(this); 
         registrar(formData);
         }
@@ -38,7 +45,7 @@ function registrar(formData) {
     });
 }
 
-function validacion(nombre, apellido, telefono, correo, password, fecha){
+function validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina, indicaciones){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
         return false;
@@ -72,31 +79,6 @@ function validacion(nombre, apellido, telefono, correo, password, fecha){
     }
     $("#fecha").css("border-color", "#ddd");
 
-    /*if(verificarTexto(barrio)){
-        $("#barrio").css("border-color", "red");
-        return false;
-    }
-    $("#barrio").css("border-color", "#ddd");
-
-    if(verificarTexto(calle)){
-        $("#calle").css("border-color", "red");
-        return false;
-    }
-    $("#calle").css("border-color", "#ddd");
-
-    if(numeroPuerta < 1){
-        $("#numeroPuerta").css("border-color", "red");
-        return false;
-    }
-    $("#numeroPuerta").css("border-color", "#ddd");
-
-    if(codigoPostal < 11000 || codigoPostal > 97000){
-        alert("El codigo postal no existe");
-        $("#codigoPostal").css("border-color", "red");
-        return false;
-    }
-    $("#codigoPostal").css("border-color", "#ddd");*/
-
     var re = /^[a-zA-Z0-9._%+-]+@(gmail\.com|hotmail\.com|yahoo\.com)$/i; 
     if(!re.test(correo)){
         $("#email").css("border-color", "red");
@@ -110,6 +92,50 @@ function validacion(nombre, apellido, telefono, correo, password, fecha){
         return false;
     }
     $("#password").css("border-color", "#ddd");
+
+    if(verificarTexto(departamento)){
+        $("#departamentos").css("border-color", "red");
+        return false;
+    }
+    $("#departamentos").css("border-color", "#ddd");
+
+    if(verificarTexto(localidad)){
+        $("#localidad").css("border-color", "red");
+        return false;
+    }
+    $("#localidad").css("border-color", "#ddd");
+
+    if(verificarTexto(calle)){
+        $("#calle").css("border-color", "red");
+        return false;
+    }
+    $("#calle").css("border-color", "#ddd");
+
+    if(verificarTexto(esquina)){
+        $("#esquina").css("border-color", "red");
+        return false;
+    }
+    $("#esquina").css("border-color", "#ddd");
+
+    if(nPuerta < 1){
+        $("#nPuerta").css("border-color", "red");
+        return false;
+    }
+    $("#nPuerta").css("border-color", "#ddd");
+
+    if(nApartamento < 1){
+        $("#nApartamento").css("border-color", "red");
+        return false;
+    }
+    $("#nApartamento").css("border-color", "#ddd");
+
+    if(cPostal < 11000 || cPostal > 97000){
+        alert("El codigo postal no existe");
+        $("#cPostal").css("border-color", "red");
+        return false;
+    }
+    $("#cPostal").css("border-color", "#ddd");
+
 
     return true;
 }
@@ -144,7 +170,7 @@ function obtenerEdad(fechaNacimiento) {
     if (mesActual < mesNac || (mesActual === mesNac && diaActual < diaNac)) {
         edad--;
     }
-    console.log(edad);
+
     return edad;
 }
 

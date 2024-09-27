@@ -263,7 +263,7 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
             datosProductos[index].nombre = nombre;
             datosProductos[index].descripcion = descripcion;
             datosProductos[index].precio = precio;
-            // Puedes actualizar la interfaz aquí si es necesario
+            obtenerProductos();
         } else {
             // Si hubo un error en la modificación
             alert(data.error);
