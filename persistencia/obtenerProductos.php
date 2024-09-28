@@ -14,7 +14,7 @@ if ($conexion->connect_errno) {
 }
 
 function obtenerDatos($conexion) {   
-    $sql = "SELECT * FROM producto";
+    $sql = "SELECT * FROM producto WHERE stock >= 1";
     $datos = mysqli_query($conexion, $sql);
     
     // Obtener todos los datos como un array de arrays asociativos

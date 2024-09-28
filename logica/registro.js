@@ -7,6 +7,7 @@ $(document).ready(function() {
         let telefono = Number($("#telefono").val());
         let correo =  $("#email").val();
         let password = $("#password").val();
+        let fecha = $("#fecha").val();
         let calle = $("#calle").val();
         let esquina = $("#esquina").val();
         let localidad = $("#localidad").val();
@@ -15,8 +16,7 @@ $(document).ready(function() {
         let nApartamento = $("#nApartamento").val();
         let cPostal = $("#cPostal").val();
         let indicaciones = $("#indicaciones").val();
-
-        if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina, indicaciones)){
+        if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina)){
         var formData = new FormData(this); 
         registrar(formData);
         }
@@ -45,7 +45,7 @@ function registrar(formData) {
     });
 }
 
-function validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina, indicaciones){
+function validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
         return false;
@@ -135,7 +135,6 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
         return false;
     }
     $("#cPostal").css("border-color", "#ddd");
-
 
     return true;
 }

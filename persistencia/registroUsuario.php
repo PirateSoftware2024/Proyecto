@@ -34,38 +34,57 @@ $cPostal = $_POST['cPostal'];
 $indicaciones = $_POST['indicaciones'];
 /////////////////////////////////////
 
-
-
 // Verificar si el correo ya existe
 $sqlCheck = "SELECT idUsuario FROM usuario WHERE correo = ? OR telefono = ?";
 $stmtCheck = $conexion->prepare($sqlCheck);
-$stmtCheck->bind_param('si', $correo, $telefono);
+$stmtCheck->bind_param('ss', $correo, $telefono);
 $stmtCheck->execute();
 $stmtCheck->store_result();
 
 if ($stmtCheck->num_rows > 0) {
-    // Si ya existe un usuario con ese correo
     echo json_encode(['success' => false, 'error' => 'El correo o el teléfono ya está registrado.']);
 } else {
-    // Insertar información de la imagen en la base de datos
-    $sql = "INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion, departamento, localidad, calle, esquina, numeroPuerta, apto, codigoPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, 'Espera', ?, ?, ?, ?, ?, ?, ?, ?)";
+    // Insertar información de usuario en la base de datos
+    $sql = "INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conexion->prepare($sql);
 
-    // Verificar si la preparación de la declaración SQL fue exitosa
     if (!$stmt) {
         echo json_encode(['success' => false, 'error' => 'Error en la preparación de la declaración: ' . $conexion->error]);
         exit;
     }
 
-    // Vincular parámetros correctamente
-    $stmt->bind_param('ssisssssssssss', $nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
+    $validacion = 'Espera';
+    $stmt->bind_param('sssssss', $nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $validacion);
 
     if ($stmt->execute()) {
-        echo json_encode(['success' => true]);
+        $idUsuario = $stmt->insert_id;
+        if(cargarDireccion($conexion, $idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)){
+            echo json_encode(['success' => true]);
+        }
     } else {
         echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos: ' . $stmt->error]);
     }
 
+    $stmt->close();
+}
+
+
+function cargarDireccion($conexion, $idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones){
+    $sql = "INSERT INTO direcciones (idUsuario, departamento, localidad, calle, esquina, numeroPuerta, numeroApto, cPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $stmt = $conexion->prepare($sql);
+
+    if (!$stmt) {
+        echo json_encode(['success' => false, 'error' => 'Error en la preparación de la declaración: ' . $conexion->error]);
+        exit;
+    }
+
+    $stmt->bind_param('issssssis', $idUsuario, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
+
+    if ($stmt->execute()) {
+        return true;
+    }else{
+        return false;
+    }
     $stmt->close();
 }
 
