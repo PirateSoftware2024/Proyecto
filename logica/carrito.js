@@ -104,7 +104,7 @@ $(document).ready(function() {
     });
 });
     ///////////////////////////////////////////////////////////
-    function devolver(){
+    /*function devolver(){
         $.ajax({
             url: '../persistencia/pedidoUsuario.php', // Ruta al archivo PHP
             method: 'GET',
@@ -126,7 +126,7 @@ $(document).ready(function() {
                 console.log('Error en la solicitud: ' + textStatus + ' - ' + errorThrown);
             }
         });
-    }
+    }*/
     ////////////////////////////////////////////////////////////
     // Función para mostrar  los productos en el carrito
     function mostrarProductosEnCarrito() {

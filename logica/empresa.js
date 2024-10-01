@@ -28,9 +28,8 @@ $(document).ready(function() {
         var formData = new FormData(this); // Crear un nuevo FormData con el formulario
         //let nom = $("#nom").val();
         //let desc = $("#desc").val();
-        console.log(formData+"  Aca esta");
         $.ajax({
-            url: '../persistencia/agregarProducto.php',
+            url: '../persistencia/producto/producto.php',
             type: 'POST',
             data: formData,
             contentType: false, // No establecer el tipo de contenido
