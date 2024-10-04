@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-09-2024 a las 05:04:03
+-- Tiempo de generación: 04-10-2024 a las 22:18:41
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.1.25
 
@@ -34,6 +34,13 @@ CREATE TABLE `almacena` (
   `precio` int(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `almacena`
+--
+
+INSERT INTO `almacena` (`idCarrito`, `id`, `cantidad`, `precio`) VALUES
+(463, 16, 1, 1000);
+
 -- --------------------------------------------------------
 
 --
@@ -42,7 +49,7 @@ CREATE TABLE `almacena` (
 
 CREATE TABLE `carrito` (
   `idCarrito` int(11) NOT NULL,
-  `fecha` date NOT NULL,
+  `fecha` date NOT NULL DEFAULT current_timestamp(),
   `estadoCarrito` enum('Pendiente','Confirmado','Cancelado') DEFAULT NULL,
   `idUsuario` int(11) DEFAULT NULL,
   `cantidadProductos` int(10) NOT NULL,
@@ -55,7 +62,18 @@ CREATE TABLE `carrito` (
 --
 
 INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cantidadProductos`, `precioTotal`, `idPaquete`) VALUES
-(30, '2024-08-21', 'Pendiente', 1, 3, 6030, NULL);
+(425, '2024-09-23', 'Confirmado', 1, 1, 630, NULL),
+(429, '2024-09-23', 'Confirmado', 1, 2, 1230, NULL),
+(430, '2024-09-23', 'Confirmado', 1, 3, 2430, NULL),
+(431, '2024-09-23', 'Confirmado', 1, 1, 930, NULL),
+(432, '2024-09-23', 'Confirmado', 34, 1, 630, NULL),
+(433, '2024-09-23', 'Confirmado', 1, 0, 0, NULL),
+(440, '2024-09-29', 'Confirmado', 1, 0, 0, NULL),
+(441, '2024-09-29', 'Confirmado', 1, 3, 1800, NULL),
+(445, '2024-10-02', 'Confirmado', 34, 0, 30, NULL),
+(451, '2024-10-02', 'Confirmado', 34, 0, 0, NULL),
+(462, '2024-10-02', 'Confirmado', 34, 2, 1130, NULL),
+(463, '2024-10-02', 'Pendiente', 34, 1, 1030, NULL);
 
 -- --------------------------------------------------------
 
@@ -121,7 +139,7 @@ CREATE TABLE `empresa` (
   `numero` int(11) DEFAULT NULL,
   `nroApartamento` varchar(10) DEFAULT NULL,
   `correo` varchar(100) NOT NULL,
-  `contraseña` varchar(255) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `fecha` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -129,8 +147,13 @@ CREATE TABLE `empresa` (
 -- Volcado de datos para la tabla `empresa`
 --
 
-INSERT INTO `empresa` (`idEmpresa`, `nombre`, `rut`, `numeroCuenta`, `telefono`, `departamento`, `calle`, `numero`, `nroApartamento`, `correo`, `contraseña`, `fecha`) VALUES
-(1, 'Puma', '123123123', '1231231231', '1231231231', 'rio-negro', 'Luis Alberto de Herrera', 123, '123', 'a@gmail.com', '1231231231', '2024-08-26');
+INSERT INTO `empresa` (`idEmpresa`, `nombre`, `rut`, `numeroCuenta`, `telefono`, `departamento`, `calle`, `numero`, `nroApartamento`, `correo`, `password`, `fecha`) VALUES
+(1, 'Puma', '123123123', '1231231231', '1231231231', 'rio-negro', 'Luis Alberto de Herrera', 123, '123', 'a@gmail.com', '1231231231', '2024-08-26'),
+(4, 'Nike', '123341233', '231231231', '93123123', 'soriano', 'asd', 12, '21', 'nike@gmail.com', '1231231231231', '2024-09-19'),
+(5, 'Walter', '123123', '11111', '091566848', 'Montevideo', 'Luis Alberto de Herrera', 132, '1', 'indio@gmail.coma', '1234', '2024-10-01'),
+(6, 'Walter', '123124', '11112', '091566847', 'Montevideo', 'Luis Alberto de Herrera', 132, '1', 'indiod@gmail.coma', '$2y$10$JM3j/AX96Bncfz6zMjopX.lPFdTxpSl0Uns/GnnEYVHrUNUb8QUJy', '2024-10-01'),
+(7, 'asdasd', '123123125', '12312312', '097777777', 'san-jose', 'dad', 13, '1', 'adidas@gmail.com', '$2y$10$4U3wJ.GlKi5Bj6EQhSKyXenYi/9ycL.Vv6YUDq2iyWx8uQsN/CC.6', '2024-10-02'),
+(8, 'Hi', '987365478', '0987365136', '097888888', 'treinta-y-tres', 'D', 1, '1', 'je@gmail.com', '$2y$10$LuLU0F/qqe8cx1M36i1yH.xjmMwWhN/SqAMDuaR0yCtb2kfFJShNm', '2024-10-02');
 
 -- --------------------------------------------------------
 
@@ -165,17 +188,30 @@ CREATE TABLE `producto` (
   `oferta` enum('Si','No') DEFAULT NULL,
   `condicion` enum('Nuevo','Usado') DEFAULT NULL,
   `file_path` varchar(255) DEFAULT NULL,
-  `categoria` varchar(50) DEFAULT NULL
+  `categoria` varchar(50) DEFAULT NULL,
+  `idEmpresa` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `producto`
 --
 
-INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `oferta`, `condicion`, `file_path`, `categoria`) VALUES
-(7, 'Remera', 'Blanca', 600, 12, 'Si', 'Nuevo', '../interfaz/images/imagenesProductos/alfombra.png', 'Ropa y Calzado'),
-(8, 'Juego', 'Play 2', 900, 12, 'Si', 'Nuevo', '../interfaz/images/imagenesProductos/alfombra (2).png', 'Juguetes y Juegos'),
-(9, 'Silla', 'Exterior', 1200, 1, 'Si', 'Nuevo', '../interfaz/images/imagenesProductos/silla.png', 'Muebles');
+INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `oferta`, `condicion`, `file_path`, `categoria`, `idEmpresa`) VALUES
+(16, 'Remera', 'Blanca', 1000, 1, 'No', 'Nuevo', '66ff184315fda.png', 'Ropa y Calzado', 8),
+(17, 'Pantalon', 'Beige', 1200, 1, 'Si', 'Nuevo', '66ff194228790.jpg', 'Ropa y Calzado', 8);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `reseñas`
+--
+
+CREATE TABLE `reseñas` (
+  `idReseña` int(11) NOT NULL,
+  `idProducto` int(11) DEFAULT NULL,
+  `idUsuario` int(11) DEFAULT NULL,
+  `reseña` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -187,10 +223,18 @@ CREATE TABLE `usuario` (
   `idUsuario` int(11) NOT NULL,
   `nombre` varchar(20) NOT NULL,
   `apellido` varchar(20) NOT NULL,
-  `telefono` varchar(15) NOT NULL,
+  `telefono` varchar(9) NOT NULL,
   `correo` varchar(50) NOT NULL,
-  `password` varchar(20) NOT NULL,
+  `password` varchar(255) NOT NULL,
   `fechaNac` date DEFAULT NULL,
+  `departamento` varchar(13) NOT NULL,
+  `localidad` varchar(50) NOT NULL,
+  `calle` varchar(50) NOT NULL,
+  `esquina` varchar(50) NOT NULL,
+  `numeroPuerta` varchar(10) NOT NULL,
+  `apto` varchar(10) NOT NULL,
+  `codigoPostal` int(5) NOT NULL,
+  `indicaciones` varchar(50) DEFAULT NULL,
   `validacion` enum('Si','No','Espera') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -198,8 +242,14 @@ CREATE TABLE `usuario` (
 -- Volcado de datos para la tabla `usuario`
 --
 
-INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `telefono`, `correo`, `password`, `fechaNac`, `validacion`) VALUES
-(1, 'Probando', 'Ando', '0993123', 'prueba@gmail.com', '321', '2011-12-12', 'Si');
+INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `telefono`, `correo`, `password`, `fechaNac`, `departamento`, `localidad`, `calle`, `esquina`, `numeroPuerta`, `apto`, `codigoPostal`, `indicaciones`, `validacion`) VALUES
+(1, 'pepe', 'Ando', '1891', '1@gmail.com', '321', '2011-12-12', '', '', '', '', '', '', 0, NULL, 'Si'),
+(27, 'asda', 'asda', '91244123', 't@gmail.com', '1231231231', '1987-01-28', 'rocha', 'asd', 'asd', 'asd', '123', '123', 12333, 'ads', 'Espera'),
+(28, 'Ricardo', 'Perez', '099781544', 'qwe@gmail.com', '123', '0000-00-00', '', '', '', '', '', '', 0, NULL, 'Espera'),
+(31, 'Ricardo', 'Perez', '099781777', 'qweqwee@gmail.com', '123', '2000-11-08', '', '', '', '', '', '', 0, NULL, 'Espera'),
+(33, 'Ricardo', 'Perez', '099781666', 'peñarol@gmail.com', '$2y$10$B5oiLai6tjS7X', '2000-11-08', '', '', '', '', '', '', 0, NULL, 'Si'),
+(34, 'Fernando', 'Morena', '091566848', 'indio@gmail.com', '$2y$10$4fH.aFgAFONZppiitMkFD.9zw7nITUr1m.xeRncPQYcM6aQDhiaFy', '2003-08-14', '', '', '', '', '', '', 0, NULL, 'Si'),
+(35, 'asd', 'asd', '097123123', 'delcap@gmail.com', '$2y$10$rUTubVk.CAXjeOQbcOnIpu8R6m89mRPhCgBb1bufPC8PbU3cLsnKa', '2000-11-11', '', '', '', '', '', '', 0, NULL, 'Si');
 
 --
 -- Índices para tablas volcadas
@@ -245,7 +295,16 @@ ALTER TABLE `paquete`
 -- Indices de la tabla `producto`
 --
 ALTER TABLE `producto`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_idEmpresa` (`idEmpresa`);
+
+--
+-- Indices de la tabla `reseñas`
+--
+ALTER TABLE `reseñas`
+  ADD PRIMARY KEY (`idReseña`),
+  ADD KEY `idProducto` (`idProducto`),
+  ADD KEY `idUsuario` (`idUsuario`);
 
 --
 -- Indices de la tabla `usuario`
@@ -263,13 +322,13 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=556;
 
 --
 -- AUTO_INCREMENT de la tabla `empresa`
 --
 ALTER TABLE `empresa`
-  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `paquete`
@@ -281,13 +340,19 @@ ALTER TABLE `paquete`
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+
+--
+-- AUTO_INCREMENT de la tabla `reseñas`
+--
+ALTER TABLE `reseñas`
+  MODIFY `idReseña` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `idUsuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- Restricciones para tablas volcadas
@@ -306,6 +371,19 @@ ALTER TABLE `almacena`
 ALTER TABLE `carrito`
   ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
   ADD CONSTRAINT `fk_paquete` FOREIGN KEY (`idPaquete`) REFERENCES `paquete` (`idPaquete`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Filtros para la tabla `producto`
+--
+ALTER TABLE `producto`
+  ADD CONSTRAINT `fk_idEmpresa` FOREIGN KEY (`idEmpresa`) REFERENCES `empresa` (`idEmpresa`);
+
+--
+-- Filtros para la tabla `reseñas`
+--
+ALTER TABLE `reseñas`
+  ADD CONSTRAINT `reseñas_ibfk_1` FOREIGN KEY (`idProducto`) REFERENCES `producto` (`id`),
+  ADD CONSTRAINT `reseñas_ibfk_2` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
