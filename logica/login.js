@@ -8,12 +8,11 @@ $(document).ready(function() {
         //const tipoUsuario = $("#tipoUsuario").val(); // Obtenemos la opcion seleccionada
         //formData.append('tipoUsuario', tipoUsuario); // Agregamos el dato en el form
         var tipoUser = $("#tipoUsuario").val();
-        console.log("El user es: "+tipoUser);
 
         var respuestaServidor = {};
         if(tipoUser == "comprador" || tipoUser == "empresa"){
             $.ajax({
-                url: '../persistencia/obtenerUsuario.php',
+                url: '../persistencia/login.php',
                 type: 'POST',
                 data: formData,
                 contentType: false, // No establecer el tipo de contenido

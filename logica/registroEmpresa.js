@@ -22,7 +22,7 @@ $(document).ready(function() {
 
 function registrar(formData) {
     $.ajax({
-        url: '../persistencia/registrarEmpresa.php',
+        url: '../persistencia/empresa/empresa.php',
         type: 'POST',
         data: formData,
         contentType: false, // No establecer el tipo de contenido

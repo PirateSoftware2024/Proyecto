@@ -1,4 +1,4 @@
-let usuarios = [];
+let usuario = [];
 
 $(document).ready(function() {
     cargarDatos();
@@ -46,12 +46,12 @@ function modificar(input, boton) {
 }
 
 function cargarDatos(){
-    fetch('../persistencia/datosUsuario.php')
+    fetch('../persistencia/usuario/usuario.php?accion=datosUsuario')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-        usuarios = jsonData; // Una vez leido los datos acutalizamos
+        usuario= jsonData; // Una vez leido los datos acutalizamos
         actualizar();
     });
     
@@ -59,7 +59,6 @@ function cargarDatos(){
 
 // Función para generar las filas de la tabla
 function actualizar() {
-    let usuario = usuarios[0];
     $("#nombre").val(usuario.nombre);
     $("#apellido").val(usuario.apellido);
     $("#telefono").val(usuario.telefono);
@@ -81,14 +80,15 @@ function tomarDato(input) {
 }
 
 function modificarProducto(dato, columna) {
-    fetch('../persistencia/modificarUsuario.php', {
-        method: 'POST',
+    fetch('../persistencia/usuario/usuario.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             columna : columna, //Almacenamos el nombre de la columna a modificar
-            dato : dato
+            dato : dato,
+            accion: 'modificar'
         })
     })
     .catch(error => {

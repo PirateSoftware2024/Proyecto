@@ -20,7 +20,8 @@ class ApiCarrito
         $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
 
         if ($result) {
-            $idCarrito = $result['idCarrito']; // Obtener el idCarrito directamente del resultado
+            $idCarrito = $result['idCarrito']; 
+            $_SESSION['usuario']['idCarrito'] = $idCarrito;
 
             // Obtener los productos del carrito
             $stmt = $this->pdo->prepare("SELECT a.id, a.cantidad, a.precio, p.nombre, p.file_path
@@ -39,6 +40,9 @@ class ApiCarrito
             // Ejecutar la consulta
             if ($stmt->execute([$idUsuario])) {
                 echo json_encode(['success' => true]);
+                $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
+                $idCarrito = $result['idCarrito']; 
+                $_SESSION['usuario']['idCarrito'] = $idCarrito;
             } else {
                 echo json_encode(['success' => false, 'error' => $stmt->errorInfo()]);
             }
@@ -197,8 +201,9 @@ $carrito = new ApiCarrito($pdo);
     O CREAMOS UNO NUEVO
 */
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
-    $data = json_decode(file_get_contents('php://input'), true);
-    $idUsuario = $data['idUsuario'];
+    session_start();
+    $id = $_SESSION['usuario']['idUsuario'];
+    $idUsuario = intval($id); // Lo convertimos en int
     $carrito->obtener($idUsuario);
 }
 
@@ -207,7 +212,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 // ELIMINAR
 if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
     $data = json_decode(file_get_contents('php://input'), true);
-    $idCarrito = $data['idCarrito'];
+    session_start();
+    $idCarrito = $_SESSION['usuario']['idCarrito'];
     $idProducto = $data['id'];
     /* Formas de validar
     if($id < 1)
@@ -228,8 +234,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     switch($accion)
     {   
         case 'actualizarCarrito':
-            //session_start();
-            $idCarrito = $data['idCarrito']; //$_SESSION['usuario'][0]['idCarrito'];
+            session_start();
+            $idCarrito = $_SESSION['usuario']['idCarrito'];
             $cantidadProductos = $data['cantidadProductos'];
             $precioTotal = $data['precioTotal'];
         
@@ -238,8 +244,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
             break;
 
         case 'actualizarProductosCarrito':
-            if (isset($data['idCarrito'], $data['cantidad'], $data['precio'], $data['id'])) {
-                $idCarrito = $data['idCarrito'];
+            if (isset($data['cantidad'], $data['precio'])) {
+                session_start();
+                $idCarrito = $_SESSION['usuario']['idCarrito'];
                 $cantidad = $data['cantidad'];
                 $precio = $data['precio'];
                 $id = $data['id'];
@@ -268,8 +275,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
 // ELIMINAR
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    $data = json_decode(file_get_contents('php://input'), true);
-    $idUsuario = $data['idUsuario'];
+    session_start();
+    $idUsuario = $_SESSION['usuario']['idUsuario'];
     
     $carrito->historial($idUsuario);
 }

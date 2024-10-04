@@ -13,7 +13,7 @@ class ApiEmpresa
 
     public function obtenerDatos($idEmpresa)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM empresa WHERE idEmpresa = 1");
+        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE idEmpresa = $idEmpresa");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -47,7 +47,7 @@ class ApiEmpresa
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Insertar información de la empresa en la base de datos
-        $stmt = $this->pdo->prepare("INSERT INTO empresa (nombre, rut, numeroCuenta, telefono, departamento, calle, numero, nroApartamento, correo, contraseña) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO empresa (nombre, rut, numeroCuenta, telefono, departamento, calle, numero, nroApartamento, correo, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
         // Verificar si la preparación de la declaración SQL fue exitosa
         if (!$stmt) {
@@ -78,19 +78,17 @@ $empresa = new ApiEmpresa($pdo);
 /////////////////////////////////////////////////////////////////////
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
-
+    $accion = $_GET['accion'];
+    session_start();
+    $idEmpresa = $_SESSION['empresa']['idEmpresa'];
     switch($accion)
     {
         case 'obtenerDatos':
-            $idEmpresa = $data['idEmpresa'];
             $empresaDatos = $empresa->obtenerDatos($idEmpresa);
             echo json_encode($empresaDatos);
             break;
 
         case 'obtenerVentas':
-            $idEmpresa = $data['idEmpresa'];
             $datosVentas = $empresa->ventasEmpresa($idEmpresa);
             echo json_encode($datosVentas);
             break;

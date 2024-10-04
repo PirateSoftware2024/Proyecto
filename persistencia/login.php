@@ -37,10 +37,23 @@ if ($result) {
     // Verificar la contraseña ingresada con la almacenada (hash)
     if (password_verify($contraseña, $contraseñaAlmacenada)) {
         echo json_encode(['success' => true, 'message' => 'Contraseña válida.']);
+        session_start();
+        if ($tipoUsuario === 'comprador') {
+            $stmt = $pdo->prepare("SELECT * FROM usuario WHERE correo = ? AND password = ? AND validacion = 'Si'");
+            $stmt->execute([$correo, $contraseñaAlmacenada]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['usuario'] = $result; // Los guardamos en la session usuario
+            $_SESSION['loggedin'] = true;
+        } else {
+            $stmt = $pdo->prepare("SELECT * FROM empresa WHERE correo = ? AND password = ?");
+            $stmt->execute([$correo, $contraseñaAlmacenada]);
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['empresa'] = $result; // Los guardamos en la session usuario
+            $_SESSION['loggedin'] = true;
+        }
     } else {
         echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta.']);
     }
-
 } else {
     echo json_encode(['success' => false, 'message' => 'Usuario no encontrado.']);
 }

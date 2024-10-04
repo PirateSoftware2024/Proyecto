@@ -118,6 +118,14 @@ $pedido = new ApiPedidos($pdo);
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $data = json_decode(file_get_contents('php://input'), true);
+    
+    $pedidos = $pedido->obtenerTodos();
+    echo json_encode($pedidos);
+}
+
+//////////////////////////////////////////////////////////////////////////////////
+if($_SERVER['REQUEST_METHOD'] == 'POST'){
+    $data = json_decode(file_get_contents('php://input'), true);
     $accion = $data['accion'];
     
     switch($accion)

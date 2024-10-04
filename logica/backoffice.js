@@ -2,7 +2,7 @@
 let productos = [];
 // Obtenemos productos de la BD
 function cargarDatos(){
-    fetch('../persistencia/obtenerProductos.php')
+    fetch('../persistencia/producto/producto.php?accion=productos')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -37,56 +37,73 @@ $(document).ready(function() {
     });
 });
 
-function buscarStock(){
+function buscarStock() {
     let stock = $("#buscarProducto").val();
-    if(isNaN(stock)){
-        alert("Debe ingresar un numero!");
-    }else{
-    fetch('../persistencia/buscarPorStock.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ stock: stock })
-    })
-    .then(response => response.text())
-    .then(data => {
-        console.log('Datos recibidos:', data);
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
-        productos = jsonData; // Una vez leido los datos acutalizamos
-        actualizar();
-    });
-}
+    
+    // Verificar si es un número válido
+    if (isNaN(stock)) {
+        alert("Debe ingresar un número!");
+    } else {
+        // Realizar la llamada fetch para buscar productos por stock
+        fetch('../persistencia/producto/producto.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                stock: stock, 
+                accion: "productoStock"  // Aquí defines la acción que será procesada en el backend
+            })
+        })
+        .then(response => response.json())  // Procesar la respuesta como JSON
+        .then(data => {
+            // Verificar si la respuesta fue exitosa
+            if (data.success) {
+                productos = data.datos; // Una vez leido los datos acutalizamos
+                actualizar();
+            } else {
+                console.error('Error al buscar el stock:', data.datos);
+                alert(data.datos);  // Mostrar el mensaje de error en un alert
+            }
+        })
+        .catch(error => {
+            console.error('Error al obtener los datos:', error);
+        });
+    }
 }
 
 function buscarProducto(){
     let nombre = $("#buscarProducto").val();
-
-    fetch('../persistencia/buscarPorNombre.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre: nombre })
+        body: JSON.stringify({ 
+            nombre: nombre,
+            accion: "productoNombre"
+        })
     })
-    .then(response => response.text())
+    .then(response => response.json())  // Procesar la respuesta como JSON
     .then(data => {
-        console.log('Datos recibidos:', data);
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
-        productos = jsonData; // Una vez leido los datos acutalizamos
-        actualizar();
+        // Verificar si la respuesta fue exitosa
+        if (data.success) {
+            productos = data.datos; // Una vez leido los datos acutalizamos
+            actualizar();
+        } else {
+            console.error('Error al buscar el producto:', data.datos);
+            alert(data.datos);  // Mostrar el mensaje de error en un alert
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
     });
 }
+
 // Función para agregar un producto
 function agregar(nombre, descripcion, precio) {
     // Utilizamos push para agregar nuevos productos
-    fetch('../persistencia/agregarProducto.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -94,7 +111,8 @@ function agregar(nombre, descripcion, precio) {
         body: JSON.stringify({
             nombre: nombre,
             descripcion: descripcion,
-            precio: precio
+            precio: precio, 
+            accion: "agregar"
         })
     })
     .then(response => response.json())
@@ -257,12 +275,15 @@ function verificarTexto(cadena){
 
 function eliminarProducto() {
     idProducto = $(this).data("id");
-    fetch('../persistencia/eliminarProducto.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: idProducto })
+        body: JSON.stringify({ 
+            id: idProducto,
+            accion: "producto"
+        })
     })
     .then(response => response.json())  // Procesar la respuesta como JSON
     .then(data => {
@@ -281,7 +302,7 @@ function eliminarProducto() {
 
 
 function modificarProducto(idProducto, nombre, descripcion, precio) {
-    fetch('../persistencia/modificarProducto.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -314,13 +335,14 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
 
 function buscarPorFecha(){
     let fecha = $("#fechaPedido").val();
-    fetch('../persistencia/obtenerPedidoFecha.php', {
+    fetch('../persistencia/pedidos/pedidos.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            fecha : fecha
+            fecha : fecha,
+            accion : "obtenerPedidoFecha"
         })
     })
     .then(response => response.json())
@@ -336,13 +358,14 @@ function buscarPorFecha(){
 }
 function pedidoBuscar(){
     let dato = Number($("#buscarOrden").val());
-    fetch('../persistencia/buscarPedido.php', {
+    fetch('../persistencia/pedidos/pedidos.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            dato : dato
+            dato : dato,
+            accion : "buscarPedido"
         })
     })
     .then(response => response.json())
@@ -359,7 +382,7 @@ function pedidoBuscar(){
 
 let pedidos = [];
 function cargarDatosPedido(){
-    fetch('../persistencia/obtenerPedidos.php')
+    fetch('../persistencia/pedidos/pedidos.php')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -401,7 +424,7 @@ function actualizarPedidos() {
 
 let usuarios = [];
 function cargarDatosUsuario(){
-    fetch('../persistencia/obtenerDatosUsuario.php')
+    fetch('../persistencia/usuario/usuario.php?accion=obtenerUsuarios')
     .then(response => response.text())
     .then(data => {
         console.log('Datos recibidos:', data);
@@ -444,7 +467,7 @@ function actualizarUsuarios() {
 
 let usuariosParaValidar = [];
 function validar(){
-    fetch('../persistencia/obtenerUsuariosAValidar.php')
+    fetch('../persistencia//usuario/usuario.php?accion=usuariosValidar')
     .then(response => response.text())
     .then(data => {
         console.log('Datos recibidos:', data);
@@ -489,14 +512,15 @@ function subirValidacion() {
     let idUsuario = $(this).data("id");
 
     // Enviar los datos al archivo PHP
-    fetch('../persistencia/validarUsuario.php', {
-        method: 'POST',
+    fetch('../persistencia/usuario/usuario.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             id: idUsuario,
-            opcion: opcion
+            opcion: opcion,
+            accion: "validar"
         })
     })
     .then(response => {
@@ -522,7 +546,7 @@ function subirValidacion() {
 // Reseñas
 let reseñas = [];
 function cargarDatosReseñas(){
-    fetch('../persistencia/obtenerReseñasTodas.php')
+    fetch('../persistencia/productos/productos.php?accion=reseñas')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -554,12 +578,15 @@ function actualizarReseñas() {
 
 function eliminarReseña() {
     idReseña = $(this).data("id");
-    fetch('../persistencia/eliminarReseña.php', {
-        method: 'POST',
+    fetch('../persistencia/producto/producto.php', {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: idReseña })
+        body: JSON.stringify({ 
+            id: idReseña, 
+            accion: "reseña"
+        })
     })
     .then(response => response.json())  // Procesar la respuesta como JSON
     .then(data => {

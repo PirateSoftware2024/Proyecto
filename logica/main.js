@@ -2,7 +2,7 @@ let products = [];
 let categorias = [];
 
 function cargarDatos(){
-    fetch('../persistencia/obtenerProductos.php')
+    fetch('../persistencia/producto/producto.php?accion=productos')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -13,7 +13,7 @@ function cargarDatos(){
 }
 
 function cargarCategorias(){
-    fetch('../persistencia/obtenerCategorias.php')
+    fetch('../persistencia/producto/producto.php?accion=categorias')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -37,12 +37,15 @@ document.querySelector('.menu-toggle').addEventListener('click', function() {
 
 function buscar(){
     const nombre = $(this).data("id");
-    fetch('../persistencia/productosCategoria.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ nombre: nombre })
+        body: JSON.stringify({ 
+            nombre: nombre, 
+            accion: "productoCategoria"
+        })
     })
     .then(response => response.text())
     .then(data => {
@@ -100,13 +103,14 @@ $(document).ready(function() {
 });
 
 function obtenerReseñas(idProducto){
-    fetch('../persistencia/obtenerReseñas.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            id: idProducto
+            id: idProducto,
+            accion: "reseñasProducto"
         })
     })
     .then(response => response.json())
@@ -141,7 +145,7 @@ function verMas(idBoton){
 
     const $productCard = $(`
             <div class="image-container">
-                <img src="${producto.file_path}" width=150 heigth=150>
+                <img src="../persistencia/assets/${producto.file_path}" width=150 heigth=150>
             </div>
             <div class="reseñas">${reseñasProducto}</div>
             <h3>${producto.nombre}</h3>
@@ -160,7 +164,7 @@ function actualizar(){
         const $productCard = $(`
             <div class="product-card">
                 <div class="image-container">
-                    <img src="${product.file_path}">
+                    <img src="../persistencia/assets/${product.file_path}">
                 </div>
                 <h3>${product.nombre}</h3>
                 <p>${product.descripcion}</p>
@@ -176,7 +180,7 @@ function actualizar(){
 
 
 function nuevoCarrito() {
-    fetch('../persistencia/agregarPedido.php', {
+    fetch('../persistencia/carrito/carrito.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -199,7 +203,7 @@ function nuevoCarrito() {
 
 
 let carrito = [];
-function obtenerProductosCarrito(){
+/*function obtenerProductosCarrito(){
     fetch('../persistencia/obtenerCarrito.php')
     .then(response => response.text())
     .then(data => {
@@ -209,18 +213,19 @@ function obtenerProductosCarrito(){
         const productosJSON = JSON.stringify(carrito);
         localStorage.setItem('carrito', productosJSON);
     });
-}
+}*/
 
 function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
-    fetch('../persistencia/obtenerCarrito.php', {
-        method: 'POST',
+    fetch('../persistencia/carrito/carrito.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             id: idProducto,
             cantidad: cantidad,
-            precio: precio
+            precio: precio,
+            accion: "actualizarProductosCarrito"
         })
     })
     .then(response => response.json())
@@ -280,14 +285,15 @@ function modificarCarrito(){
         total += subtotal;
         cantidad += item.cantidad;
     }
-    fetch('../persistencia/modificarCarrito.php', {
-        method: 'POST',
+    fetch('../persistencia/carrito/carrito.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
             cantidadProductos: cantidad,
-            precioTotal: total
+            precioTotal: total,
+            accion: "actualizarCarrito"
         })
     })
     .then(response => {

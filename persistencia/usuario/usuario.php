@@ -166,12 +166,12 @@ $usuario = new ApiUsuarios($pdo);
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
-
+    $accion = $_GET['accion'];
     switch($accion)
     {
         case 'datosUsuario':
-            $idUsuario = $data['idUsuario'];
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
             $usuario->datosUsuario($idUsuario);
             break;
         
@@ -220,7 +220,8 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
     switch($accion)
     {
         case 'modificar':
-            $idUsuario = $data['idUsuario'];
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
             $dato = $data['dato'];
             $columna = $data['columna'];
             $usuario->modificarUsuario($idUsuario, $dato, $columna);

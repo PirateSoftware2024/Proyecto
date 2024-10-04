@@ -30,7 +30,7 @@ function mostrarHistorial(){
 
 let ordenes = [];
 function generarHistorial() {
-    fetch('../persistencia/historial.php', {
+    fetch('../persistencia/carrito/carrito.php', {
     headers: {
         'Content-Type': 'application/json'
     }
@@ -39,6 +39,7 @@ function generarHistorial() {
 .then(data => {
     if (data.success) {
         ordenes = data.data;  // Una vez leido los datos actualizamos
+        console.log("aca estan las ordenes:" +ordenes);
         mostrar();
     } else {
         console.error('Error:', data.error);
@@ -105,14 +106,15 @@ function reseña(){
 
 function enviarReseña() {
     let reseña = $("#reseña").val();
-    fetch('../persistencia/ingresarReseña.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: new URLSearchParams({
             idProducto: idBoton,
-            reseña: reseña
+            reseña: reseña,
+            accion: "reseñasAgregar"
         })
     })
     .then(response => response.json())

@@ -1,5 +1,6 @@
 <?php 
 require("../ConexionDB.php");
+require("subirImagen.php");
 header('Content-Type: application/json');
 
 class ApiProducto
@@ -25,7 +26,7 @@ class ApiProducto
             // Si no hay productos, enviamos un mensaje de error
             echo json_encode(['success' => false, 'error' => 'Sin productos']);
         }
-}
+    }   
 
     public function obtenerProductos()
     {
@@ -48,51 +49,32 @@ class ApiProducto
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function agregar($nombre, $descripcion, $precio, $stock, $oferta, $condicion, $categoria, $file)
+    public function agregar($nombre, $descripcion, $precio, $stock, $oferta, $condicion, $categoria, $urlImagen, $idEmpresa)
     {
-        $uploadDir = '../imagenes'; // Ruta corregida
-        $uploadFile = $uploadDir . basename($file['name']);
+        
+        $stmt = $this->pdo->prepare("INSERT INTO producto (nombre, descripcion, precio, stock, oferta, condicion, file_path, categoria, idEmpresa) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
-        if (move_uploaded_file($file['tmp_name'], $uploadFile)) {
-            $uploadFile = $uploadFile; // No necesita cambiar la ruta aquí
-            $stmt = $this->pdo->prepare("INSERT INTO producto (nombre, descripcion, precio, stock, oferta, condicion, file_path, categoria) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-
-            if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $oferta, $condicion, $uploadFile, $categoria])) {
-                echo json_encode(['success' => true]);
-            } else {
-                echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos']);
-            }
+        if ($stmt->execute([$nombre, $descripcion, $precio, $stock, $oferta, $condicion, $urlImagen, $categoria, $idEmpresa])) {
+            echo json_encode(['success' => true]);
         } else {
-            echo json_encode(['success' => false, 'error' => 'Error al subir el archivo']);
+            echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos']);
         }
     }
 
     public function eliminar($idProducto)
-    {
-        // Verificar si el producto está en la tabla carrito
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) AS conteo 
-                                    FROM almacena a 
-                                    JOIN carrito c ON c.idCarrito = a.idCarrito
-                                    WHERE a.id = ?");
-        $stmt->execute([$idProducto]);
-        $result = $stmt->fetch(); 
+{
+    // Eliminamos las reseñas relacionadas con el producto
+    $stmt = $this->pdo->prepare("DELETE FROM reseñas WHERE idProducto = ?");
+    $stmt->execute([$idProducto]);
 
-        if ($result['conteo'] > 0) {
-            echo json_encode(['success' => false, 'error' => 'No se puede eliminar el producto porque está en un carrito.']);
-        }else {
-            // Eliminar el producto
-            $stmt = $this->pdo->prepare("DELETE FROM producto WHERE id = ?");
-            if ($stmt->execute([$idProducto])) {
-                echo json_encode(['success' => true]);
-            } else {
-                echo json_encode(['success' => false, 'error']);
-            }
-        }
+    // Y luego eliminamos el producto
+    $stmt = $this->pdo->prepare("DELETE FROM producto WHERE id = ?");
+    if ($stmt->execute([$idProducto])) {
+        echo json_encode(['success' => true]);
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Error al eliminar el producto']);
     }
+}
 
     public function actualizar($nombre, $descripcion, $precio, $idProducto)
     {
@@ -102,11 +84,11 @@ class ApiProducto
         $result = $stmt->fetch();
 
         if ($result){
-        if ($result['conteo'] > 0){
-            // Producto está en un carrito, no se puede modificar el precio
-            echo json_encode(['success' => false, 'error' => 'No se puede modificar el precio porque el producto está en un carrito.']);
-            return;
-        } 
+            if ($result['conteo'] > 0){
+                // Producto está en un carrito, no se puede modificar el precio
+                echo json_encode(['success' => false, 'error' => 'No se puede modificar el precio porque el producto está en un carrito.']);
+                return;
+            } 
         }else{
             // Error al verificar la existencia del producto en un carrito
             echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito']);
@@ -186,16 +168,40 @@ class ApiProducto
 
     public function stock($stock)
     {
+        // Preparar la consulta
         $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE stock = ?");
+    
+        // Ejecutar la consulta
         $stmt->execute([$stock]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Obtener todos los resultados
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Verificar si el array tiene elementos
+        if (count($result) > 0) {
+            echo json_encode(['success' => true, 'datos' => $result]);
+        } else {
+            echo json_encode(['success' => false, 'datos' => "No se encontraron productos"]);
+        }
     }
 
     public function nombre($nombre)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE nombre = ?");
-        $stmt->execute([$nombre]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Preparar la consulta
+        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE nombre = '$nombre'");
+    
+        // Ejecutar la consulta
+        $stmt->execute();
+    
+        // Obtener todos los resultados
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Verificar si el array tiene elementos
+        if ($result) {
+            echo json_encode(['success' => true, 'datos' => $result]);
+        } else {
+            echo json_encode(['success' => false, 'datos' => "No se encontraron productos"]);
+        }
     }
 }
 
@@ -223,30 +229,67 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     switch ($accion) 
     {
         case 'agregar':
-            // Verificar si el archivo se envió correctamente
-            if (isset($_FILES['image']) && $_FILES['image']['error'] === UPLOAD_ERR_OK) {
-                $file = $_FILES['image'];
-                $nombre = $_POST['nombre'];
-                $descripcion = $_POST['descripcion'];
-                $precio = $_POST['precio'];
-                $stock = $_POST['stock'];
-                $oferta = $_POST['oferta'];
-                $condicion = $_POST['condicion'];
-                $categoria = "ASDASD"; // Modificar según sea necesario
-                $producto->agregar($nombre, $descripcion, $precio, $stock, $oferta, $condicion, $categoria, $file);
+            // Validar si se subió una imagen
+            if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+                // Crear una instancia del cargador de imágenes
+                $uploader = new ImageUploader();
+                $urlImagen = $uploader->uploadImage($_FILES['imagen']); // Intentar subir la imagen
+
+                // Verificar si la subida de la imagen fue exitosa
+                if (strpos($urlImagen, 'Error:') === 0) {
+                    // Mensaje de error al subir la imagen
+                    echo json_encode(['message' => $urlImagen]);
+                    exit; // Terminar la ejecución
+                }
             } else {
-                echo json_encode(['success' => false, 'error' => 'No se ha enviado ningún archivo o error en el archivo']);
+                // Mensaje de error si no se subió la imagen o hubo un problema
+                echo json_encode(['message' => 'Error: No se subió la imagen o hubo un problema durante la subida.']);
+                exit; // Terminar la ejecución
             }
+            session_start();
+            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
+            $nombre = $_POST['nombre'];
+            $descripcion = $_POST['descripcion'];
+            $precio = $_POST['precio'];
+            $stock = $_POST['stock'];
+            $oferta = $_POST['oferta'];
+            $condicion = $_POST['condicion'];
+            $categoria = $_POST['categoria'];; // Modificar según sea necesario 
+            // Agregar el producto a la base de datos
+            $producto->agregar($nombre, $descripcion, $precio, $stock, $oferta, $condicion, $categoria, $urlImagen, $idEmpresa);
             break;
 
         case 'reseñasAgregar':
             $idProducto = isset($_POST['idProducto']) ? $_POST['idProducto'] : $data['idProducto'];
             $reseña = isset($_POST['reseña']) ? $_POST['reseña'] : $data['reseña'];
-            $idUsuario = isset($_POST['idUsuario']) ? $_POST['idUsuario'] : $data['idUsuario'];
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
+
 
             $producto->reseña($idProducto, $idUsuario, $reseña);
             break;
         
+        case 'productoCategoria':
+            $nombreCategoria = $data['nombre'];
+            $productosCateogria = $producto->categoriaProducto($nombreCategoria);
+            echo json_encode($productosCateogria);
+            break;
+
+        case 'reseñasProducto':
+            $idProducto = $data['id'];
+            $producto->reseñasProducto($idProducto);
+            break;
+
+        case 'productoStock': // Buscamos productos por stock
+            $stock = $data['stock'];
+            $producto->stock($stock);
+            break;
+
+        case 'productoNombre': // Buscamos productos por stock
+            $nombre = $data['nombre'];
+            $producto->nombre($nombre);
+            break;
+
         default:
             echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
             break;
@@ -256,17 +299,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 ////////////////////////////////////////////////////////////////////////////////////////
 
 if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
-    $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
-    switch($accion)
-    {
+    $data = json_decode(file_get_contents('php://input'), true);  // Decodificar el cuerpo JSON
+    $accion = $data['accion'];  // Obtener la acción desde el cuerpo
+
+    switch($accion) {
         case 'producto':
-            $idProducto = $data['id'];
+            $idProducto = $data['id'];  // Asignar correctamente el idProducto
             $producto->eliminar($idProducto);  
             break;
 
         case 'reseña':
-            $idReseña = $data['id'];
+            $idReseña = $data['id'];  // Asignar correctamente el idReseña
             $producto->eliminarReseña($idReseña);
             break;
 
@@ -292,7 +335,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
+    if (isset($_GET['accion'])) {
+    $accion = $_GET['accion']; // Obtenemos la acción de la solicitud
+
 
     switch($accion)
     {
@@ -307,12 +352,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             $producto->obtenerProductosEmpresa($idEmpresa);
             break;
 
-        case 'productoCategoria':
-            $nombreCategoria = $data['nombre'];
-            $productosCateogria = $producto->categoriaProducto($nombreCategoria);
-            echo json_encode($productosCateogria);
-            break;
-
         case 'categorias':
             $categorias = $producto->obtenerCategorias();
             echo json_encode($categorias);
@@ -323,34 +362,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
             echo json_encode($reseñas);
             break;
 
-        case 'reseñasProducto':
-            $idProducto = $data['id'];
-            $producto->reseñasProducto($idProducto);
-            break;
-
-        case 'productoStock': // Buscamos productos por stock
-            $stock = $data['stock'];
-            $productos = $producto->stock($stock);
-            if($productos){
-                echo json_encode($productos);
-            }else{
-                echo json_encode("No se encontraron productos");
-            }
-            break;
-
-        case 'productoNombre': // Buscamos productos por stock
-            $nombre = $data['nombre'];
-            $productos = $producto->nombre($nombre);
-            if($productos){
-                echo json_encode($productos);
-            }else{
-                echo json_encode("No se encontraron productos");
-            }
-            break;
-
         default:
             echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
             break;
     }
+    }else {
+        // Si el método no es GET, también devolvemos un error
+        echo json_encode(['success' => false, 'error' => 'Método no permitido']);
+    }
+
 }
 ?>

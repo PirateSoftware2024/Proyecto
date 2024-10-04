@@ -8,15 +8,15 @@ $(document).ready(function() {
         let correo =  $("#email").val();
         let password = $("#password").val();
         let fecha = $("#fecha").val();
-        let calle = $("#calle").val();
+        /*let calle = $("#calle").val();
         let esquina = $("#esquina").val();
         let localidad = $("#localidad").val();
         let departamento = $("#departamentos").val();
         let nPuerta = $("#nPuerta").val();
         let nApartamento = $("#nApartamento").val();
         let cPostal = $("#cPostal").val();
-        let indicaciones = $("#indicaciones").val();
-        if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina)){
+        let indicaciones = $("#indicaciones").val();*/
+        if(validacion(nombre, apellido, telefono, correo, password, fecha/*, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina*/)){
         var formData = new FormData(this); 
         registrar(formData);
         }
@@ -25,7 +25,7 @@ $(document).ready(function() {
 
 function registrar(formData) {
     $.ajax({
-        url: '../persistencia/registroUsuario.php',
+        url: '../persistencia/usuario/usuario.php',
         type: 'POST',
         data: formData,
         contentType: false, // No establecer el tipo de contenido
@@ -45,7 +45,7 @@ function registrar(formData) {
     });
 }
 
-function validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina){
+function validacion(nombre, apellido, telefono, correo, password, fecha/*, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina*/){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
         return false;
@@ -93,7 +93,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
     }
     $("#password").css("border-color", "#ddd");
 
-    if(verificarTexto(departamento)){
+    /*if(verificarTexto(departamento)){
         $("#departamentos").css("border-color", "red");
         return false;
     }
@@ -135,7 +135,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
         return false;
     }
     $("#cPostal").css("border-color", "#ddd");
-
+*/
     return true;
 }
 

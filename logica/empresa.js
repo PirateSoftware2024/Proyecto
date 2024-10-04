@@ -6,6 +6,7 @@ $(document).ready(function() {
 
     $("#filasProductos").on("click", ".boton-editar", redirigir);
     $("#filasProductos").on("click", ".boton-modificar", modificar);
+    $("#filasProductos").on("click", ".boton-eliminar", eliminarProducto);
     $("#actualizarProductos").click(obtenerProductos);
 
     // ####################################################################################
@@ -26,6 +27,7 @@ $(document).ready(function() {
         event.preventDefault(); // Evitar el envío del formulario por defecto
 
         var formData = new FormData(this); // Crear un nuevo FormData con el formulario
+        formData.append('accion', 'agregar'); // Agregar el parámetro 'accion' para que entre en el switch
         //let nom = $("#nom").val();
         //let desc = $("#desc").val();
         $.ajax({
@@ -50,7 +52,7 @@ $(document).ready(function() {
 });
 
 function obtenerVentas(){
-    fetch('../persistencia/ventasEmpresa.php')
+    fetch('../persistencia/empresa/empresa.php?accion=obtenerVentas')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -62,7 +64,7 @@ function obtenerVentas(){
 
 let datosProductos = [];
 function obtenerProductos(){
-    fetch('../persistencia/obtenerProductosEmpresa.php')
+    fetch('../persistencia/empresa/empresa.php?accion=obtenerDatos')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -86,7 +88,7 @@ function productos(){
                 <td>${producto.oferta}</td>
                 <td>${producto.condicion}</td>
                 <td>${producto.categoria}</td>
-                <td><img src="${producto.file_path}" width=50 height=50></td>
+                <td><img src="../persistencia/assets/${producto.file_path}" width=50 height=50></td>
                 <td>
                     <button class="boton-eliminar" data-id="${producto.id}"><i class="bi bi-trash-fill"></i></button>
                     <button class="boton-editar" data-id="${producto.id}"><i class="bi bi-pencil-fill"></i></button>
@@ -129,7 +131,7 @@ WHERE c.estadoCarrito = 'Confirmado' AND idEmpresa = 1;
 
 let categorias = [];
 function cargarCategorias(){
-    fetch('../persistencia/obtenerCategorias.php')
+    fetch('../persistencia/producto/producto.php?accion=categorias')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -164,7 +166,7 @@ let index;  // Almacenaremos el indice del producto
 function eliminarFila(idBoton){
     index = datosProductos.findIndex(producto => Number(producto.id) === idBoton);
     datosProductos.splice(index, 1);
-    actualizar();
+    productos();
 }
 
 function mostrarDatos(){
@@ -217,22 +219,30 @@ function modificar(){
 
 
 function eliminarProducto() {
-    idProducto = $(this).data("id");
-    fetch('../persistencia/eliminarProducto.php', {
-        method: 'POST',
+    let idProducto = $(this).data("id");
+    fetch('../persistencia/producto/producto.php', {
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ id: idProducto })
+        body: JSON.stringify({ 
+            id: idProducto,
+            accion: "producto"  // Asegúrate de incluir la clave 'accion'
+        })
     })
-    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(response => response.text())  // Cambia a .text() temporalmente para ver la respuesta cruda
     .then(data => {
-        if (data.success) {
-            console.log('Producto eliminado exitosamente');
-            eliminarFila(idProducto);
-            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
-        } else {
-            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        console.log(data);  // Verificar la respuesta sin procesar
+        try {
+            const jsonData = JSON.parse(data);  // Convertir a JSON si es válido
+            if (jsonData.success) {
+                console.log('Producto eliminado exitosamente');
+                eliminarFila(idProducto);
+            } else {
+                alert(jsonData.error);
+            }
+        } catch (error) {
+            console.error('Error al procesar la respuesta como JSON:', error);
         }
     })
     .catch(error => {
@@ -242,8 +252,8 @@ function eliminarProducto() {
 
 
 function modificarProducto(idProducto, nombre, descripcion, precio) {
-    fetch('../persistencia/modificarProducto.php', {
-        method: 'POST',
+    fetch('../persistencia/producto/producto.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -315,13 +325,14 @@ function verificarTexto(cadena){
 
 let reseñas = [];
 function obtenerReseñas(idProducto){
-    fetch('../persistencia/obtenerReseñas.php', {
+    fetch('../persistencia/producto/producto.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            id: idProducto
+            id: idProducto,
+            accion: "reseñasProducto"
         })
     })
     .then(response => response.json())
