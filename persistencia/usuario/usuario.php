@@ -11,7 +11,7 @@ class ApiUsuarios
         $this->pdo = $pdo;
     }
 
-    public function registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo)
+    public function registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
     {
         // Verificar si el correo o el teléfono ya existe
         $stmt = $this->pdo->prepare("SELECT idUsuario FROM usuario WHERE correo = ? OR telefono = ?");
@@ -20,49 +20,50 @@ class ApiUsuarios
         // Verificar si ya existe un usuario con ese correo o teléfono
         if ($stmt->rowCount() > 0) {
             echo json_encode(['success' => false, 'error' => 'El correo o el teléfono ya está registrado.']);
-        } else {
-            // Hash de la contraseña antes de insertarla
-            $hashedPassword = password_hash($contraseña, PASSWORD_DEFAULT);
+            return;
+        }
 
-            // Insertar información de usuario en la base de datos
-            $stmt = $this->pdo->prepare("INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        // Hash de la contraseña antes de insertarla
+        $hashedPassword = password_hash($contraseña, PASSWORD_DEFAULT);
 
-            if (!$stmt) {
-                echo json_encode(['success' => false, 'error' => 'Error en la preparación de la consulta.']);
-                exit;
-            }
+        // Insertar información de usuario en la base de datos
+        $stmt = $this->pdo->prepare("INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion) VALUES (?, ?, ?, ?, ?, ?, ?)");
 
-            $validacion = 'Espera';
-            if ($stmt->execute([$nombre, $apellido, $telefono, $fechaNac, $hashedPassword, $correo, $validacion])) {
-                $idUsuario = $this->pdo->lastInsertId();
-                echo json_encode(['success' => true, 'message' => "El id del usuario es: $idUsuario"]);
-                /*if(cargarDireccion($conexion, $idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)){
-                    echo json_encode(['success' => true]);
-                }*/
+        if (!$stmt) {
+            echo json_encode(['success' => false, 'error' => 'Error en la preparación de la consulta.']);
+            return;
+        }
+
+        $validacion = 'Espera';  // Si 'validacion' es un campo que siempre se pone así, bien.
+        if ($stmt->execute([$nombre, $apellido, $telefono, $fechaNac, $hashedPassword, $correo, $validacion])) {
+            $idUsuario = $this->pdo->lastInsertId();  // Obtener el ID del usuario insertado
+
+            // Intentar registrar la dirección
+            if ($this->cargarDireccion($idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)) {
+                // Solo enviar una respuesta si todo fue exitoso
+                echo json_encode(['success' => true, 'message' => "Usuario y dirección registrados correctamente."]);
             } else {
-                echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos.']);
+                echo json_encode(['success' => false, 'error' => 'Error al registrar la dirección.']);
             }
-        }   
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos.']);
+        }
     }
 
-/*function cargarDireccion($idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones){
-    $sql = "INSERT INTO direcciones (idUsuario, departamento, localidad, calle, esquina, numeroPuerta, numeroApto, cPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = $conexion->prepare($sql);
+    function cargarDireccion($idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO direcciones (idUsuario, departamento, localidad, calle, esquina, numeroPuerta, numeroApto, cPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-            if (!$stmt) {
-                echo json_encode(['success' => false, 'error' => 'Error en la preparación de la declaración: ' . $conexion->error]);
-                exit;
-            }
+        if (!$stmt) {
+            return false;  // Retornar false si hay un problema en la preparación
+        }
 
-            $stmt->bind_param('issssssis', $idUsuario, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
-
-            if ($stmt->execute()) {
-                return true;
-            }else{
-                return false;
-            }
-            $stmt->close();
-        }*/
+        if ($stmt->execute([$idUsuario, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones])) {
+            return true; // Retornar true si se insertó correctamente
+        } else {
+            return false; // Retornar false si hubo un error al ejecutar la consulta
+        }
+    }
 
     public function obtenerUsuarios()
     {
@@ -198,16 +199,16 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $correo = $_POST['correo'];
     /////////////////////////////////////
     // Dirección
-    /*$departamento = $_POST['departamentos'];
+    $departamento = $_POST['departamentos'];
     $localidad = $_POST['localidad'];
     $calle = $_POST['calle'];
     $esquina = $_POST['esquina'];
     $nPuerta = $_POST['nPuerta'];
     $nApartamento = $_POST['nApartamento'];
     $cPostal = $_POST['cPostal'];
-    $indicaciones = $_POST['indicaciones'];*/
+    $indicaciones = $_POST['indicaciones'];
     /////////////////////////////////////
-    $usuario->registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo);
+    $usuario->registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
 }
 
 ////////////////////////////////////////////////////////////////////////

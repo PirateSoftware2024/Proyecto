@@ -111,17 +111,40 @@ class ApiCarrito
 
     public function generarOrden($idCarrito)
     {
-        //session_start();
-        //$idCarrito = $_SESSION['usuario'][0]['idCarrito'];
         $stmt = $this->pdo->prepare("UPDATE carrito SET estadoCarrito = 'Confirmado' WHERE idCarrito = ?");
         // Ejecutar la consulta
         if ($stmt->execute([$idCarrito])) {
-            echo json_encode(['success' => true]);
+            if($this->descontarEnStock($idCarrito)){
+                echo json_encode(['success' => true]);
+            }else{
+                echo json_encode(['success' => false]);
+            }
         } else {
             echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
         }
-    
     }
+
+
+    function descontarEnStock($idCarrito)
+    {
+        $stmt = $this->pdo->prepare("SELECT id, cantidad FROM almacena WHERE idCarrito = ?");
+        if ($stmt->execute([$idCarrito])) {
+            $datos = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recuperar todas las filas
+
+            foreach ($datos as $producto) {
+                $cantidad = $producto['cantidad'];
+                $idProducto = $producto['id'];
+
+                $updateStmt = $this->pdo->prepare("UPDATE producto SET stock = stock - ? WHERE id = ?");
+                if (!$updateStmt->execute([$cantidad, $idProducto])) {
+                    return false; // Si la actualización falla
+                }
+            }
+            return true; // Si todas las actualizaciones son exitosas
+        } else {
+            return "Error en la consulta";
+        }
+    }   
 
     public function crearPaquete($idUsuario, $idDireccion, $telefono, $correo)
     {   
@@ -259,9 +282,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
             break;
 
         case 'generarOrden':
-            //session_start();
-            //$idCarrito = $_SESSION['usuario'][0]['idCarrito'];
-            $idCarrito = $data['idCarrito'];
+            session_start();
+            $idCarrito = $_SESSION['usuario']['idCarrito'];
             $carrito->generarOrden($idCarrito);
             break;
 
@@ -280,4 +302,5 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     
     $carrito->historial($idUsuario);
 }
+
 ?>
