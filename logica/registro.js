@@ -8,15 +8,15 @@ $(document).ready(function() {
         let correo =  $("#email").val();
         let password = $("#password").val();
         let fecha = $("#fecha").val();
-        /*let calle = $("#calle").val();
+        let calle = $("#calle").val();
         let esquina = $("#esquina").val();
         let localidad = $("#localidad").val();
         let departamento = $("#departamentos").val();
         let nPuerta = $("#nPuerta").val();
         let nApartamento = $("#nApartamento").val();
         let cPostal = $("#cPostal").val();
-        let indicaciones = $("#indicaciones").val();*/
-        if(validacion(nombre, apellido, telefono, correo, password, fecha/*, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina*/)){
+        let indicaciones = $("#indicaciones").val();
+        if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina)){
         var formData = new FormData(this); 
         registrar(formData);
         }
@@ -36,16 +36,21 @@ function registrar(formData) {
                 $("#result").html("Usuario registrado con éxito!");
                 limpiarCampos();
             } else {
-                $("#result").html(data.error);
+                $("#result").html(data.error); // Mostrar el error del PHP si no tuvo éxito
             }
         },
-        error: function(jqXHR, textStatus, errorThrown) {
-            $("#result").html("Error al registrar el usuario");
+        error: function(jqXHR) {dsfsd
+            // Intentar obtener el mensaje de error devuelto por el PHP
+            let errorMsg = "Ocurrió un error en la solicitud.";
+            if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
+                errorMsg = jqXHR.responseJSON.error; // Mensaje de error desde PHP
+            }
+            $("#result").html(errorMsg); // Mostrar el error en la interfaz
         }
     });
 }
 
-function validacion(nombre, apellido, telefono, correo, password, fecha/*, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina*/){
+function validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina){
     if(verificarTexto(nombre)){
         $("#nombre").css("border-color", "red");
         return false;
@@ -93,7 +98,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha/*, local
     }
     $("#password").css("border-color", "#ddd");
 
-    /*if(verificarTexto(departamento)){
+    if(verificarTexto(departamento)){
         $("#departamentos").css("border-color", "red");
         return false;
     }
@@ -135,7 +140,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha/*, local
         return false;
     }
     $("#cPostal").css("border-color", "#ddd");
-*/
+    
     return true;
 }
 
@@ -179,7 +184,7 @@ function esMayorDe18(fechaNacimiento) {
 }
 
 function limpiarCampos(){
-    let campos = ["nombre", "apellido", "telefono", "fecha", "email", "password"];
+    let campos = ["nombre", "apellido", "telefono", "fecha", "email", "password", "localidad", "departamento", "calle", "nPuerta", "nApartamento", "cPostal", "esquina", "indicaciones"];
     for(let i=0;i<6;i++){
         $("#"+campos[i]).val("");
     }

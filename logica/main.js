@@ -62,7 +62,10 @@ function buscar(){
 function pantallaCarga() {
     const loader = document.getElementById('loader'); // Obtenemos el elemento
     loader.style.display = 'flex'; // Mostramos
-    
+    // Convertir el carrito actual a JSON y guardar en localStorage
+    carrito = [];
+    const productosJSON = JSON.stringify(carrito);
+    localStorage.setItem('carrito', productosJSON);
     setTimeout(function() {
     window.location.href = "../interfaz/logout.php";
         }, 2000);

@@ -460,25 +460,25 @@ paypal.Buttons({
         return actions.order.capture().then(function(details) {
             alert('Pago realizado con éxito por ' + details.payer.name.given_name);
             generarOrden();
-            setTimeout(function() {
-                window.location.href = "../interfaz/historial.html";
-            }, 2000);
         });
     }
 }).render('#paypal-button-container');
 
 
 function generarOrden(){
-    fetch('../persistencia/generarOrden.php', {
-        method: 'POST',
+    fetch('../persistencia/carrito/carrito.php', {
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
-        }
+        },
+        body: JSON.stringify({ 
+            accion: "generarOrden"
+        }),
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            console.log(data.message);
+            actualizarPage();
         } else {
             console.error('Error:', data.error);
         }
@@ -486,6 +486,15 @@ function generarOrden(){
     .catch(error => {
         console.error('Error en la solicitud:', error);
     });
+}
+
+function actualizarPage(){
+    carrito = [];
+    const productosJSON = JSON.stringify(carrito);
+    localStorage.setItem('carrito', productosJSON);
+    setTimeout(function() {
+        window.location.href = "../interfaz/carrito.html";
+    }, 3000);
 }
 
 function nuevoCarrito() {
