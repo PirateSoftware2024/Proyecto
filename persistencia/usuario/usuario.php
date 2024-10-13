@@ -69,7 +69,7 @@ class ApiUsuarios
     {
         $stmt = $this->pdo->prepare("SELECT * FROM usuario WHERE validacion = 'Si'");
         if ($stmt->execute()) {
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $usuario = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($usuario);
         } else {
             // Error en la consulta
