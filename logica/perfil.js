@@ -21,15 +21,7 @@ $(document).ready(function() {
         modificar("password", "contra");
     });
     $("#verContraseña").click(function (){
-        if ($("#password").attr("type") === "password") {
-            // Cambiamos el tipo del input a texto
-            $("#password").attr("type", "text");
-            $(this).text("Ocultar");
-        } else {
-            // Cambia el tipo a contraseña
-            $("#password").attr("type", "password");
-            $(this).text("Mostrar");
-        }
+        
     });
 });
 
@@ -76,10 +68,10 @@ function tomarDato(input) {
         dato = $(`#${input}`).val();
     }
 
-    modificarProducto(dato, input);
+    modificarUsuario(dato, input);
 }
 
-function modificarProducto(dato, columna) {
+function modificarUsuario(dato, columna) {
     fetch('../persistencia/usuario/usuario.php', {
         method: 'PUT',
         headers: {

@@ -546,7 +546,7 @@ function subirValidacion() {
 // Reseñas
 let reseñas = [];
 function cargarDatosReseñas(){
-    fetch('../persistencia/productos/productos.php?accion=reseñas')
+    fetch('../persistencia/producto/producto.php?accion=reseñas')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
