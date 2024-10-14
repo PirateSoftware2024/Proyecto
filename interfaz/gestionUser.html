@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="Estilos/backoffice.css">
+        <title>Gestión de Usuarios</title>
+    </head>
+    <body>
+        <header>
+            <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
+            <h1>Gestión de Usuarios - AXIS</h1>
+        </header>
+
+        <!-- GESTIÓN DE USUARIOS -->
+        <div class="carta">
+            <div class="buscarUsuario">
+                <h2>Gestión de Usuarios</h2>
+                <label for="buscarUsuario">Buscar Usuario (Por id o nombre)</label><br>
+                <input type="text" id="buscarUsuario1" placeholder="Ingrese dato...">
+                <button id="botonBuscar">Buscar</button>
+                <button id="botonUsuarioTodos">Todos</button><br><br>
+                <table id="tablaUsuario">
+                    <thead>
+                        <tr>
+                            <th>IdUsuario</th>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Fecha de nacimiento</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas3">
+                        <!-- Aquí se insertarán dinámicamente las filas de los usuarios -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- VALIDACIÓN DE USUARIOS -->
+        <div class="carta">
+            <div class="validarUsuario">
+                <h2>Usuarios para validar</h2>
+                <button id="botonValidar">Mostrar</button>
+                <table id="tablaUsuarioValidacion">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Apellido</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Fecha de nacimiento</th>
+                            <th>Validar</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas4">
+                        <!-- Aquí se insertarán dinámicamente las filas de validación de usuarios -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+        </footer>
+        <script src="../logica/jquery-3.7.1.min.js"></script>
+        <script src="../logica/backoffice.js"></script>
+    </body>
+</html>

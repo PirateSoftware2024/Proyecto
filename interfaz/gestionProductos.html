@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="Estilos/backoffice.css">
+        <title>Gestión de Productos</title>
+    </head>
+    <body>
+        <header>
+            <div class="logo"><img src="images/logo.png" alt="Logo" width="105" height="100"></div>
+            <h1>Gestión de Productos - AXIS</h1>
+        </header>
+        
+        <!-- GESTION DE PRODUCTOS -->
+        <div class="carta">
+            <form id="uploadForm" enctype="multipart/form-data">
+                <h2>Agregar Productos</h2>
+                <label for="nombreProducto">Nombre del Producto:</label><br>
+                <input type="text" id="nombre" name="nombre"><br><br>
+                
+                <label for="descripcionProducto">Descripción:</label><br>
+                <input type="text" id="descripcion" name="descripcion"><br><br>
+                
+                <label for="precioProducto">Precio:</label><br>
+                <input type="number" id="precio" name="precio" min="1" step="1"><br><br>
+                
+                <label for="stock">Stock disponible:</label><br>
+                <input type="number" id="stock" name="stock" min="1" required><br><br>
+                    
+                <label for="oferta">Aplica a oferta:</label><br>
+                <select id="oferta" name="oferta">
+                    <option value="" disabled selected>Opciones</option>
+                    <option value="Si">Sí</option>
+                    <option value="No">No</option>
+                </select><br><br>
+
+                <label for="categoria">Seleccione categoría:</label><br>
+                <select id="categoria" name="categoria">
+                    <option value="" disabled selected>Opciones</option>
+                </select><br><br>
+
+                <label for="condicion">Condición:</label><br>
+                <select id="condicion" name="condicion">
+                    <option value="" disabled selected>Opciones</option>
+                    <option value="Nuevo">Nuevo</option>
+                    <option value="Usado">Usado</option>
+                </select><br><br>
+
+                <label for="imagen">Imagen:</label><br>
+                <input type="file" name="imagen" id="imagen" required><br><br>
+
+                <button type="submit" id="boton">Agregar Producto</button>
+            </form>
+            <br>
+            <div class="buscar">
+                <h2>Buscar Productos (Por nombre o disponibilidad)</h2>
+                <input type="text" id="buscarProducto" placeholder="Ingrese dato...">
+                <button id="botonBuscarNombre">Buscar</button>
+                <button id="botonStock">Buscar por stock</button><br><br>
+                <button id="botonTodos">Todos</button>
+        
+                <table id="tablaProducto">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Precio</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- RESEÑAS -->
+        <div class="carta">
+            <div class="reseñas">
+                <h2>Reseñas</h2>
+                <button id="botonReseñas">Actualizar</button>
+                <table id="tablaReseñas">
+                    <thead>
+                        <tr>
+                            <th>Id Reseña</th>
+                            <th>Id Producto</th>
+                            <th>Id Usuario</th>
+                            <th>Reseña</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas5"></tbody>
+                </table>
+            </div>
+        </div>
+        <footer>
+            <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+        </footer>
+
+        <script src="../logica/jquery-3.7.1.min.js"></script>
+        <script src="../logica/backoffice.js"></script>
+    </body>
+</html>

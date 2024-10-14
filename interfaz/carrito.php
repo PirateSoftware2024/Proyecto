@@ -28,11 +28,21 @@
 
         <!-- Div para los productos -->
         <div class="cart-container" id="cartContainer"></div>
-        <div class="resumenPedido">
-            <h1 id="titulo">Resumen de Pedido</h1>
-            <div id="pedido"></div>
-            <button id="comprar">Comprar</button>
-        </div>
+
+        <?php 
+            session_start();
+            if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
+                <!-- Si el usuario esta logueado, mostramos el enlace de "Salir" -->
+                <div class="login-container">
+                    <a id="login" href="login.html">Iniciar Sesión</a>
+                </div>
+        <?php else: ?>
+            <div class="resumenPedido">
+                <h1 id="titulo">Resumen de Pedido</h1>
+                <div id="pedido"></div>
+                <button id="comprar">Comprar</button>
+            </div>
+        <?php endif; ?>
 
         <footer>
             <p>© 2024 Pirate Software. Todos los derechos reservados.</p>

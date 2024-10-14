@@ -22,7 +22,7 @@
                 <ul class="nav-menu"  id="nav-links">
                     <li><a href="historial.html">Mis compras</a></li>
                     <li><a href="perfil.html">Mi perfil</a></li>
-                    <li style="font-size: 25px"><a href="carrito.html" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
+                    <li style="font-size: 25px"><a href="carrito.php" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
                     
                     <?php 
                     session_start();

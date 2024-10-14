@@ -1,85 +1,149 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Arial', sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f4f4f9;
+    overflow-x: hidden; /* Evitar scroll horizontal */
 }
 
 header {
     display: flex;
     align-items: center;
-    padding: 1px;
-    width: 100%;
-    height: 85px;
+    justify-content: space-between;
+    padding: 5px 10px;
     background-color: #333;
     color: white;
-    text-align: center;
 }
 
-form {
-    padding-top: 10px;
-    padding-left: 20px;
+header .logo img {
+    margin-right: 10px;
 }
 
-.buscarPedido, .buscarUsuario, .buscar, .validarUsuario, .tablaProducto {
-    padding-left: 20px;
+header h1 {
+    flex-grow: 1;
 }
 
-.buscarPedido input, .buscarUsuario input, .buscar input {
+.carta {
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 22px;
+    color: #000000;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 5px;
+}
+
+label {
+    font-size: 14px;
     margin-bottom: 5px;
+    display: inline-block;
+    color: #555;
 }
 
-table .boton-eliminar, table .boton-eliminar-usuario {
-    background-color: rgb(212, 97, 97);
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select {
+    width: 97%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+#oferta, #categoria, #condicion {
+    width: 100%;
 }
 
-table .boton-editar, table .boton-editar-usuario {
-    background-color: rgb(204, 204, 105);
+button {
+    background-color: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
 }
+
+button:hover {
+    background-color: #2ecc71;
+}
+
+.boton-modificar{
+    background-color: #4c5b52;
+}
+.boton-modificar:hover {
+    
+    background-color: #4c4e5b;
+} 
+
+.boton-eliminar{
+    background-color: rgb(212, 21, 21);
+}
+
+.boton-editar{
+    background-color: rgb(230, 206, 27);
+}
+
+.boton-cancelar{
+    background-color: #30388f;
+}
+
+.boton-eliminar:hover{
+    background-color: #711512;
+}
+
+.boton-editar:hover {
+    background-color: #7a6713;
+}
+
+.boton-cancelar:hover{
+    background-color: #30388f;
+} 
 
 table {
     width: 100%;
-    margin-bottom: 50px;
+    margin-top: 20px;
+    border-collapse: collapse;
 }
 
 th, td {
-    border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
     text-align: left;
 }
 
 th {
-    background-color: #f2f2f2;
+    background-color: #ecf0f1;
+    font-weight: bold;
 }
 
-button {
-    background-color: rgb(101, 141, 101);
-    border-radius: 10%;
-    cursor: pointer;
+tr:hover {
+    background-color: #f9f9f9;
 }
+
 
 footer {
     text-align: center;
     background-color: #333;
     color: #fff;
-    padding: 10px;
-    position: fixed;
-    bottom: 0;
+    padding: 15px;
+    position: relative;
     width: 100%;
-    margin-top: 50px;
-}
-
-.carta {
-    margin: 50px;
-    display: block;
-    text-align: left;
-    max-width: 600px;
-    width: 90%;
-    background-color: #f0f0f0;
-    border-radius: 15px;
-    padding: 10px;
-    transition: transform 0.3s ease;
-    font-size: 12px;
-}
-.carta:hover {
-    transform: scale(1.05);
+    margin-top: 20px;
 }

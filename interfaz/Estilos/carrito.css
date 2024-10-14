@@ -60,6 +60,28 @@ header {
     background-color: #45a049;
 }
 
+.login-container {
+    display: flex;                     /* Usar Flexbox para centrar el contenido */
+    justify-content: center;           /* Centrar horizontalmente */
+    align-items: center;               /* Centrar verticalmente */
+    margin-top: 20px;                    /* Ajusta la altura según sea necesario */
+}
+
+#login {
+    display: inline-block;              /* Asegura que el enlace se comporte como un botón */
+    background-color: #27ae60;         /* Color de fondo */
+    color: white;                       /* Color del texto */
+    padding: 10px 20px;                /* Espaciado interno */
+    text-decoration: none;              /* Sin subrayado */
+    border-radius: 5px;                /* Bordes redondeados */
+    font-size: 16px;                    /* Tamaño de fuente */
+    transition: background-color 0.3s; /* Transición suave */
+}
+
+#login:hover {
+    background-color: #2ecc71;          /* Color de fondo al pasar el ratón */
+}
+
 .resumenPedido{
     width: 80%;
     margin: 10px auto 85px; 
