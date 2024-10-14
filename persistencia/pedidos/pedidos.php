@@ -100,6 +100,32 @@ class ApiPedidos
         // Devolver los resultados en formato JSON
         echo json_encode($arrayDatos);
     }
+
+    public function graficaDatos()
+    {
+        $stmt = $this->pdo->prepare("SELECT e.idEmpresa, e.nombre, (a.precio * a.cantidad) AS ventas
+                                    FROM empresa e
+                                    JOIN producto p ON p.idEmpresa = e.idEmpresa
+                                    JOIN almacena a ON a.id = p.id
+                                    JOIN carrito c ON c.idCarrito = a.idCarrito 
+                                    WHERE c.estadoCarrito = 'Confirmado'
+                                    GROUP BY e.idEmpresa
+                                    ORDER BY ventas DESC
+                                    LIMIT 10;");
+
+        if ($stmt->execute()) {
+            $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($datos)) {
+                echo json_encode($datos);
+            } else {
+                // No hay usuarios en espera de validación
+                echo json_encode(['success' => false, 'message' => 'No hay usuarios']);
+            }
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
 }
 
 
@@ -118,9 +144,18 @@ $pedido = new ApiPedidos($pdo);
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $data = json_decode(file_get_contents('php://input'), true);
-    
-    $pedidos = $pedido->obtenerTodos();
-    echo json_encode($pedidos);
+    $accion = $_GET['accion'];
+    switch($accion)
+    {
+        case 'pedidos':            
+            $pedidos = $pedido->obtenerTodos();
+            echo json_encode($pedidos);
+            break;
+
+        case 'grafica':            
+            $pedido->graficaDatos();
+            break;   
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////////////

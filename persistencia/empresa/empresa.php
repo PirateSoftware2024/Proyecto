@@ -31,7 +31,7 @@ class ApiEmpresa
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    public function registro($nombre, $rut, $numeroCuenta, $telefono, $departamento, $calle, $numero, $nApartamento, $correo, $password)
+    public function registro($nombre, $rut, $numeroCuenta, $telefono, $correo, $password,  $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
     {
         // Verificar si el correo, teléfono, rut o número de cuenta ya están registrados
         $stmt = $this->pdo->prepare("SELECT idEmpresa FROM empresa WHERE correo = ? OR telefono = ? OR rut = ? OR numeroCuenta = ?");
@@ -47,20 +47,70 @@ class ApiEmpresa
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Insertar información de la empresa en la base de datos
-        $stmt = $this->pdo->prepare("INSERT INTO empresa (nombre, rut, numeroCuenta, telefono, departamento, calle, numero, nroApartamento, correo, password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO empresa (nombre, rut, numeroCuenta, telefono, correo, password) VALUES (?, ?, ?, ?, ?, ?)");
 
         // Verificar si la preparación de la declaración SQL fue exitosa
         if (!$stmt) {
             echo json_encode(['success' => false, 'error' => 'Error en la preparación de la declaración.']);
             return;
         }
-    
-        // Ejecutar la consulta de inserción
-        if ($stmt->execute([$nombre, $rut, $numeroCuenta, $telefono, $departamento, $calle, $numero, $nApartamento, $correo, $hashedPassword])) {
-            echo json_encode(['success' => true, 'message' => 'Registro exitoso']);
-        } else {
+        
+        ////////////////////////
+        if ($stmt->execute([$nombre, $rut, $numeroCuenta, $telefono, $correo, $hashedPassword])) {
+            $idEmpresa = $this->pdo->lastInsertId();  // Obtener el ID del usuario insertado
+
+            // Intentar registrar la dirección
+            if ($this->cargarDireccion($idEmpresa, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)) {
+                // Solo enviar una respuesta si todo fue exitoso
+                echo json_encode(['success' => true, 'message' => "Usuario y dirección registrados correctamente."]);
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Error al registrar la dirección.']);
+            }
+        } else {    
             echo json_encode(['success' => false, 'error' => 'Error al insertar en la base de datos.']);
-        }      
+        }  
+    }
+
+    
+    function cargarDireccion($idEmpresa, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO direcciones (idEmpresa, departamento, localidad, calle, esquina, numeroPuerta, numeroApto, cPostal, indicaciones) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+        if (!$stmt) {
+            return false;  // Retornar false si hay un problema en la preparación
+        }
+
+        if ($stmt->execute([$idEmpresa, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones])) {
+            return true; // Retornar true si se insertó correctamente
+        } else {
+            return false; // Retornar false si hubo un error al ejecutar la consulta
+        }
+    }
+
+    public function graficaDatos()
+    {
+        $stmt = $this->pdo->prepare("SELECT e.idEmpresa, e.nombre, SUM(a.cantidad) AS ventas
+                                    FROM empresa e
+                                    JOIN producto p ON p.idEmpresa = e.idEmpresa
+                                    JOIN almacena a ON a.id = p.id
+                                    JOIN carrito c ON c.idCarrito = a.idCarrito 
+                                    WHERE c.estadoCarrito = 'Confirmado'
+                                    GROUP BY e.idEmpresa
+                                    ORDER BY ventas DESC
+                                    LIMIT 10;");
+
+        if ($stmt->execute()) {
+            $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($datos)) {
+                echo json_encode($datos);
+            } else {
+                // No hay usuarios en espera de validación
+                echo json_encode(['success' => false, 'message' => 'No hay usuarios']);
+            }
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
     }
 }
 
@@ -79,22 +129,26 @@ $empresa = new ApiEmpresa($pdo);
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $accion = $_GET['accion'];
-    session_start();
-    $idEmpresa = $_SESSION['empresa']['idEmpresa'];
     switch($accion)
     {
         case 'obtenerDatos':
+            session_start();
+            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
             $empresaDatos = $empresa->obtenerDatos($idEmpresa);
             echo json_encode($empresaDatos);
             break;
 
         case 'obtenerVentas':
+            session_start();
+            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
             $datosVentas = $empresa->ventasEmpresa($idEmpresa);
             echo json_encode($datosVentas);
             break;
+        
+        case 'grafica':
+            $empresa->graficaDatos();
+            break;
     }
-
-    
 }
 
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
@@ -103,13 +157,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     $rut = $_POST['rut'];
     $numeroCuenta = $_POST['nCuenta'];
     $telefono = $_POST['telefono'];
-    $departamento = $_POST['departamentos'];
-    $calle = $_POST['calle'];
-    $numero = $_POST['numero'];
-    $nApartamento = $_POST['nApartamento'];
     $correo = $_POST['correo'];
-    $password = $_POST['password']; 
+    $password = $_POST['password'];
+    
+    // Direccion
+    $departamento = $_POST['departamentos'];
+    $localidad = $_POST['localidad'];
+    $calle = $_POST['calle'];
+    $esquina = $_POST['esquina'];
+    $nPuerta = $_POST['nPuerta'];
+    $nApartamento = $_POST['nApartamento'];
+    $cPostal = $_POST['cPostal'];
+    $indicaciones = $_POST['indicaciones'];
 
-    $empresa->registro($nombre, $rut, $numeroCuenta, $telefono, $departamento, $calle, $numero, $nApartamento, $correo, $password);
+    $empresa->registro($nombre, $rut, $numeroCuenta, $telefono, $correo, $password,  $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
 }
 ?>

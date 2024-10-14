@@ -62,7 +62,25 @@ class ApiProducto
     }
 
     public function eliminar($idProducto)
-{
+    {
+    
+    // Verificar si el producto está en un carrito
+    $stmt = $this->pdo->prepare("SELECT COUNT(*) as conteo FROM almacena WHERE id = ?");
+    $stmt->execute([$idProducto]);
+    $result = $stmt->fetch();
+
+    if ($result){
+        if ($result['conteo'] > 0){
+            // Producto está en un carrito, no se puede modificar el precio
+            echo json_encode(['success' => false, 'error' => 'No se puede eliminar el producto porque está en un carrito.']);
+            return;
+        } 
+    }else{
+        // Error al verificar la existencia del producto en un carrito
+        echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito']);
+        return;
+    }
+
     // Eliminamos las reseñas relacionadas con el producto
     $stmt = $this->pdo->prepare("DELETE FROM reseñas WHERE idProducto = ?");
     $stmt->execute([$idProducto]);
@@ -86,7 +104,7 @@ class ApiProducto
         if ($result){
             if ($result['conteo'] > 0){
                 // Producto está en un carrito, no se puede modificar el precio
-                echo json_encode(['success' => false, 'error' => 'No se puede modificar el precio porque el producto está en un carrito.']);
+                echo json_encode(['success' => false, 'error' => 'No se puede modificar el producto porque está en un carrito.']);
                 return;
             } 
         }else{
@@ -181,17 +199,17 @@ class ApiProducto
         if (count($result) > 0) {
             echo json_encode(['success' => true, 'datos' => $result]);
         } else {
-            echo json_encode(['success' => false, 'datos' => "No se encontraron productos"]);
+            echo json_encode(['success' => false, 'datos' => "No se encontraron productos con ese stock"]);
         }
     }
 
     public function nombre($nombre)
     {
         // Preparar la consulta
-        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE nombre = '$nombre'");
+        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE nombre = ?");
     
         // Ejecutar la consulta
-        $stmt->execute();
+        $stmt->execute([$nombre]);
     
         // Obtener todos los resultados
         $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -200,7 +218,32 @@ class ApiProducto
         if ($result) {
             echo json_encode(['success' => true, 'datos' => $result]);
         } else {
-            echo json_encode(['success' => false, 'datos' => "No se encontraron productos"]);
+            echo json_encode(['success' => false, 'datos' => "No se encontraron productos con ese nombre"]);
+        }
+    }
+
+    public function graficaDatos()
+    {
+        $stmt = $this->pdo->prepare("SELECT p.id, p.nombre, COUNT(*) AS compras
+                                    FROM producto p
+                                    JOIN almacena a ON a.id = p.id
+                                    JOIN carrito c ON c.idCarrito = a.idCarrito 
+                                    WHERE c.estadoCarrito = 'Confirmado'
+                                    GROUP BY p.id
+                                    ORDER BY compras DESC
+                                    LIMIT 10;");
+
+        if ($stmt->execute()) {
+            $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($datos)) {
+                echo json_encode($datos);
+            } else {
+                // No hay usuarios en espera de validación
+                echo json_encode(['success' => false, 'message' => 'No hay usuarios']);
+            }
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
 }
@@ -247,7 +290,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit; // Terminar la ejecución
             }
             session_start();
-            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
+            $idEmpresa = $_SESSION['empresa']['idEmpresa'] ?? $_POST['idEmpresa'] ?? null;
             $nombre = $_POST['nombre'];
             $descripcion = $_POST['descripcion'];
             $precio = $_POST['precio'];
@@ -360,6 +403,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         case 'reseñas':
             $reseñas = $producto->obtenerReseñas();
             echo json_encode($reseñas);
+            break;
+        
+        case 'grafica':
+            $producto->graficaDatos();
             break;
 
         default:

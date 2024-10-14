@@ -150,6 +150,30 @@ class ApiUsuarios
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
+
+    public function graficaDatos()
+    {
+        $stmt = $this->pdo->prepare("SELECT c.idUsuario, u.nombre, COUNT(*) AS compras
+                                    FROM carrito c
+                                    JOIN usuario u ON u.idUsuario = c.idUsuario
+                                    WHERE c.estadoCarrito = 'Confirmado'
+                                    GROUP BY c.idUsuario, u.nombre
+                                    ORDER BY compras DESC
+                                    LIMIT 10;");
+
+        if ($stmt->execute()) {
+            $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($datos)) {
+                echo json_encode($datos);
+            } else {
+                // No hay usuarios en espera de validación
+                echo json_encode(['success' => false, 'message' => 'No hay usuarios']);
+            }
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
 }
 
 // Configuracion de la base de datos
@@ -182,6 +206,10 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         
         case 'usuariosValidar':
             $usuario->usuariosValidar();
+            break;
+
+        case 'grafica':
+            $usuario->graficaDatos();
             break;
     }
 }
