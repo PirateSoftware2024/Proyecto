@@ -19,7 +19,8 @@ function cargarDatos(){
 $(document).ready(function() {
     $("#filas4").on("click", ".opcionValidar", subirValidacion);
     $("#botonValidar").click(validar);
-    $("#agregar").click(tomarDatos);
+
+    //$("#agregar").click(tomarDatos);
     $("#botonBuscarNombre").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
@@ -32,6 +33,8 @@ $(document).ready(function() {
     $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
+    $("#filas").on("click", ".boton-cancelar", cancelar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
+    cargarCategorias();
     $("#formulario").submit(function(event) {
     event.preventDefault(); // Evita el envío del formulario por defecto    
     });
@@ -72,6 +75,13 @@ function buscarStock() {
     }
 }
 
+function cancelar(){
+    habilitarBotones();
+    actualizar();
+    $("#nombre").css("border-color", "#ccc");
+    $("#descripcion").css("border-color", "#ccc");
+    $("#precio").css("border-color", "#ccc");
+}
 function buscarProducto(){
     let nombre = $("#buscarProducto").val();
     fetch('../persistencia/producto/producto.php', {
@@ -99,49 +109,62 @@ function buscarProducto(){
         console.error('Error al obtener los datos:', error);
     });
 }
-
-// Función para agregar un producto
-function agregar(nombre, descripcion, precio) {
-    // Utilizamos push para agregar nuevos productos
-    fetch('../persistencia/producto/producto.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            nombre: nombre,
-            descripcion: descripcion,
-            precio: precio, 
-            accion: "agregar"
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            // Si el producto se agregó correctamente, actualizar la lista
-        cargarDatos();
-        } else {
-            console.error('Error al agregar el producto:', data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error al obtener los datos:', error);
-    });
-}
-
-
-// Función para tomar los datos del formulario
-function tomarDatos() {
+/////////////////////////////////////////
+$('#uploadForm').on('submit', function(event) {
     let nombre = $("#nombre").val();
     let descripcion = $("#descripcion").val();
     let precio = Number($("#precio").val());
 
     if(validacion(nombre, descripcion, precio)){
-        // Llamamos a la funcion agregar y agregamos sus atributos
-        agregar(nombre, descripcion, precio); 
-    }else{
-        alert("Hay campos erroneos");
-    }   
+    var formData = new FormData(this); // Crear un nuevo FormData con el formulario
+    formData.append('accion', 'agregar'); // Agregar el parámetro 'accion' para que entre en el switch
+    formData.append('idEmpresa', '9'); // Agregar el parámetro 'accion' para que entre en el switch
+    //let nom = $("#nom").val();
+    //let desc = $("#desc").val();
+    $.ajax({
+        url: '../persistencia/producto/producto.php',
+        type: 'POST',
+        data: formData,
+        contentType: false, // No establecer el tipo de contenido
+        processData: false, // No procesar los datos (FormData se encarga)
+        success: function(data) {
+            if (data.success) {
+                alert("Producto publicado!")
+            } else {
+                alert("Error: "+data.error);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('Error en la solicitud:', textStatus, errorThrown);
+            $('#result').html('<p>Error al subir la imagen.</p>');
+        }
+    });
+}else{
+    alert("Hay campos erroneos");
+}   
+event.preventDefault(); // Evitar el envío del formulario por defecto
+});
+
+
+let categorias = [];
+function cargarCategorias(){
+    fetch('../persistencia/producto/producto.php?accion=categorias')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        categorias = jsonData; // Una vez leido los datos acutalizamos
+        // Generamos categorias
+        actualizarCategorias();
+    });
+}
+
+function actualizarCategorias(){
+    for (let i = 0; i < categorias.length; i++) {
+        const categoria = categorias[i];
+        const $categoriaButton = $(`<option value="${categoria.nombre}">${categoria.nombre}</option>`);
+        $("#categoria").append($categoriaButton);
+    }
 }
 
 // Función para generar las filas de la tabla
@@ -165,13 +188,16 @@ function actualizar() {
                 <button class="boton-eliminar" data-id="${producto.id}">Eliminar</button>
                 <button class="boton-editar" data-id="${producto.id}">Editar</button>
                 <button class="boton-modificar" data-id="${producto.id}">Modificar</button>
+                <button class="boton-cancelar" data-id="${producto.id}">Cancelar</button>
                 </td>
             </tr>
         `);
         $("#filas").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
     }
     $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
+    $(".boton-cancelar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
 }
+
 
 let idBoton; // Almacenaremos el id del producto
 let index;  // Almacenaremos el indice del producto
@@ -197,8 +223,19 @@ function mostrarDatos(){
     $("#nombre").val(productos[index].nombre);
     $("#descripcion").val(productos[index].descripcion);
     $("#precio").val(productos[index].precio);
-
+    
+    $("#categoria").val(productos[index].nombre).prop('disabled', true);
+    $("#oferta").val(productos[index].descripcion).prop('disabled', true);
+    $("#imagen").prop('disabled', true);
+    $("#condicion").val(productos[index].condicion).prop('disabled', true);
+    
+    
     $('.boton-modificar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
+    $('.boton-cancelar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
+    $('.boton-modificar[data-id="' + idBoton + '"]').css("background-color", "#2ecc71"); // Cambia el color de fondo a rojo
+    $('.boton-cancelar[data-id="' + idBoton + '"]').css("background-color", "#0a20e4"); // Cambia el color de fondo a rojo
+    alert("Al finalizar presione 'Modificar' en el producto seleccionado!");
+    $("html, body").animate({ scrollTop: 0 }, "slow");
 }   
 
 
@@ -206,13 +243,13 @@ function mostrarDatos(){
 function cancelarBotones(){
     $(".boton-eliminar").attr("disabled", "disabled");
     $(".boton-editar").attr("disabled", "disabled");
-    $("#agregar").attr("disabled", "disabled");
+    $("#boton").attr("disabled", "disabled");
 }
 
 function habilitarBotones(){
     $(".boton-eliminar").removeAttr("disabled", "disabled");
     $(".boton-editar").removeAttr("disabled", "disabled");
-    $("#agregar").removeAttr("disabled", "disabled");
+    $("#boton").removeAttr("disabled", "disabled");
 }
 
 function modificar(){
@@ -241,21 +278,21 @@ function validacion(nombre, descripcion, precio){
         $("#nombre").css("border-color", "red");
         return false;
     }
-    $("#nombre").css("border-color", "black");
+    $("#nombre").css("border-color", "#ccc");
 
     if(descripcion.length < 10 || descripcion.length > 20){
         $("#descripcion").css("border-color", "red");
         return false;
     }
-    $("#descripcion").css("border-color", "black");
+    $("#descripcion").css("border-color", "#ccc");
 
     
     if(isNaN(precio) || precio < 1) {
         $("#precio").css("border-color", "red");
         return false;
     }
-    $("#precio").css("border-color", "black");
-    
+    $("#precio").css("border-color", "#ccc");
+
     return true;
 }
 
@@ -276,7 +313,7 @@ function verificarTexto(cadena){
 function eliminarProducto() {
     idProducto = $(this).data("id");
     fetch('../persistencia/producto/producto.php', {
-        method: 'POST',
+        method: 'DELETE',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -303,7 +340,7 @@ function eliminarProducto() {
 
 function modificarProducto(idProducto, nombre, descripcion, precio) {
     fetch('../persistencia/producto/producto.php', {
-        method: 'POST',
+        method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
@@ -322,11 +359,16 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
             productos[index].nombre = nombre;
             productos[index].descripcion = descripcion;
             productos[index].precio = precio;
+            
             // Puedes actualizar la interfaz aquí si es necesario
         } else {
             // Si hubo un error en la modificación
             alert(data.error);
         }
+        $("#categoria").val(productos[index].nombre).prop('disabled', false);
+        $("#oferta").val(productos[index].descripcion).prop('disabled', false);
+        $("#imagen").prop('disabled', false);
+        $("#condicion").val(productos[index].condicion).prop('disabled', false);
     })
     .catch(error => {
         alert('Ocurrió un error inesperado al intentar modificar el producto.');
@@ -430,8 +472,6 @@ function cargarDatosUsuario(){
         console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
         usuarios = jsonData; // Una vez leido los datos acutalizamos
         actualizarUsuarios();
     });
@@ -449,12 +489,9 @@ function actualizarUsuarios() {
                 <td>${usuario.apellido}</td>
                 <td>${usuario.telefono}</td>
                 <td>${usuario.correo}</td>
-                <td>${usuario.password}</td>
                 <td>${usuario.fechaNac}</td>
                 <td>
-                <button class="boton-eliminar-usuario" data-id="${usuario.idUsuario}">Eliminar</button>
-                <button class="boton-editar-usuario" data-id="${usuario.idUsuario}">Editar</button>
-                <button class="boton-modificar-usuario" data-id="${usuario.idUsuario}">Modificar</button>
+                <button class="boton-eliminar" data-id="${usuario.idUsuario}">Eliminar</button>
                 </td>
             </tr>
         `);
@@ -486,7 +523,6 @@ function usuariosValidar() {
         const usuario = usuariosParaValidar[i];
         let fila = $(`
             <tr>
-                <td>${usuario.idUsuario}</td>
                 <td>${usuario.nombre}</td>
                 <td>${usuario.apellido}</td>
                 <td>${usuario.telefono}</td>
@@ -507,7 +543,6 @@ function usuariosValidar() {
 
 function subirValidacion() {
     // Obtener la opción seleccionada y el idUsuario del botón
-    console.log("Entreeeee");
     let opcion = $("#selectValidacion").val();
     let idUsuario = $(this).data("id");
 
@@ -518,7 +553,7 @@ function subirValidacion() {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            id: idUsuario,
+            idUsuario: idUsuario,
             opcion: opcion,
             accion: "validar"
         })
@@ -558,21 +593,24 @@ function cargarDatosReseñas(){
 }
 function actualizarReseñas() {
     $("#filas5").empty();
-    
-    for (let i = 0; i < reseñas.length; i++) {
-        const reseña = reseñas[i];
-        let fila = $(`
-            <tr>
-                <td>${reseña.idReseña}</td>
-                <td>${reseña.idProducto}</td>
-                <td>${reseña.idUsuario}</td>
-                <td>${reseña.reseña}</td>
-                <td>
-                <button class="boton-eliminar-reseña" data-id="${reseña.idReseña}">Eliminar</button>
-                </td>
-            </tr>
-        `);
-        $("#filas5").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
+    if(reseñas.length < 1){
+        alert("No hay reseñas!");
+    }else{
+        for (let i = 0; i < reseñas.length; i++) {
+            const reseña = reseñas[i];
+            let fila = $(`
+                <tr>
+                    <td>${reseña.idReseña}</td>
+                    <td>${reseña.idProducto}</td>
+                    <td>${reseña.idUsuario}</td>
+                    <td>${reseña.reseña}</td>
+                    <td>
+                    <button class="boton-eliminar-reseña" data-id="${reseña.idReseña}">Eliminar</button>
+                    </td>
+                </tr>
+            `);
+            $("#filas5").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
+        }
     }
 }
 
@@ -593,7 +631,7 @@ function eliminarReseña() {
         if (data.success) {
             index = reseñas.findIndex(reseña => Number(reseña.idReseña) === idReseña);
             reseñas.splice(index, 1);
-            actualizarReseñas();
+            alert("Reseña eliminada!");
             // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
         } else {
             alert(data.error);  // Opcional: muestra el mensaje de error en una alerta

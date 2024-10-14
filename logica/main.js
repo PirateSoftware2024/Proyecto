@@ -160,25 +160,29 @@ function verMas(idBoton){
 }   
 
 function actualizar(){
-    // Generamos las tarjetas de productos
-    $("#productContainer").html("");
-    for (let i = 0; i < products.length; i++) {
-        const product = products[i];
-        const $productCard = $(`
-            <div class="product-card">
-                <div class="image-container">
-                    <img src="../persistencia/assets/${product.file_path}">
+    if(products.length < 1){
+        alert("No hay productos...");
+    }else{
+        // Generamos las tarjetas de productos
+        $("#productContainer").html("");
+        for (let i = 0; i < products.length; i++) {
+            const product = products[i];
+            const $productCard = $(`
+                <div class="product-card">
+                    <div class="image-container">
+                        <img src="../persistencia/assets/${product.file_path}">
+                    </div>
+                    <h3>${product.nombre}</h3>
+                    <p>${product.descripcion}</p>
+                    <div class="price">$${product.precio}</div>
+                    <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
+                    <button class="boton-reseña" data-id="${product.id}">Ver más</button>
                 </div>
-                <h3>${product.nombre}</h3>
-                <p>${product.descripcion}</p>
-                <div class="price">$${product.precio}</div>
-                <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
-                <button class="boton-reseña" data-id="${product.id}">Ver más</button>
-            </div>
-        `);
+            `);
         
-        $("#productContainer").append($productCard);
-    }   
+            $("#productContainer").append($productCard);
+        }   
+    }
 }
 
 

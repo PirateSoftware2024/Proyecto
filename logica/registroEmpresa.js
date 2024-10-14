@@ -6,10 +6,14 @@ $(document).ready(function() {
         let rut = $("#rut").val(); // Cambiado a cadena
         let numeroCuenta = $("#nCuenta").val(); // Cambiado a cadena
         let telefono = $("#telefono").val(); // Cambiado a cadena
-        let departamento = $("#departamentos").val();
         let calle = $("#calle").val();
-        let numero = $("#numeroPuerta").val(); // Cambiado a cadena
-        let nApartamento = $("#numeroApartamento").val(); // Cambiado a cadena
+        let esquina = $("#esquina").val();
+        let localidad = $("#localidad").val();
+        let departamento = $("#departamentos").val();
+        let nPuerta = $("#nPuerta").val();
+        let nApartamento = $("#nApartamento").val();
+        let cPostal = $("#cPostal").val();
+        let indicaciones = $("#indicaciones").val();
         let correo = $("#email").val();
         let password = $("#password").val();
         // Validar los campos
