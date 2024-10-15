@@ -187,25 +187,24 @@ $(document).ready(function() {
         }
     });
 
-    $(document).ready(function() {
-        $.ajax({
-            url: '../persistencia/pedidos/pedidos.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                // Crear arreglos para los nombres y las ventas
-                const nombres = data.map(item => item.nombre);
-                const ventas = data.map(item => item.ventas);
+    $.ajax({
+        url: '../persistencia/pedidos/pedidos.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
+        method: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            // Crear arreglos para los nombres y las ventas
+            const nombres = data.map(item => item.nombre);
+            const ventas = data.map(item => item.ventas);
                 
-                // Calcular el total de ventas
-                const totalVentas = ventas.reduce((acc, current) => acc + current, 0);
+            // Calcular el total de ventas
+            const totalVentas = ventas.reduce((suma, valor) => suma + Number(valor), 0);
                 
-                // Mostrar el total de ventas en un elemento HTML
-                $('#totalVentas').html(`Total de Ventas: $${totalVentas}`);
+            // Mostrar el total de ventas en un elemento HTML
+            $('#totalVentas').html(`Total de Ventas: $${totalVentas}`);
     
-                const ctx = document.getElementById('total').getContext('2d');
-                const ventasPastel = new Chart(ctx, {
-                    type: 'pie', // Cambia a 'doughnut' si prefieres un gráfico de dona
+            const ctx = document.getElementById('total').getContext('2d');
+            const ventasPastel = new Chart(ctx, {
+                type: 'pie', // Cambia a 'doughnut' si prefieres un gráfico de dona
                     data: {
                         labels: nombres,
                         datasets: [{
@@ -232,31 +231,30 @@ $(document).ready(function() {
                             borderWidth: 1
                         }]
                     },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top',
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        const label = tooltipItem.label || '';
-                                        const value = tooltipItem.raw || 0;
-                                        return `${label}: ${value}`;
-                                    }
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const label = tooltipItem.label || '';
+                                    const value = tooltipItem.raw || 0;
+                                    return `${label}: ${value}`;
                                 }
                             }
                         }
                     }
-                });
-            },
-            error: function(xhr, status, error) {
-                console.error('Error en la solicitud:', error);
-            }
-        });
-    });    
+                }
+            });
+        },
+    error: function(xhr, status, error) {
+        console.error('Error en la solicitud:', error);
+    }
 });
+});    
 /*
 const ctx = document.getElementById('myChart');
 const names = ['Carlos', 'Pedro', 'Maria'];
