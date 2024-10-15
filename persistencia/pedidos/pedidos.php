@@ -103,7 +103,7 @@ class ApiPedidos
 
     public function graficaDatos()
     {
-        $stmt = $this->pdo->prepare("SELECT e.idEmpresa, e.nombre, (a.precio * a.cantidad) AS ventas
+        $stmt = $this->pdo->prepare("SELECT e.idEmpresa, e.nombre, SUM(a.precio * a.cantidad) AS ventas
                                     FROM empresa e
                                     JOIN producto p ON p.idEmpresa = e.idEmpresa
                                     JOIN almacena a ON a.id = p.id
