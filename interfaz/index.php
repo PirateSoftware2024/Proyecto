@@ -15,8 +15,8 @@
                     <span class="menu-icon"></span>
                 </button>
                 <a href="index.php"><img src="images/logo.png" alt="Logo" class="logo"></a>
-                <input type="text" placeholder="Buscar...">
-                <button class="search-button">Buscar</button>
+                <input type="text" placeholder="Buscar..." id="buscarProducto">
+                <button class="search-button" id="btnBuscar">Buscar</button>
             </div>
             <nav>
                 <ul class="nav-menu"  id="nav-links">

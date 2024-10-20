@@ -204,3 +204,54 @@ body::before {
 body.modal-open::before {
     display: block;
 }
+
+.radio-group {
+    margin: 20px 0; /* Espaciado vertical */
+    padding: 15px; /* Espaciado interno para el contenedor */
+    background-color: #ffffff; /* Fondo blanco para el contenedor */
+    border-radius: 8px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+}
+
+.radio-group label {
+    display: flex; /* Utiliza Flexbox para alinear elementos */
+    align-items: center; /* Centra verticalmente los elementos */
+    margin-bottom: 10px; /* Espaciado entre opciones */
+    padding: 10px 15px; /* Espaciado interno */
+    border: 1px solid #ddd; /* Borde gris claro */
+    border-radius: 5px; /* Bordes redondeados */
+    transition: background-color 0.3s, border-color 0.3s; /* Transiciones suaves */
+    cursor: pointer; /* Cambia el cursor al pasar sobre la etiqueta */
+}
+
+.radio-group input[type="radio"] {
+    margin-right: 10px; /* Espaciado a la derecha del radio button */
+    appearance: none; /* Elimina el estilo predeterminado del radio button */
+    width: 20px; /* Ancho del radio button */
+    height: 20px; /* Alto del radio button */
+    border-radius: 50%; /* Hace que el radio button sea circular */
+    border: 2px solid #4CAF50; /* Borde verde */
+    outline: none; /* Sin borde al hacer foco */
+    position: relative; /* Posicionamiento relativo para el pseudo-elemento */
+    background-color: white; /* Fondo blanco */
+}
+
+.radio-group input[type="radio"]:checked {
+    background-color: #4CAF50; /* Fondo verde cuando está seleccionado */
+}
+
+.radio-group input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
+    top: 3px; /* Ajusta la posición del punto */
+    left: 3px; /* Ajusta la posición del punto */
+    width: 14px; /* Ancho del punto */
+    height: 14px; /* Alto del punto */
+    border-radius: 50%; /* Hace que el punto sea circular */
+    background-color: white; /* Color del punto */
+}
+
+.radio-group label:hover {
+    background-color: #f0f0f0; /* Fondo gris claro al pasar el mouse */
+    border-color: #4CAF50; /* Cambia el color del borde al pasar el mouse */
+}

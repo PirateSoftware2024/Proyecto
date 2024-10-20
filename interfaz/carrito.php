@@ -13,7 +13,7 @@
         </header>
         
         <div id="cuadroInformacion" class="cuadro">
-            <p>Información Entrega</p>
+            <p>Información Envío</p>
             <select name="entrega" id="entrega">
                 <option value="opcion" disabled selected>Opciones</option>
                 <option value="1">Domicilio</option>
@@ -23,7 +23,7 @@
             <div id="direccionUsuario"></div>
             <div id="paypal-button-container"></div>
             <br>
-            <button id="cerrarCuadro">Confirmar</button>
+            <button id="cerrarCuadro">Cerrar</button>
         </div>
 
         <!-- Div para los productos -->

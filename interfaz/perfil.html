@@ -34,10 +34,21 @@
             <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" disabled>
             <button id="mail">Editar</button><br><br>
 
-            <label for="password">Contraseña</label><br>
-            <input type="password" id="password" name="password" placeholder="Ingresa tu contraseña" disabled>
-            <button id="contra">Editar</button>
+            <label for="password">Contraseña <button id="contra">Editar</button></label>
+
+            <!-- CUADRO VER MÁS -->
+            <div id="cuadroInformacion" class="cuadro">
+                <div id="modificarContra">
+                    <h3>Cambiar Contraseña</h3>
+                    <label for="nuevaContra">Ingrese contraseña actual:</label>
+                    <input type="password" id="nuevaContra" placeholder="Ingrese contraseña">
+                    <button id="guardarContra">Continuar</button><br><br>
+                </div>
+                <button id="cerrarCuadro">Cerrar</button>
+            </div>
+
         </div>
+
         <footer>
             <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
         </footer>

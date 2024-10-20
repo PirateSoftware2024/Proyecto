@@ -1,0 +1,110 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado de la Compra</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom right, #f4f4f4, #e2e2e2);
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            text-align: center;
+            position: relative;
+        }
+        .notification {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            width: 300px;
+            transition: transform 0.3s ease;
+            z-index: 1;
+        }
+        .notification:hover {
+            transform: scale(1.05);
+        }
+        .success {
+            color: #28a745;
+        }
+        .error {
+            color: #dc3545;
+        }
+        h1 {
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        a {
+            display: inline-block;
+            text-decoration: none;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        a:hover {
+            background-color: #0056b3;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        /* Estilos para la pantalla de carga */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2;
+        }
+        .spinner {
+            border: 8px solid #f3f3f3; /* Color del fondo */
+            border-top: 8px solid #3498db; /* Color de la parte superior */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="notification success">
+        <h1>¡Pago Exitoso!</h1>
+        <p>Tu compra se ha completado con éxito.</p>
+        <a href="#" id="return-link">Volver a la tienda</a>
+        <div class="footer">¡Gracias por tu compra!</div>
+    </div>
+
+    <!-- Pantalla de carga -->
+    <div class="loading-screen" id="loading-screen">
+        <div class="spinner"></div>
+    </div>
+
+    <script>
+        document.getElementById('return-link').addEventListener('click', function(event) {
+            event.preventDefault(); // Evitar el comportamiento por defecto del enlace
+            document.getElementById('loading-screen').style.display = 'flex'; // Mostrar la pantalla de carga
+            setTimeout(function() {
+                window.location.href = "../interfaz/carrito.php"; // Redirigir después de un breve retraso
+            }, 1000); // Ajusta el tiempo de retraso según sea necesario
+        });
+    </script>
+</body>
+</html>
