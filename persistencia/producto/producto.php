@@ -246,6 +246,28 @@ class ApiProducto
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
+
+    public function buscarProducto($nombre) 
+    {
+        $nombre = '%' . $nombre . '%'; // Agregamos los comodines para buscar cualquier coincidencia
+    
+        // Preparar la consulta
+        $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE nombre LIKE ?");
+        
+        // Ejecutar la consulta
+        $stmt->execute([$nombre]);
+    
+        // Obtener los resultados
+        $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+        // Verificar si hay resultados
+        if (empty($resultados)) {
+            echo json_encode(false); // Retorna false si no hay productos
+        } else {
+            echo json_encode($resultados); // Retorna los resultados si existen
+        }
+    }    
+    
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -407,6 +429,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         
         case 'grafica':
             $producto->graficaDatos();
+            break;
+        
+        case 'buscar':
+            $dato = $_GET['dato'];
+            $producto->buscarProducto($dato);
             break;
 
         default:

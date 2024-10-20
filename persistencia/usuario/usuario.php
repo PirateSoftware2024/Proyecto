@@ -90,7 +90,12 @@ class ApiUsuarios
     }
 
     public function modificarUsuario($idUsuario, $dato, $columna)
-    {
+    {   
+        // Hash de la contraseña antes de insertarla
+        if ($columna == "password") {
+            $dato = password_hash($dato, PASSWORD_DEFAULT);
+        }
+
         // Ejecutar la consulta
         if($columna == "telefono"){
             $stmt = $this->pdo->prepare("UPDATE usuario SET telefono = $dato WHERE idUsuario = $idUsuario");
@@ -174,6 +179,47 @@ class ApiUsuarios
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
+
+    public function verificarContra($contra, $idUsuario)
+    {
+        $stmt = $this->pdo->prepare("SELECT password FROM usuario WHERE idUsuario = ?");
+        $stmt->execute([$idUsuario]);
+        // Obtener el resultado
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        // Verificar si se encontró al usuario
+        if ($result) {
+            $contraseñaAlmacenada = $result['password'];
+
+            // Verificar la contraseña ingresada con la almacenada (hash)
+            if (password_verify($contra, $contraseñaAlmacenada)) {
+                echo json_encode(['success' => true, 'message' => 'Contraseña correcta']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error al obtener la contraseña']);
+        }
+    }
+
+    public function resetPass($contra, $idUsuario)
+    {
+        // Hash de la contraseña antes de insertarla
+        $hashedPassword = password_hash($contra, PASSWORD_DEFAULT);
+
+        $stmt = $this->pdo->prepare("UPDATE usuario SET password= ? WHERE idUsuario = ?");
+        $stmt->execute([$hashedPassword, $idUsuario]);
+        // Obtener el resultado
+
+
+        if ($stmt->execute()) {
+            // Consulta exitosa
+            echo json_encode(['success' => true]);
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'error']);
+        }
+    }
 }
 
 // Configuracion de la base de datos
@@ -219,24 +265,39 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // Obtener valores de POST
     // Datos Personales
-    $nombre = $_POST['nombre'];
-    $apellido = $_POST['apellido'];
-    $telefono = $_POST['telefono'];
-    $fechaNac = $_POST['fecha'];
-    $contraseña = $_POST['contraseña'];
-    $correo = $_POST['correo'];
+    $data = json_decode(file_get_contents('php://input'), true);
+    $accion = $data['accion'];
+    
+    switch($accion)
+    {
+        case 'registrar':
+    $nombre = $data['nombre'];
+    $apellido = $data['apellido'];
+    $telefono = $data['telefono'];
+    $fechaNac = $data['fecha'];
+    $contraseña = $data['contraseña'];
+    $correo = $data['correo'];
     /////////////////////////////////////
     // Dirección
-    $departamento = $_POST['departamentos'];
-    $localidad = $_POST['localidad'];
-    $calle = $_POST['calle'];
-    $esquina = $_POST['esquina'];
-    $nPuerta = $_POST['nPuerta'];
-    $nApartamento = $_POST['nApartamento'];
-    $cPostal = $_POST['cPostal'];
-    $indicaciones = $_POST['indicaciones'];
+    $departamento = $data['departamentos'];
+    $localidad = $data['localidad'];
+    $calle = $data['calle'];
+    $esquina = $data['esquina'];
+    $nPuerta = $data['nPuerta'];
+    $nApartamento = $data['nApartamento'];
+    $cPostal = $data['cPostal'];
+    $indicaciones = $data['indicaciones'];
     /////////////////////////////////////
     $usuario->registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
+    break;
+
+    case 'verificarContra':
+        session_start();
+        $idUsuario = $_SESSION['usuario']['idUsuario'];
+        $contra = $data['contra'];
+        $usuario->verificarContra($contra, $idUsuario);
+        break;
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -248,6 +309,12 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
 
     switch($accion)
     {
+        case 'contraReset':
+            $dato = $data['contra'];
+            $id = $data['id'];
+            $usuario->resetPass($dato, $id);
+            break;
+
         case 'modificar':
             session_start();
             $idUsuario = $_SESSION['usuario']['idUsuario'];
@@ -257,7 +324,8 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
             break;
 
         case 'validar':
-            $idUsuario = $data['idUsuario'];
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
             $opcion = $data['opcion'];
             $usuario->validarUsuario($idUsuario, $opcion);
             break;
