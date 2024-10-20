@@ -9,6 +9,7 @@ $(document).ready(function() {
     nuevoCarrito();
     mostrarProductosEnCarrito();
     resumenPedido();
+    datosUsuario();
     $("#cartContainer").on("click", ".boton-eliminar", eliminar);     // Controlador de eventos que
     $("#cartContainer").on("click", ".boton-mas", sumarCantidad);     // responde a los clicks en cualquier elemento con la     
     $("#cartContainer").on("click", ".boton-menos", restarCantidad);  // clase .boton-"accion" que esté dentro del elemento con id "cartContainer".
@@ -42,50 +43,17 @@ $(document).ready(function() {
     
     let pago = () => {
         let datos = $(`
-            <label for="nombreUsuario">Departamento</label><br>
-            <select id="departamentos" name="departamentos" required>
-                <option value="" disabled selected>Seleccione un departamento</option>
-                <option value="Artigas">Artigas</option>
-                <option value="Canelones">Canelones</option>
-                <option value="Cerro-largo">Cerro Largo</option>
-                <option value="Colonia">Colonia</option>
-                <option value="Durazno">Durazno</option>
-                <option value="Flores">Flores</option>
-                <option value="Florida">Florida</option>
-                <option value="Lavalleja">Lavalleja</option>
-                <option value="Maldonado">Maldonado</option>
-                <option value="Montevideo">Montevideo</option>
-                <option value="Paysandu">Paysandú</option>
-                <option value="Rio-negro">Río Negro</option>
-                <option value="Rivera">Rivera</option>
-                <option value="Rocha">Rocha</option>
-                <option value="Salto">Salto</option>
-                <option value="San-jose">San José</option>
-                <option value="Soriano">Soriano</option>
-                <option value="Tacuarembo">Tacuarembó</option>
-                <option value="Treinta-y-tres">Treinta y Tres</option>
-            </select><br><br>
-
-            <label for="barrio">Barrio</label><br>
-            <input type="text" id="barrio" name="barrio" placeholder="Ingrese su barrio"><br><br>
-
-            <label for="calleUsuario">Calle</label><br>
-            <input type="text" id="calle" name="calle" placeholder="Ingresa tu calle"><br><br>
-            
-            <label for="numeroPuerta">Numero</label><br>
-            <input type="number" id="numeroPuerta" name="numeroPuerta" placeholder="Numero de puerta"><br><br>
-
-            <label for="numeroApartamento">Numero apartamento</label><br>
-            <input type="number" id="numeroApartamento" name="numeroApartamento" placeholder="Numero de apartamento"><br><br>
-
-            <label for="codigoPostal">Codigo postal</label><br>
-            <input type="number" id="codigoPostal" name="codigoPostal" placeholder="Ingrese codigo postal"><br>
-
-            <label for="telefono">Telefono</label><br>
-            <input type="number" id="telefono" name="telefono" placeholder="Ingrese Telefono"><br>
-
-            <label for="correo">Correo</label><br>
-            <input type="mail" id="correo" name="correo" placeholder="Ingrese su correo"><br><br>
+             <div class="radio-group">
+                <label>
+                    Pick-up - Ciudad Vieja, Sarandí 508, 11000 Montevideo 
+                    <input type="radio" name="opciones" class="radio" value="opcion1">
+                </label><br>
+               
+                <label>
+                    Envío a domicilio - ${usuario.localidad}, ${usuario.localidad} ${usuario.numero}, ${usuario.postal} ${usuario.departamento}
+                   <input type="radio" name="opciones" class="radio" value="opcion2"> Opción 2
+                </label><br>
+            </div>
         `);
         $("#direccionUsuario").html(datos);
     }
@@ -307,9 +275,23 @@ function resumenPedido(){
 
 let empresa = [];
 let usuario = [];
-function entregaPedido(tipo){
+
+function datosUsuario(){
+    fetch('../persistencia/usuario/usuario.php?accion=datosUsuario')
+    .then(response => response.text())
+    .then(data => {
+        console.log('Datos recibidos:', data);
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        console.log('Datos JSON:', jsonData);
+        usuario = jsonData; // Una vez leido los datos acutalizamos
+    });
+}
+
+/*function entregaPedido(tipo){
     if(tipo == 1){
-        fetch('../persistencia/datosEmpresa.php')
+        fetch('../spersistencia/datosEmpresa.php')
         .then(response => response.text())
         .then(data => {
             console.log('Datos recibidos:', data);
@@ -324,27 +306,7 @@ function entregaPedido(tipo){
             $("#nPuerta").html("Numero puerta: "+direccion.numero);
             $("#departamento").html("Departamento: "+direccion.departamento);
         });
-
-    }else if(tipo == 2){
-        fetch('../persistencia/datosUsuario.php')
-    .then(response => response.text())
-    .then(data => {
-        console.log('Datos recibidos:', data);
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
-        usuario = jsonData; // Una vez leido los datos acutalizamos
-
-        let direccion = usuario[0];
-        $("#calle").html("Calle: "+direccion.calle);
-        $("#nPuerta").html("Numero puerta: "+direccion.nPuerta);
-        $("#departamento").html("Departamento: "+direccion.departamento);
-    });
-    }else{
-        $("#domicilio").html("Ciudad vieja CALLE, NUMERO PUERTA");
-    }
-}
+}*/
 
 
 function modificarCarrito(){
@@ -431,39 +393,37 @@ let totalCarrito = () => {
     return aDolar; // Convertir a número flotante
 }
 
-let cantidadArticulos = () => {
-    let total = 0; 
-    // Recorrer cada producto en el carrito
-    for (let j = 0; j < carrito.length; j++) {
-        const item = carrito[j];
-            
-        // Calcula el subtotal del producto y agregarlo al total del carrito
-        total += item.cantidad;
-    }
-    return total; // Convertir a número flotante
-}
-
 paypal.Buttons({
+    // Configuración del botón
     createOrder: function(data, actions) {
-        // Configura el pago
-        return actions.order.create({
-            purchase_units: [{
-                amount: {
-                    currency_code: 'USD', // Asegúrate de que la moneda sea USD
-                    value: totalCarrito().toFixed(2) // Total en dólares
-                }
-            }]
-        });
+      return actions.order.create({
+        purchase_units: [{
+          amount: {
+            currency_code: 'USD', // Asegúrate de que la moneda sea USD
+            value: 10.00 // Total en dólares
+          }
+        }]
+      });
     },
+    
+    // Esta función se ejecuta cuando el pago fue exitoso
     onApprove: function(data, actions) {
-        // Captura el pago
-        return actions.order.capture().then(function(details) {
-            alert('Pago realizado con éxito por ' + details.payer.name.given_name);
-            generarOrden();
-        });
+      return actions.order.capture().then(function(details) {
+        alert('Pago completado por ' + details.payer.name.given_name);
+        generarOrden();
+        actualizarPage();
+        // Redirigir a una página específica
+        window.location.href = '../interfaz/pagoExitoso.html'; // Reemplaza con tu URL deseada
+      });
+    },
+    
+    // Manejar errores en el pago
+    onError: function(err) {
+      console.log('Ocurrió un error con el pago', err);
+      alert('Hubo un problema con el pago. Por favor, intenta de nuevo.');
     }
-}).render('#paypal-button-container');
-
+  }).render('#paypal-button-container'); // ID del contenedor donde se mostrará el botón de PayPal
+  
 
 function generarOrden(){
     fetch('../persistencia/carrito/carrito.php', {
@@ -478,7 +438,7 @@ function generarOrden(){
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            actualizarPage();
+            console.log("orden generada");
         } else {
             console.error('Error:', data.error);
         }
@@ -492,9 +452,7 @@ function actualizarPage(){
     carrito = [];
     const productosJSON = JSON.stringify(carrito);
     localStorage.setItem('carrito', productosJSON);
-    setTimeout(function() {
-        window.location.href = "../interfaz/carrito.html";
-    }, 3000);
+    mostrarProductosEnCarrito();
 }
 
 function nuevoCarrito() {

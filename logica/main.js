@@ -35,7 +35,33 @@ document.querySelector('.menu-toggle').addEventListener('click', function() {
     document.querySelector('.nav-menu').classList.toggle('active');
 });
 
-function buscar(){
+function buscar() {
+    const nombre = $("#buscarProducto").val();
+    fetch(`../persistencia/producto/producto.php?accion=buscar&dato=${nombre}`, {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.text())
+    .then(data => {
+        // Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+
+        // Verificamos si no hay productos
+        if (jsonData === false) {
+            alert('No hay productos disponibles.'); // Mostrar alerta si no hay productos
+        } else {
+            console.log('Datos JSON:', jsonData);
+            products = jsonData; // Una vez leído los datos, actualizamos
+            actualizar(); // Asegúrate de que esta función esté definida
+        }
+    })
+    .catch(error => {
+        console.error('Error al buscar el producto:', error);
+    });
+}
+
+function buscarProductosCategoria(){
     const nombre = $(this).data("id");
     fetch('../persistencia/producto/producto.php', {
         method: 'POST',
@@ -87,7 +113,8 @@ $(document).ready(function() {
         obtenerReseñas(idBoton);
     });
 
-    $("#nav-bar").on("click", ".nav-button", buscar);
+    $("#nav-bar").on("click", ".nav-button", buscarProductosCategoria);
+    $("#btnBuscar").click(buscar);
 
     $("#right-arrow").on("click", function() {
         console.log('Right arrow clicked');

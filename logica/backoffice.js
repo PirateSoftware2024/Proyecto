@@ -77,8 +77,16 @@ function buscarStock() {
 
 function cancelar(){
     habilitarBotones();
+    $("#categoria").val(productos[index].nombre).prop('disabled', false);
+    $("#oferta").val(productos[index].descripcion).prop('disabled', false);
+    $("#imagen").prop('disabled', false);
+    $("#condicion").val(productos[index].condicion).prop('disabled', false);
+
+    $('.boton-editar').css("background-color", "rgb(230, 206, 27)"); // Cambia el color de fondo a rojo
+    $('.boton-eliminar').css("background-color", "rgb(212, 21, 21)");
+
     actualizar();
-    $("#nombre").css("border-color", "#ccc");
+    $("#nombre").css("border-color", "#ccc");   
     $("#descripcion").css("border-color", "#ccc");
     $("#precio").css("border-color", "#ccc");
 }
@@ -174,6 +182,7 @@ function actualizar() {
     $("#nombre").val(''); // Limpiamos los campos (input)
     $("#descripcion").val('');
     $("#precio").val('');
+    $("#stock").val('');
 
     // Generar filas para cada producto
     for (let i = 0; i < productos.length; i++) {
@@ -223,6 +232,7 @@ function mostrarDatos(){
     $("#nombre").val(productos[index].nombre);
     $("#descripcion").val(productos[index].descripcion);
     $("#precio").val(productos[index].precio);
+    $("#stock").val(productos[index].stock);
     
     $("#categoria").val(productos[index].nombre).prop('disabled', true);
     $("#oferta").val(productos[index].descripcion).prop('disabled', true);
@@ -232,8 +242,12 @@ function mostrarDatos(){
     
     $('.boton-modificar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
     $('.boton-cancelar[data-id="' + idBoton + '"]').removeAttr("disabled"); // Habilitamos el boton "Modificar"
+    
+    $('.boton-editar').css("background-color", "#7a6713"); // Cambia el color de fondo a rojo
+    $('.boton-eliminar').css("background-color", "#711512"); // Cambia el color de fondo a rojo
     $('.boton-modificar[data-id="' + idBoton + '"]').css("background-color", "#2ecc71"); // Cambia el color de fondo a rojo
     $('.boton-cancelar[data-id="' + idBoton + '"]').css("background-color", "#0a20e4"); // Cambia el color de fondo a rojo
+    
     alert("Al finalizar presione 'Modificar' en el producto seleccionado!");
     $("html, body").animate({ scrollTop: 0 }, "slow");
 }   
