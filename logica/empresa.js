@@ -144,8 +144,7 @@ function productos(){
     }
     $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
 }
-
-function ventas(ventas){
+function ventas(ventas) {
     let estados = {
         "enviado": "Enviado a depósito",
         "cancelado": "Cancelado",
@@ -157,46 +156,65 @@ function ventas(ventas){
     for (let i = 0; i < ventas.length; i++) {
         const venta = ventas[i];
 
-        // Copiar el objeto estados para modificarlo por cada venta
-        let estadosCopia = { ...estados };
-
         // Obtener el estado actual de la venta
         let estadoActual = venta.estado_preparacion;
-
-        // Eliminar el estado actual del select
-        for (let clave in estadosCopia) {
-            if (estadosCopia[clave] === estadoActual) {
-                delete estadosCopia[clave];
-                break;
+        
+        if (estadoActual == "Enviado a depósito") {
+            // Crear la fila y añadirla a la tabla
+            let fila = $(`
+                <tr>
+                    <td>${venta.idCarrito}</td>
+                    <td>${venta.idPaquete}</td>
+                    <td>${venta.nombre}</td>
+                    <td>${venta.idProducto}</td>
+                    <td>${venta.fecha}</td>
+                    <td>${venta.cantidad}</td>
+                    <td>${venta.total}</td>
+                    <td>
+                        <select class="cambioEstado" data-id="${venta.id}">
+                            <option value="enviado">Enviado a depósito</option>
+                        </select>
+                    </td>
+                </tr>
+            `);
+            $("#filasVentas").append(fila);
+        } else {
+            // Eliminar el estado actual del select
+            for (let clave in estados) {
+                if (estados[clave] === estadoActual) {
+                    delete estados[clave];
+                    break;
+                }
             }
-        }
 
-        // Crear el string de opciones para el select
-        let selectEstados = `<option value="${estadoActual}" disabled selected>${estadoActual}</option>`;
-        for (let clave in estadosCopia) {
-            selectEstados += `<option value="${clave}">${estadosCopia[clave]}</option>`;
-        }
+            // Crear el string de opciones para el select
+            let selectEstados = `<option value="${estadoActual}" disabled selected>${estadoActual}</option>`;
+            for (let clave in estados) {
+                selectEstados += `<option value="${clave}">${estados[clave]}</option>`;
+            }
 
-        // Crear la fila y añadirla a la tabla
-        let fila = $(`
-            <tr>
-                <td>${venta.idCarrito}</td>
-                <td>${venta.idPaquete}</td>
-                <td>${venta.nombre}</td>
-                <td>${venta.idProducto}</td>
-                <td>${venta.fecha}</td>
-                <td>${venta.cantidad}</td>
-                <td>${venta.total}</td>
-                <td>
-                    <select class="cambioEstado" data-id="${venta.id}">
-                        ${selectEstados}
-                    </select>
-                </td>
-            </tr>
-        `);
-        $("#filasVentas").append(fila);
+            // Crear la fila y añadirla a la tabla
+            let fila = $(`
+                <tr>
+                    <td>${venta.idCarrito}</td>
+                    <td>${venta.idPaquete}</td>
+                    <td>${venta.nombre}</td>
+                    <td>${venta.idProducto}</td>
+                    <td>${venta.fecha}</td>
+                    <td>${venta.cantidad}</td>
+                    <td>${venta.total}</td>
+                    <td>
+                        <select class="cambioEstado" data-id="${venta.id}">
+                            ${selectEstados}
+                        </select>
+                    </td>
+                </tr>
+            `);
+            $("#filasVentas").append(fila);
+        }
     }
 }
+
 /*
 SELECT c.idCarrito, u.nombre, p.nombre, a.cantidad, a.cantidad * a.precio Total, c.idPaquete, c.fecha
 FROM almacena a
