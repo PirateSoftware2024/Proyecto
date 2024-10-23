@@ -175,6 +175,38 @@ class ApiPedidos
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
+
+    function obtenerEnvios($idUsuario)
+    {
+        // Prepara la primera consulta
+        $stmt1 = $this->pdo->prepare("SELECT p.idPaquete, d.localidad, d.calle, d.esquina, d.numeroPuerta, d.numeroApto, d.cPostal, p.fecha, p.estadoEnvio, SUM(d2.cantidad * p2.precio) AS total
+            FROM paquete p
+            JOIN usuario u ON u.idUsuario = p.idUsuario
+            JOIN direcciones d ON d.idUsuario = u.idUsuario
+            JOIN detalle_pedido d2 ON d2.idPaquete = p.idPaquete
+            JOIN producto p2 ON p2.id = d2.idProducto
+            WHERE u.idUsuario = ?
+            GROUP BY p.idPaquete;"); // No olvides agregar GROUP BY para las funciones de agregación
+        $stmt1->execute([$idUsuario]);
+        $result1 = $stmt1->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
+
+        // Prepara la segunda consulta
+        $stmt2 = $this->pdo->prepare("SELECT p.nombre, d2.cantidad, p.precio, p.descripcion, d2.estado_preparacion, p.file_path
+            FROM detalle_pedido d2
+            JOIN producto p ON p.id = d2.idProducto
+            WHERE d2.idPaquete IN (SELECT idPaquete FROM paquete WHERE idUsuario = ?);"); // Ajustar para que tome todos los paquetes del usuario
+        $stmt2->execute([$idUsuario]);
+        $result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
+
+        // Combina los resultados en un solo array
+        $datos  =  [
+            'envios' => $result1, // Primera consulta
+            'detalles' => $result2 // Segunda consulta
+        ];
+
+        // Retornar la respuesta en formato JSON
+        echo json_encode(['success' => true, 'productos' => $datos]);
+    }
 }
 
 
@@ -238,6 +270,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $idDireccion = $data['idDireccion'];
             $tipoEntrega = $data['entrega'];
             $pedido->nuevoEnvio($idDireccion, $idUsuario, $idCarrito, $tipoEntrega);
+            break;
+        
+        case 'obtenerEnvios':
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            //$idUsuario = $data['id'];
+            $pedido->obtenerEnvios($idUsuario);
             break;
     }
 }

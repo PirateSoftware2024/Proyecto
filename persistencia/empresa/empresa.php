@@ -121,8 +121,100 @@ class ApiEmpresa
 
         if ($stmt->execute([$nuevoEstado, $id])) {
             echo json_encode(['success' => true, 'message' => 'Estado modificado']);
+            switch($nuevoEstado){
+                case 'Enviado a depósito':
+                    $this->envioDeposito($id);
+                    break;
+                case 'Cancelado':
+                    $this->envioCancelado($id);
+                    break;
+            }
         } else {
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
+
+    public function envioDeposito($id)
+    {
+        // Primera consulta para obtener el idPaquete
+        $stmt = $this->pdo->prepare("SELECT idPaquete FROM detalle_pedido WHERE id = ?;");
+
+        if ($stmt->execute([$id])) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC); // Obtenemos el resultado
+
+            if ($result) {
+                $idPaquete = $result['idPaquete']; // Asignamos el idPaquete
+
+                // Segunda consulta para obtener el estado de preparación
+                $stmt = $this->pdo->prepare("SELECT estado_preparacion FROM detalle_pedido WHERE idPaquete = ?;");
+                if($stmt->execute([$idPaquete])) {
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Recorremos el array para verificar si hay algún producto no enviado a depósito
+                    foreach ($result as $row) {
+                        if ($row['estado_preparacion'] !== 'Enviado a depósito') {
+                            echo json_encode(['success' => false, 'message' => 'Aún faltan productos por recibir']);
+                            return; // Salimos de la función si hay productos pendientes
+                        }
+                    }
+
+                    // Si todos los productos están "Enviado a depósito", modificamos el estado del paquete
+                    $stmt = $this->pdo->prepare("UPDATE paquete SET estadoEnvio = 'En depósito' WHERE idPaquete = ?;");
+                    if($stmt->execute([$idPaquete])) {
+                        echo json_encode(['success' => true, 'message' => 'Estado de envío del paquete modificado']);
+                    } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al modificar el envío']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al obtener el estado de preparación']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se encontró el paquete asociado al pedido']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta para obtener el paquete']);
+        }
+    }
+
+    public function envioCancelado($id)
+    {
+        // Primera consulta para obtener el idPaquete
+        $stmt = $this->pdo->prepare("SELECT idPaquete FROM detalle_pedido WHERE id = ?;");
+
+        if ($stmt->execute([$id])) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC); // Obtenemos el resultado
+
+            if ($result) {
+                $idPaquete = $result['idPaquete']; // Asignamos el idPaquete
+
+                // Segunda consulta para obtener el estado de preparación
+                $stmt = $this->pdo->prepare("SELECT estado_preparacion FROM detalle_pedido WHERE idPaquete = ?;");
+                if($stmt->execute([$idPaquete])) {
+                    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    // Recorremos el array para verificar si hay algún producto no enviado a depósito
+                    foreach ($result as $row) {
+                        if ($row['estado_preparacion'] !== 'Cancelado') {
+                            echo json_encode(['success' => false, 'message' => 'Aún faltan productos por recibir']);
+                            return; // Salimos de la función si hay productos pendientes
+                        }
+                    }
+
+                    // Si todos los productos están "Enviado a depósito", modificamos el estado del paquete
+                    $stmt = $this->pdo->prepare("UPDATE paquete SET estadoEnvio = 'Cancelado' WHERE idPaquete = ?;");
+                    if($stmt->execute([$idPaquete])) {
+                        echo json_encode(['success' => true, 'message' => 'Estado de envío del paquete modificado']);
+                    } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al modificar el envío']);
+                    }
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Error al obtener el estado de preparación']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'No se encontró el paquete asociado al pedido']);
+            }
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta para obtener el paquete']);
         }
     }
 }
