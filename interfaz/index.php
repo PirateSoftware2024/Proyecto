@@ -29,6 +29,7 @@
                         <li id="crearCuenta"><a href="registro.html">Crea tu cuenta</a></li>
                         <li id="login"><a href="login.html">Inicio sesión</a></li>
                     <?php else: ?>
+                        <li><a href="misEnvios.html">Envíos</a></li>
                         <li><a href="perfil.html">Mi perfil</a></li>
                     <!-- Si el usuario esta logueado, mostramos el enlace de "Salir" -->
                         <button id="salir">Salir</a></button>
