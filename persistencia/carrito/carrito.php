@@ -1,7 +1,6 @@
 <?php 
 require("../ConexionDB.php");
 header('Content-Type: application/json');
-
 class ApiCarrito
 {
     private $pdo;
@@ -299,7 +298,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     session_start();
     $idUsuario = $_SESSION['usuario']['idUsuario'];
-    
     $carrito->historial($idUsuario);
 }
 

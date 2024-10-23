@@ -13,29 +13,88 @@
         </header>
         
         <div class="carta">
-            <h2>Mis datos</h2>
-            <label for="nombreUsuario">Nombre</label><br>
-            <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" disabled>
-            <button id="nom">Editar</button><br><br>
+            <button id="btnDatosDireccion">Dirección</button>
+            <!-- DIV DIRECCION -->
+            <div id="datosDireccion" style="display: none">
+                <h2>Dirección</h2>
+                <label for="departamento">Departamento</label><br>
+                <select id="departamento" name="departamento" disabled>
+                    <option value="" disabled selected>Seleccione un departamento</option>
+                    <option value="artigas">Artigas</option>
+                    <option value="canelones">Canelones</option>
+                    <option value="cerro-largo">Cerro Largo</option>
+                    <option value="colonia">Colonia</option>
+                    <option value="durazno">Durazno</option>
+                    <option value="flores">Flores</option>
+                    <option value="florida">Florida</option>
+                    <option value="lavalleja">Lavalleja</option>
+                    <option value="maldonado">Maldonado</option>
+                    <option value="montevideo">Montevideo</option>
+                    <option value="paysandu">Paysandú</option>
+                    <option value="rio-negro">Río Negro</option>
+                    <option value="rivera">Rivera</option>
+                    <option value="rocha">Rocha</option>
+                    <option value="salto">Salto</option>
+                    <option value="san-jose">San José</option>
+                    <option value="soriano">Soriano</option>
+                    <option value="tacuarembo">Tacuarembó</option>
+                    <option value="treinta-y-tres">Treinta y Tres</option>
+                </select>
+                <button id="depa">Editar</button><br><br>
+    
+                <label for="localidad">Localidad</label><br>
+                <input type="text" id="localidad" name="localidad" placeholder="Ingresa su localidad" disabled>
+                <button id="localia">Editar</button><br><br>
+    
+                <label for="calle">Calle</label><br>
+                <input type="text" id="calle" name="calle" placeholder="Ingresa su calle" disabled>
+                <button id="call">Editar</button><br><br>
+                
+                <label for="esquina">Esquina</label><br>
+                <input type="text" id="esquina" name="esquina" placeholder="Ingresa su esquina" disabled>
+                <button id="esq">Editar</button><br><br>
+    
+                <label for="nPuerta">N° Puerta</label><br>
+                <input type="text" id="numeroPuerta" name="nPuerta" placeholder="Ingresa su numero de puerta" disabled>
+                <button id="nPue">Editar</button><br><br>
+    
+                <label for="nApartamento">N° Apartamento</label><br>
+                <input type="text" id="numeroApto" name="nApartamento" placeholder="Ingrese numero de apartamento" disabled>
+                <button id="nAp">Editar</button><br><br>
+    
+                <label for="cPostal">Codigo Postal</label><br>
+                <input type="text" id="cPostal" name="cPostal" placeholder="Ingresa su codigo postal" disabled>
+                <button id="cPos">Editar</button><br><br>
 
-            <label for="apellidoUsuario">Apellido</label><br>
-            <input type="text" id="apellido" name="apellido" placeholder="Ingresa tu apellido" disabled>
-            <button id="ape">Editar</button><br><br>
+                <label for="indicaciones">Indicaciones</label><br>
+                <input type="text" id="indicaciones" name="indicaciones" placeholder="Ingresa indicaciones" disabled>
+                <button id="indi">Editar</button><br><br>
+            </div>
+            <!-- DIV DATOS PERSONALES-->
+            <div id="datosPersonales">
+                <h2>Mis datos</h2>
+                <label for="nombreUsuario">Nombre</label><br>
+                <input type="text" id="nombre" name="nombre" placeholder="Ingresa tu nombre" disabled>
+                <button id="nom">Editar</button><br><br>
 
-            <label for="telefonoUsuario">Telefono</label><br>
-            <input type="number" id="telefono" name="telefono" placeholder="Ingresa tu telefono" disabled>
-            <button id="tel">Editar</button><br><br>
+                <label for="apellidoUsuario">Apellido</label><br>
+                <input type="text" id="apellido" name="apellido" placeholder="Ingresa tu apellido" disabled>
+                <button id="ape">Editar</button><br><br>
 
-            <label for="fecha">Fecha Nacimiento:</label><br>
-            <input type="date" id="fechaNac" name="fecha" disabled>
-            <button id="fech">Editar</button><br><br>
+                <label for="telefonoUsuario">Telefono</label><br>
+                <input type="number" id="telefono" name="telefono" placeholder="Ingresa tu telefono" disabled>
+                <button id="tel">Editar</button><br><br>
 
-            <label for="email">Correo Electrónico</label><br>
-            <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" disabled>
-            <button id="mail">Editar</button><br><br>
+                <label for="fecha">Fecha Nacimiento:</label><br>
+                <input type="date" id="fechaNac" name="fecha" disabled>
+                <button id="fech">Editar</button><br><br>
 
-            <label for="password">Contraseña <button id="contra">Editar</button></label>
+                <label for="email">Correo Electrónico</label><br>
+                <input type="email" id="correo" name="correo" placeholder="Ingresa tu correo" disabled>
+                <button id="mail">Editar</button><br><br>
 
+                <label for="password">Contraseña <button id="contra">Editar</button></label>
+            </div>
             <!-- CUADRO VER MÁS -->
             <div id="cuadroInformacion" class="cuadro">
                 <div id="modificarContra">

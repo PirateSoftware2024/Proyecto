@@ -1,6 +1,6 @@
 <?php
 require("../ConexionDB.php");
-header(header: 'Content-Type: application/json');
+header('Content-Type: application/json');
 
 class ApiPedidos
 {
@@ -9,6 +9,55 @@ class ApiPedidos
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
+    }
+
+    public function nuevoEnvio($idDireccion, $idUsuario, $idCarrito, $tipoEntrega)
+    {
+        $stmt = $this->pdo->prepare("INSERT INTO paquete (idDireccion, idUsuario, idCarrito, tipoEntrega) 
+        VALUES (?, ?, ?, ?);");
+    
+        $result = $stmt->execute([$idDireccion, $idUsuario, $idCarrito, $tipoEntrega]);
+        if ($result) {
+            $idPaquete = $this->pdo->lastInsertId();
+            $this->detallePaquete($idCarrito, $idPaquete);
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'No se pudo crear el pedido.']);
+        }
+    }
+
+    public function detallePaquete($idCarrito, $idPaquete)
+    {
+        /*
+            - Obtenemos el id de la empresa que publico el articulo
+            - ID del articulo
+            - Cantidad
+            Estos datos los enviaremos a la tabla detalle_pedido, 
+            gracias a ello podremos comunicar a las empresas de las compras
+            y que estas preparen el pedido
+        */
+        $stmt = $this->pdo->prepare("SELECT p.idEmpresa, a.id, a.cantidad
+                                    FROM almacena a
+                                    JOIN producto p ON a.id = p.id
+                                    WHERE a.idCarrito = ?;");
+        $stmt->execute([$idCarrito]);
+        $result= $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        /* 
+            Insert en la tabla detalle pedido
+            Donde se guardaran los datos para que cada
+            empresa comience el armado del pedido
+        */
+        $datos = $this->pdo->prepare("INSERT INTO detalle_pedido (idEmpresa, idProducto, cantidad, idPaquete) VALUES (?, ?, ?, ?)");
+
+        foreach ($result as $row) {
+            $idEmpresa = $row['idEmpresa'];
+            $idProducto = $row['id'];  // Esto es 'a.id' de tu consulta original
+            $cantidad = $row['cantidad'];
+
+            // Ejecuta la consulta de inserción
+            $datos->execute([$idEmpresa, $idProducto, $cantidad, $idPaquete]);
+        }
     }
 
     public function obtenerTodos()
@@ -179,6 +228,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             $fecha = $data['fecha'];
             $pedido->obtenerPedidoFecha($fecha);
             break;  
+
+        case 'nuevoPedido':
+            session_start();
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $idCarrito = $_SESSION['usuario']['idCarrito'];
+            //$idUsuario =$data['idUsuario'];
+            //$idCarrito = $data['idCarrito'];
+            $idDireccion = $data['idDireccion'];
+            $tipoEntrega = $data['entrega'];
+            $pedido->nuevoEnvio($idDireccion, $idUsuario, $idCarrito, $tipoEntrega);
+            break;
     }
 }
 ?>

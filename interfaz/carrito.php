@@ -16,8 +16,7 @@
             <p>Información Envío</p>
             <select name="entrega" id="entrega">
                 <option value="opcion" disabled selected>Opciones</option>
-                <option value="1">Domicilio</option>
-                <option value="2">Centro de recogida</option>
+                <option value="1">Seleccione envío</option>
             </select>
             <br><br>
             <div id="direccionUsuario"></div>

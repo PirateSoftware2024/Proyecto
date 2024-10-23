@@ -79,7 +79,9 @@ class ApiUsuarios
 
     public function datosUsuario($idUsuario)
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM usuario WHERE idUsuario = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM usuario u
+                                    JOIN direcciones d ON d.idUsuario = u.idUsuario
+                                    WHERE u.idUsuario = ?");
         if ($stmt->execute([$idUsuario])) {
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
             echo json_encode($usuario);
@@ -89,7 +91,7 @@ class ApiUsuarios
         }
     }
 
-    public function modificarUsuario($idUsuario, $dato, $columna)
+    public function modificarUsuario($idUsuario, $dato, $columna, $tabla)
     {   
         // Hash de la contraseña antes de insertarla
         if ($columna == "password") {
@@ -98,10 +100,10 @@ class ApiUsuarios
 
         // Ejecutar la consulta
         if($columna == "telefono"){
-            $stmt = $this->pdo->prepare("UPDATE usuario SET telefono = $dato WHERE idUsuario = $idUsuario");
+            $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idUsuario = $idUsuario");
         }else{
             // Consulta SQL para eliminar un registro
-            $stmt = $this->pdo->prepare("UPDATE usuario SET $columna = '$dato' WHERE idUsuario = $idUsuario");
+            $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idUsuario = $idUsuario");
         }
 
         if ($stmt->execute()) {
@@ -320,7 +322,8 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
             $idUsuario = $_SESSION['usuario']['idUsuario'];
             $dato = $data['dato'];
             $columna = $data['columna'];
-            $usuario->modificarUsuario($idUsuario, $dato, $columna);
+            $tabla = $data['tabla'];
+            $usuario->modificarUsuario($idUsuario, $dato, $columna, $tabla);
             break;
 
         case 'validar':

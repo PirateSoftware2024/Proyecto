@@ -11,7 +11,6 @@ $(document).ready(function() {
 
     // ####################################################################################
     $("#filasProductos").on("click", ".boton-reseña", function () {
-        console.log("Holaa");
         $('#cuadroInformacion').fadeIn();
         $('body').addClass('modal-open');
         let idBoton = Number($(this).data("id"));  // Convertimos el data-id a número
@@ -49,15 +48,59 @@ $(document).ready(function() {
             }
         });
     });
+
+
+   // Cambia el event listener para la clase
+    $(document).on('change', '.cambioEstado', function() {
+        const valor = $(this).val();
+        const idPaquete = $(this).data('id'); //Este id sera necesario para modificar el dato en la tabla detalle_pedido
+
+        if (valor == "cancelado"){
+            modificarEstado(idPaquete, "Cancelado"); // Llama a tu función para actualizar
+        }else if(valor == "enviado"){
+            modificarEstado(idPaquete, "Enviado a depósito");
+        }else if(valor == "preparacion"){
+            modificarEstado(idPaquete, "En preparación");
+        }else{
+            alert("Error al seleccionar una opcion!");
+        }
+    });
 });
 
+function modificarEstado(idPaquete, valor) {
+    fetch('../persistencia/empresa/empresa.php', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            id: idPaquete,  // Asegúrate de que estás pasando el ID correcto
+            valor: valor
+        })
+    })
+    .then(response => response.json())  // Parsear la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            alert(data.message);  // Mostrar mensaje en caso de éxito
+            location.reload();
+        } else {
+            console.error('Error del servidor:', data.message);  // Mostrar error en consola
+        }
+    })
+    .catch(error => {
+        console.error('Error al modificar el estado:', error);  // Manejar errores de la solicitud
+    });
+}
+
+
+let datosVentas;
 function obtenerVentas(){
     fetch('../persistencia/empresa/empresa.php?accion=obtenerVentas')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-        const datosVentas = jsonData;
+        datosVentas = jsonData;
         ventas(datosVentas);
     });
 }
@@ -103,22 +146,56 @@ function productos(){
 }
 
 function ventas(ventas){
-$("#filasVentas").empty(); // Limpiar las filas anteriores
-for (let i = 0; i < ventas.length; i++) {
-    const venta = ventas[i];
-    let fila = $(`
-        <tr>
-            <td>${venta.idCarrito}</td>
-            <td>${venta.nomUsuario}</td>
-            <td>${venta.nomProducto}</td>
-            <td>${venta.cantidad}</td>
-            <td>${venta.total}</td>
-            <td>${venta.idPaquete}</td>
-            <td>${venta.fecha}</td>
-        </tr>
-`);
-    $("#filasVentas").append(fila);
-}
+    let estados = {
+        "enviado": "Enviado a depósito",
+        "cancelado": "Cancelado",
+        "preparacion": "En preparación"
+    };
+
+    $("#filasVentas").empty(); // Limpiar las filas anteriores
+
+    for (let i = 0; i < ventas.length; i++) {
+        const venta = ventas[i];
+
+        // Copiar el objeto estados para modificarlo por cada venta
+        let estadosCopia = { ...estados };
+
+        // Obtener el estado actual de la venta
+        let estadoActual = venta.estado_preparacion;
+
+        // Eliminar el estado actual del select
+        for (let clave in estadosCopia) {
+            if (estadosCopia[clave] === estadoActual) {
+                delete estadosCopia[clave];
+                break;
+            }
+        }
+
+        // Crear el string de opciones para el select
+        let selectEstados = `<option value="${estadoActual}" disabled selected>${estadoActual}</option>`;
+        for (let clave in estadosCopia) {
+            selectEstados += `<option value="${clave}">${estadosCopia[clave]}</option>`;
+        }
+
+        // Crear la fila y añadirla a la tabla
+        let fila = $(`
+            <tr>
+                <td>${venta.idCarrito}</td>
+                <td>${venta.idPaquete}</td>
+                <td>${venta.nombre}</td>
+                <td>${venta.idProducto}</td>
+                <td>${venta.fecha}</td>
+                <td>${venta.cantidad}</td>
+                <td>${venta.total}</td>
+                <td>
+                    <select class="cambioEstado" data-id="${venta.id}">
+                        ${selectEstados}
+                    </select>
+                </td>
+            </tr>
+        `);
+        $("#filasVentas").append(fila);
+    }
 }
 /*
 SELECT c.idCarrito, u.nombre, p.nombre, a.cantidad, a.cantidad * a.precio Total, c.idPaquete, c.fecha
@@ -236,7 +313,7 @@ function eliminarProducto() {
         try {
             const jsonData = JSON.parse(data);  // Convertir a JSON si es válido
             if (jsonData.success) {
-                console.log('Producto eliminado exitosamente');
+                alert('Producto eliminado exitosamente');
                 eliminarFila(idProducto);
             } else {
                 alert(jsonData.error);

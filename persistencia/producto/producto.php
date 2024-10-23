@@ -94,35 +94,31 @@ class ApiProducto
     }
 }
 
-    public function actualizar($nombre, $descripcion, $precio, $idProducto)
-    {
-        // Verificar si el producto está en un carrito
-        $stmt = $this->pdo->prepare("SELECT COUNT(*) as conteo FROM almacena WHERE id = ?");
-        $stmt->execute([$idProducto]);
-        $result = $stmt->fetch();
-
-        if ($result){
-            if ($result['conteo'] > 0){
-                // Producto está en un carrito, no se puede modificar el precio
-                echo json_encode(['success' => false, 'error' => 'No se puede modificar el producto porque está en un carrito.']);
-                return;
-            } 
-        }else{
-            // Error al verificar la existencia del producto en un carrito
-            echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito']);
-            return;
-        }
-
-        // Consulta SQL para actualizar el producto
-        $stmt = $this->pdo->prepare("UPDATE producto SET nombre = ?, descripcion = ?, precio = ? WHERE id = ?");
-
-        // Ejecutar la consulta
-        if ($stmt->execute([$nombre, $descripcion, $precio, $idProducto])) {
+    public function actualizar($dato, $columna, $idProducto)
+    {    
+        // Consulta SQL para eliminar un registro
+        $stmt = $this->pdo->prepare("UPDATE producto SET $columna = '$dato' WHERE id = $idProducto");
+    
+        if ($stmt->execute()) {
             // Consulta exitosa
             echo json_encode(['success' => true]);
         } else {
             // Error en la consulta
             echo json_encode(['success' => false, 'error']);
+        }
+    }
+
+    public function actualizarImagen($imagen, $idProducto)
+    {
+        // Consulta SQL para actualizar el file_path de un producto
+        $stmt = $this->pdo->prepare("UPDATE producto SET file_path = ? WHERE id = ?");
+    
+        if ($stmt->execute([$imagen, $idProducto])) {
+            // Consulta exitosa
+            echo json_encode(['success' => true]);
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'error' => 'Error al actualizar la imagen.']);
         }
     }
 
@@ -354,6 +350,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $nombre = $data['nombre'];
             $producto->nombre($nombre);
             break;
+        
+        case 'modificarImg':
+            if (isset($_FILES['imagen']) && $_FILES['imagen']['error'] === UPLOAD_ERR_OK) {
+                // Crear una instancia del cargador de imágenes
+                $uploader = new ImageUploader();
+                $urlImagen = $uploader->uploadImage($_FILES['imagen']); // Intentar subir la imagen
+    
+                // Verificar si la subida de la imagen fue exitosa
+                if (strpos($urlImagen, 'Error:') === 0) {
+                    // Mensaje de error al subir la imagen
+                    echo json_encode(['message' => $urlImagen]);
+                     exit; // Terminar la ejecución
+                }
+            } else {
+                // Mensaje de error si no se subió la imagen o hubo un problema
+                echo json_encode(['message' => 'Error: No se subió la imagen o hubo un problema durante la subida.']);
+                exit; // Terminar la ejecución
+            }
+            $idProducto = $_POST['id'];
+            $producto->actualizarImagen($urlImagen, $idProducto);
+            break;
 
         default:
             echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
@@ -385,15 +402,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
-
 if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     $data = json_decode(file_get_contents('php://input'), true);
     $idProducto = $data['id'];
-    $nombre = $data['nombre'];
-    $descripcion = $data['descripcion'];
-    $precio = $data['precio'];
-
-    $producto->actualizar($nombre, $descripcion, $precio, $idProducto);  
+    $dato = $data['dato'];
+    $columna = $data['columna'];
+    $producto->actualizar($dato, $columna, $idProducto);
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

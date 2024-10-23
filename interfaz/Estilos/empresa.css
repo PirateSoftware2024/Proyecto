@@ -1,9 +1,16 @@
-body {
-    font-family: 'Arial', sans-serif;
+html, body {
+    height: 100%; /* Hace que el cuerpo ocupe al menos toda la pantalla */
     margin: 0;
     padding: 0;
-    background-color: #f4f4f9;
-    overflow-x: hidden; /* Evitar scroll horizontal */
+    display: flex;
+    flex-direction: column;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;    
+    font-family: Arial, sans-serif;
 }
 
 header {
@@ -37,9 +44,10 @@ nav a:hover {
 }
 
 main {
-    padding: 20px;
-    max-width: 1200px; /* Limita el ancho máximo del contenedor */
-    margin: 0 auto; /* Centra el contenido */
+    flex-grow: 1; /* Hace que el main ocupe el espacio disponible */
+    border-radius: 10px;
+    background-color: grey;
+    margin: 50px 170px;
 }
 
 .form-section, .table-section {
@@ -126,20 +134,20 @@ footer {
     background-color: rgb(212, 21, 21);
 }
 
-.boton-editar{
-    background-color: rgb(230, 206, 27);
+.boton-modificar{
+    background-color: #4CAF50;
 }
 
 .boton-reseña{
-    background-color: rgb(17, 33, 207);
+    background-color: rgb(62, 73, 194);
 }
 
 .boton-eliminar:hover{
     background-color: #711512;
 }
 
-.boton-editar:hover {
-    background-color: #7a6713;
+.boton-modificar:hover {
+    background-color: #45a049;
 }
 
 .boton-reseña:hover{
@@ -162,9 +170,10 @@ footer {
     padding: 25px;
     background-color: #f9f9f9; /* Color de fondo más suave */
     border-radius: 10px; /* Bordes redondeados */
-    border: 2px solid #007bff; /* Borde azul elegante */
+    border: none;
     box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
     z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    overflow: hidden; /* Evita todo tipo de scroll dentro del contenedor */
 }
 
 #cuadroInformacion {
@@ -181,13 +190,51 @@ footer {
     margin-bottom: 10px;
     font-size: 16px; /* Tamaño de letra más grande */
 }
-
+/*
 #cuadroInformacion select, 
 #cuadroInformacion input, 
 #cuadroInformacion button {
-    width: 100%;
+    width: 10%;
     padding: 10px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+}*/
+
+#cuadroInformacion select{
+    width: 79%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+#cuadroInformacion input{
+    width: 75%;
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    text-align: left;
+}
+
+#cuadroInformacion button {
+    background-color: #4CAF50;; /* Botón azul */
+    color: white;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    width: 15%;
+    padding: 10px;
+    margin-bottom: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 14px;
@@ -195,16 +242,8 @@ footer {
     text-align: center;
 }
 
-#cuadroInformacion button {
-    background-color: #007bff; /* Botón azul */
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
 #cuadroInformacion button:hover {
-    background-color: #0056b3; /* Color al pasar el mouse */
+    background-color: #45a049; /* Color al pasar el mouse */
 }
 
 body::before {
@@ -228,3 +267,82 @@ body.modal-open::before {
 }
 
 /* ////////////////// */
+
+
+main{
+	border-radius: 10px;
+	background-color: grey;
+	margin: 50px 170px;
+	/*margin-top: 100px;
+	margin-left: 100px;
+	margin-right: 100px;*/
+}
+/* ///////////////////////////////////////// */
+
+.product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.product-card {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+	transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+    transform: scale(1.05);
+}
+
+.product-card .image-container {
+    width: 100%;
+    height: 200px; 
+    overflow: hidden;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 10px;
+}
+
+.product-card .image-container img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.product-card h3 {
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+.product-card p {
+    margin: 10px 0;
+    color: #555;
+}
+
+.product-card .price {
+    font-size: 1.4em;
+    color: #000;
+}
+
+.product-card button{
+    margin: 20px auto;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.cerrar {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+}

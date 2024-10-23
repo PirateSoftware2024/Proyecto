@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="Estilos/empresa.css">
+    <title>Empresa</title>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="Logo" width="105" height="100"></div>
+        <h1>Envíos</h1>
+        <nav>
+            <a href="empresa.php">Inicio</a>
+        </nav>
+    </header>
+    
+    <main>
+        <div class="carta">
+            <table id="tablaEnvios">
+                <thead>
+                    <tr>
+                        <th>ID Paquete</th>
+                        <th>Nombre Usuario</th>
+                        <th>Departamento</th>
+                        <th>Localidad</th>
+                        <th>Calle</th>
+                        <th>Esquina</th>
+                        <th>Numero Puerta</th>
+                        <th>Departamento</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="filasEnvios"></tbody>
+            </table>
+        </div>
+    </main>
+
+    <footer>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../logica/jquery-3.7.1.min.js"></script>
+    <script src="../logica/empresa.js"></script>
+</body>
+</html>

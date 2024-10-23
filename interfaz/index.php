@@ -20,10 +20,8 @@
             </div>
             <nav>
                 <ul class="nav-menu"  id="nav-links">
-                    <li><a href="historial.html">Mis compras</a></li>
-                    <li><a href="perfil.html">Mi perfil</a></li>
                     <li style="font-size: 25px"><a href="carrito.php" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
-                    
+                    <li><a href="historial.html">Mis compras</a></li> 
                     <?php 
                     session_start();
                     if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
@@ -31,6 +29,7 @@
                         <li id="crearCuenta"><a href="registro.html">Crea tu cuenta</a></li>
                         <li id="login"><a href="login.html">Inicio sesión</a></li>
                     <?php else: ?>
+                        <li><a href="perfil.html">Mi perfil</a></li>
                     <!-- Si el usuario esta logueado, mostramos el enlace de "Salir" -->
                         <button id="salir">Salir</a></button>
                     <?php endif; ?>

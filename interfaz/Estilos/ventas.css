@@ -1,0 +1,156 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;    
+    font-family: Arial, sans-serif;
+}     
+
+        /* Estilos generales */
+        html, body {
+            height: 100%; /* Asegúrate de que el cuerpo ocupa el 100% de la altura de la ventana */
+            margin: 0; /* Eliminar márgenes por defecto */
+        }
+
+        body {
+            display: flex;
+            flex-direction: column; /* Apila los elementos en columnas */
+        }
+
+        /* Estilo del contenido principal */
+        main {
+            flex: 1; /* Hace que el main ocupe todo el espacio disponible */
+            padding: 20px; /* Espaciado interno en el contenido */
+        }
+
+       
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+
+
+header .logo img {
+    margin-right: 20px;
+}
+
+header h1 {
+    flex-grow: 1;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #4d4a4a;
+}
+        
+
+#tablaVentas {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+#tablaVentas thead {
+    background-color: #004466;
+    color: white;
+}
+
+#tablaVentas th, #tablaVentas td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#tablaVentas tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#tablaVentas tr:hover {
+    background-color: #f1f1f1;
+}
+
+#tablaVentas th {
+    background-color: #4d4a4a;
+    color: white;
+    text-transform: uppercase;
+}
+
+#tablaVentas td {
+    color: #333;
+}
+
+        footer {
+            text-align: center;
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            position: relative;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .carta {
+            background-color: #ffffff;
+            border-radius: 12px;
+            border: 2px solid #333; /* Borde gris oscuro */
+            padding: 20px;
+            margin: 25px 250px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+            position: relative;
+            z-index: 1;
+        }
+        
+        
+        h2 {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            margin-top: 16px;
+            font-weight: bold;
+        }
+        
+        
+        input[type="text"],
+        input[type="number"],
+        input[type="file"],
+        select {
+            width: 98%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+        
+        #oferta, #categoria, #condicion {
+            width: 100%;
+        }
+        
+        button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: background-color 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #218838;
+        }

@@ -46,12 +46,12 @@ $(document).ready(function() {
              <div class="radio-group">
                 <label>
                     Pick-up - Ciudad Vieja, Sarandí 508, 11000 Montevideo 
-                    <input type="radio" name="opciones" class="radio" value="opcion1">
+                    <input type="radio" name="opciones" class="radio" value="Centro de recogida">
                 </label><br>
                
                 <label>
-                    Envío a domicilio - ${usuario.localidad}, ${usuario.localidad} ${usuario.numero}, ${usuario.postal} ${usuario.departamento}
-                   <input type="radio" name="opciones" class="radio" value="opcion2"> Opción 2
+                    Envío a domicilio - ${usuario.localidad}, ${usuario.calle} ${usuario.numeroPuerta}, ${usuario.cPostal} ${usuario.departamento}
+                    <input type="radio" name="opciones" class="radio" value="Domicilio"> Opción 2
                 </label><br>
             </div>
         `);
@@ -71,31 +71,7 @@ $(document).ready(function() {
         devolver();
     });
 });
-    ///////////////////////////////////////////////////////////
-    /*function devolver(){
-        $.ajax({
-            url: '../persistencia/pedidoUsuario.php', // Ruta al archivo PHP
-            method: 'GET',
-            dataType: 'json',
-            success: function(data) {
-                if (data.error) {
-                    console.log(data.error);
-                } else {
-                    // Procesar los datos
-                    console.log('Nombre: ' + data.name);
-                    console.log('Monto: ' + data.amount);
-                    
-                    // Puedes mostrar los datos en la página, por ejemplo:
-                    $('#nameDisplay').text(data.name);
-                    $('#amountDisplay').text(data.amount);
-                }
-            },
-            error: function(jqXHR, textStatus, errorThrown) {
-                console.log('Error en la solicitud: ' + textStatus + ' - ' + errorThrown);
-            }
-        });
-    }*/
-    ////////////////////////////////////////////////////////////
+
     // Función para mostrar  los productos en el carrito
     function mostrarProductosEnCarrito() {
     // Vacia el contenedor antes de agregar los productos
@@ -190,33 +166,6 @@ function restarCantidad() {
     modificarCarrito();
 }
 
-// Funcion para comprar y generar un ticket de compra 
-/*function comprar() {
-    let datosOrden = [];
-    // Recorrer el carrito para construir los datos de la orden
-    for (let i = 0; i < carrito.length; i++) {
-        const producto = carrito[i];
-        datosOrden.push({
-            name: producto.nombre,
-            price: producto.precio,
-            cantidad: producto.cantidad
-        });
-}
-
-    // Crear la orden con los datos recopilados
-    orden.push({
-        id: "id de la orden",
-        titulo: "Orden Numero",
-        date: '2024-11-20',
-        productos: datosOrden
-    });
-
-
-    // Convertir la orden a JSON y guardar en localStorage
-    const ordenJSON = JSON.stringify(orden);
-    localStorage.setItem('orden', ordenJSON);
-}*/
-
 
 function resumenPedido(){
     let html = '';
@@ -288,26 +237,6 @@ function datosUsuario(){
         usuario = jsonData; // Una vez leido los datos acutalizamos
     });
 }
-
-/*function entregaPedido(tipo){
-    if(tipo == 1){
-        fetch('../spersistencia/datosEmpresa.php')
-        .then(response => response.text())
-        .then(data => {
-            console.log('Datos recibidos:', data);
-            //Pasamos datos a JSON
-            const jsonData = JSON.parse(data);
-    
-            console.log('Datos JSON:', jsonData);
-            empresa = jsonData; // Una vez leido los datos acutalizamos
-    
-            let direccion = empresa[0];
-            $("#calle").html("Calle: "+direccion.calle);
-            $("#nPuerta").html("Numero puerta: "+direccion.numero);
-            $("#departamento").html("Departamento: "+direccion.departamento);
-        });
-}*/
-
 
 function modificarCarrito(){
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
@@ -411,6 +340,7 @@ paypal.Buttons({
       return actions.order.capture().then(function(details) {
         alert('Pago completado por ' + details.payer.name.given_name);
         generarOrden();
+        nuevoEnvio();
         actualizarPage();
         // Redirigir a una página específica
         window.location.href = '../interfaz/pagoExitoso.html'; // Reemplaza con tu URL deseada
@@ -467,6 +397,7 @@ function nuevoCarrito() {
         if (data.success) {
             // Guardar los datos en el localStorage
             const productosJSON = JSON.stringify(data.productos);
+            console.log(productosJSON+" esos son los producos");
             localStorage.setItem('carrito', productosJSON);
         } else {
             console.error('Error:', data.error);
@@ -474,5 +405,39 @@ function nuevoCarrito() {
     })
     .catch(error => {
         console.log("Nose");
+    });
+}
+
+function nuevoEnvio(){
+    let tipoEntrega = $('input[name="opciones"]:checked').val();
+    let idDireccion = usuario.idDireccion;
+
+    fetch('../persistencia/pedidos/pedidos.php', {
+        method: 'POST', // Método de la petición
+        headers: {
+            'Content-Type': 'application/json' // Establece el tipo de contenido
+        },
+        body: JSON.stringify({ // Convierte los datos a JSON
+            accion: 'nuevoPedido', // La acción que quieres ejecutar en PHP
+            idDireccion: idDireccion,
+            entrega: tipoEntrega
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la red'); // Si hay un error en la red
+        }
+        return response.json(); // Parsear la respuesta JSON
+    })
+    .then(data => {
+        if (data.success) {
+            alert('El pedido fue creado con éxito.');
+        } else {
+            alert('Hubo un problema al crear el pedido: ' + data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Hubo un error al procesar el pedido:', error);
+        alert('Hubo un error al procesar el pedido.');
     });
 }

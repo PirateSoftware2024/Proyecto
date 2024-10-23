@@ -20,12 +20,12 @@ class ApiEmpresa
     
     public function ventasEmpresa($idEmpresa)
     {
-        $stmt = $this->pdo->prepare("SELECT c.idCarrito, u.nombre nomUsuario, p.nombre nomProducto, a.cantidad, a.cantidad * a.precio total, c.idPaquete, c.fecha
-            FROM almacena a
-            JOIN producto p ON p.id = a.id
-            JOIN carrito c ON c.idCarrito = a.idCarrito
-            JOIN usuario u ON u.idUsuario = c.idUsuario
-            WHERE c.estadoCarrito = 'Confirmado' AND idEmpresa = ?;");
+        $stmt = $this->pdo->prepare("SELECT d.id, p.idCarrito, d.idPaquete, u.nombre, d.idProducto, p.fecha, d.cantidad, (d.cantidad * p2.precio) AS total, d.estado_preparacion
+                                    FROM detalle_pedido d
+                                    JOIN paquete p ON p.idPaquete = d.idPaquete
+                                    JOIN usuario u ON u.idUsuario = p.idUsuario
+                                    JOIN producto p2 ON p2.id = d.idProducto
+                                    WHERE d.idEmpresa = ?;");
         
         $stmt->execute([$idEmpresa]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -112,6 +112,19 @@ class ApiEmpresa
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
+
+    public function modificarEstado($nuevoEstado, $id)
+    {
+        $stmt = $this->pdo->prepare("UPDATE detalle_pedido
+                                    SET estado_preparacion = ?
+                                    WHERE id = ?;");
+
+        if ($stmt->execute([$nuevoEstado, $id])) {
+            echo json_encode(['success' => true, 'message' => 'Estado modificado']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
 }
 
 // Configuracion de la base de datos
@@ -172,4 +185,13 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     $empresa->registro($nombre, $rut, $numeroCuenta, $telefono, $correo, $password,  $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
 }
+
+if($_SERVER['REQUEST_METHOD'] == 'PUT'){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id'];
+    $nuevoEstado = $data['valor'];
+
+    $empresa->modificarEstado($nuevoEstado, $id);
+}
 ?>
+

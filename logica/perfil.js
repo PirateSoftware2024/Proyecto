@@ -18,6 +18,31 @@ $(document).ready(function() {
         modificar("correo", "mail");
     });
     
+    $("#depa").click(function (){
+        modificar("departamento", "depa");
+    });
+    $("#localia").click(function (){
+        modificar("localidad", "localia");
+    });
+    $("#call").click(function (){
+        modificar("calle", "call");
+    });
+    $("#esq").click(function (){
+        modificar("esquina", "esq");
+    });
+    $("#nPue").click(function (){
+        modificar("numeroPuerta", "nPue");
+    });
+    $("#nAp").click(function (){
+        modificar("numeroApto", "nAp");
+    });
+    $("#cPos").click(function (){
+        modificar("cPostal", "cPos");
+    });
+    $("#indi").click(function (){
+        modificar("indicaciones", "indi");
+    });
+
     $(document).on('click', '#modfiContra', function () {
         let contra = $("#password").val();
         if(nuevaContrasena == contra){
@@ -51,8 +76,25 @@ $(document).ready(function() {
         $('body').removeClass('modal-open');
     });
     
+
+    $(document).on('click', '#btnDatosDireccion', function () {
+        tabla = "direcciones";
+        $('#datosPersonales').hide();
+        $('#datosDireccion').show();
+        $("#btnDatosDireccion").text("Datos personales");
+        $("#btnDatosDireccion").attr("id", "btnDatosPersonales");
+    });
+
+    $(document).on('click', '#btnDatosPersonales', function () {
+        tabla = "usuario";
+        $('#datosDireccion').hide();
+        $('#datosPersonales').show();
+        $("#btnDatosPersonales").text("Dirección");
+        $("#btnDatosPersonales").attr("id", "btnDatosDireccion");
+    });
 });
 
+let tabla;
 
 function modificar(input, boton) {
     if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
@@ -84,15 +126,28 @@ function actualizar() {
     $("#telefono").val(usuario.telefono);
     $("#fechaNac").val(usuario.fechaNac);
     $("#correo").val(usuario.correo);
+
+    //Datos direccion
+    $("#departamento").val(usuario.departamento);
+    $("#localidad").val(usuario.localidad);
+    $("#calle").val(usuario.calle);
+    $("#esquina").val(usuario.esquina);
+    $("#numeroPuerta").val(usuario.numeroPuerta);
+
+    $("#numeroApto").val(usuario.numeroApto);
+    $("#cPostal").val(usuario.cPostal);
+    $("#indicaciones").val(usuario.indicaciones);
 }
 
 // Función para tomar los datos del formulario
 function tomarDato(input) {
+
     let dato;
     if(input == "telefono"){
         dato = Number($("#telefono").val());
     }else{
         dato = $(`#${input}`).val();
+        console.log(dato+" "+input+"   "+tabla);
     }
 
     modificarUsuario(dato, input);
@@ -107,7 +162,8 @@ function modificarUsuario(dato, columna) {
         body: JSON.stringify({
             columna: columna, // Almacenamos el nombre de la columna a modificar
             dato: dato,
-            accion: 'modificar'
+            accion: 'modificar',
+            tabla: tabla
         })
     })
     .then(response => {
