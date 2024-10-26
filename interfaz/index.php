@@ -20,6 +20,7 @@
             </div>
             <nav>
                 <ul class="nav-menu"  id="nav-links">
+                    <li><button class="nav-button" id="productosVistos">Productos Vistos</button></li>
                     <li style="font-size: 25px"><a href="carrito.php" id="iconoCarrito"><i class="bi bi-basket2-fill"></i></a></li>
                     <li><a href="historial.html">Mis compras</a></li> 
                     <?php 
@@ -66,6 +67,13 @@
                     <li>Email: piratesoftwareook@gmail.com</li>
                     <li>Dirección: Regimiento 9, Montevideo, Uruguay</li>
                     <li><a href="nosotros.html">Sobre Nosotros</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Atención al cliente</h3>
+                <ul>
+                    <li><a href="ticket.html">Generar Ticket</a></li>
+                    <li>Número: 099 999 999</li>
                 </ul>
             </div>
         </div>

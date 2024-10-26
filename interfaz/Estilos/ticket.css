@@ -1,0 +1,82 @@
+/* Estilo global */
+* {
+    box-sizing: border-box; /* Para incluir el padding y el borde en el tamaño total */
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    overflow-x: hidden; /* Evitar scroll horizontal */
+    display: flex;
+    flex-direction: column; /* Permitir que los hijos se alineen en columna */
+    min-height: 100vh; /* Asegurarse de que el body ocupe al menos toda la altura de la ventana */
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+}
+
+header .logo img {
+    margin-right: 20px;
+}
+
+header h1 {
+    flex-grow: 1; /* Permitir que el h1 ocupe el espacio disponible */
+}
+
+main {
+    flex-grow: 1; /* Permitir que el main ocupe el espacio restante */
+    padding: 20px; /* Espaciado interno para el main */
+}
+
+#ticket-form, #responses {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    margin: 10px 0 5px;
+}
+
+input, textarea, button {
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+#responseList {
+    margin-top: 10px;
+}
+
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    width: 100%;
+}

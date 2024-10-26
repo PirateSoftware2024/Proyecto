@@ -94,7 +94,7 @@ $(document).ready(function() {
     });
 });
 
-let tabla;
+let tabla = "usuario";
 
 function modificar(input, boton) {
     if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
@@ -147,7 +147,6 @@ function tomarDato(input) {
         dato = Number($("#telefono").val());
     }else{
         dato = $(`#${input}`).val();
-        console.log(dato+" "+input+"   "+tabla);
     }
 
     modificarUsuario(dato, input);

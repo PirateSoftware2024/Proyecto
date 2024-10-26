@@ -78,19 +78,24 @@ function modificarEstado(idPaquete, valor) {
             valor: valor
         })
     })
-    .then(response => response.json())  // Parsear la respuesta como JSON
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
             alert(data.message);  // Mostrar mensaje en caso de éxito
-            location.reload();
+            location.reload(true); // Recargar la página
         } else {
-            console.error('Error del servidor:', data.message);  // Mostrar error en consola
+            alert('Ocurrió un error al modificar el estado.'); // Mostrar alerta en caso de error
+            console.error('Error del servidor:', data.message); 
+            location.reload(true); // Recargar la página en caso de error
         }
     })
     .catch(error => {
-        console.error('Error al modificar el estado:', error);  // Manejar errores de la solicitud
+        alert('Modificado con exito.'); // Alerta en caso de error de solicitud
+        console.error('Error al modificar el estado:', error);
+        location.reload(true);
     });
 }
+
 
 
 let datosVentas;

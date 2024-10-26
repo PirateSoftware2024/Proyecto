@@ -240,11 +240,9 @@ function datosUsuario(){
     fetch('../persistencia/usuario/usuario.php?accion=datosUsuario')
     .then(response => response.text())
     .then(data => {
-        console.log('Datos recibidos:', data);
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
 
-        console.log('Datos JSON:', jsonData);
         usuario = jsonData; // Una vez leido los datos acutalizamos
     });
 }
@@ -423,14 +421,13 @@ function nuevoCarrito() {
         if (data.success) {
             // Guardar los datos en el localStorage
             const productosJSON = JSON.stringify(data.productos);
-            console.log(productosJSON+" esos son los producos");
             localStorage.setItem('carrito', productosJSON);
         } else {
             console.error('Error:', data.error);
         }
     })
     .catch(error => {
-        console.log("Nose");
+        
     });
 }
 

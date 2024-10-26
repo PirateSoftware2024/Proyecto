@@ -18,7 +18,7 @@ $contraseña = $_POST['contraseña'];  // Esta será la contraseña ingresada
 $tipoUsuario = $_POST['tipoCuenta'];
 
 if ($tipoUsuario === 'comprador') {
-    $stmt = $pdo->prepare("SELECT password FROM usuario WHERE correo = ? AND validacion = 'Si'");
+    $stmt = $pdo->prepare("SELECT password FROM usuario WHERE correo = ?");
 } else {
     $stmt = $pdo->prepare("SELECT password FROM empresa WHERE correo = ?");
 }
@@ -39,7 +39,7 @@ if ($result) {
         echo json_encode(['success' => true, 'message' => 'Contraseña válida.']);
         session_start();
         if ($tipoUsuario === 'comprador') {
-            $stmt = $pdo->prepare("SELECT * FROM usuario WHERE correo = ? AND password = ? AND validacion = 'Si'");
+            $stmt = $pdo->prepare("SELECT * FROM usuario WHERE correo = ? AND password = ?");
             $stmt->execute([$correo, $contraseñaAlmacenada]);
             $result = $stmt->fetch(PDO::FETCH_ASSOC);
             $_SESSION['usuario'] = $result; // Los guardamos en la session usuario

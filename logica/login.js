@@ -48,7 +48,7 @@ function redirigir(tipoUser) {
         }, 2000);
     }else{
         setTimeout(function() {
-            window.location.href = "../interfaz/empresa.html";
+            window.location.href = "../interfaz/empresa.php";
         }, 2000);
     }
     // Esperar 2 segundos antes de redirigir

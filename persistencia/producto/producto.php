@@ -264,6 +264,36 @@ class ApiProducto
         }
     }    
     
+    public function nuevoProductoVisto($idUsuario, $idProducto)
+    {
+       $stmt = $this->pdo->prepare("INSERT INTO productos_vistos (idUsuario, idProducto)
+                                    VALUES (?, ?)");
+       $stmt->execute([$idUsuario, $idProducto]);
+    }
+
+    public function productosVistos($idUsuario)
+    {
+       if($idUsuario == "no"){
+            echo json_encode(['success' => false, 'message' => 'No tiene productos vistos']);
+            return;
+        }
+       // Preparar la consulta
+       $stmt = $this->pdo->prepare("SELECT p2.*
+                                    FROM productos_vistos p
+                                    JOIN producto p2 ON p2.id = p.idProducto
+                                    WHERE p.idUsuario = ?;");
+        
+       // Ejecutar la consulta
+       $stmt->execute([$idUsuario]);
+       $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+   
+       // Verificar si hay resultados
+       if (!empty($resultados)) {
+            echo json_encode(['success' => true, 'resultados' => $resultados]);
+       } else {
+            echo json_encode(['success' => false, 'message' => 'No tiene productos vistos']);
+       } 
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////
@@ -372,6 +402,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $producto->actualizarImagen($urlImagen, $idProducto);
             break;
 
+            case 'productoVisto':
+                session_start();
+                $idUsuario = $_SESSION['usuario']['idUsuario'];
+                $idProducto = $data['id'];
+                $producto->nuevoProductoVisto($idUsuario, $idProducto);
+                break;
+            
         default:
             echo json_encode(['success' => false, 'error' => 'Acción no reconocida']);
             break;
@@ -448,6 +485,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
         case 'buscar':
             $dato = $_GET['dato'];
             $producto->buscarProducto($dato);
+            break;
+
+        case 'obtenerProductosVistos':
+            session_start();
+            // Verifica si hay una sesión iniciada
+            if (isset($_SESSION['usuario']['idUsuario'])) {
+                $idUsuario = $_SESSION['usuario']['idUsuario'];
+            } else {
+                $idUsuario = "no"; // Valor asignado si no hay sesión iniciada
+            }
+            $producto->productosVistos($idUsuario);
             break;
 
         default:

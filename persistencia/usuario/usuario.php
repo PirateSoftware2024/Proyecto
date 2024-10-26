@@ -10,7 +10,6 @@ class ApiUsuarios
     {
         $this->pdo = $pdo;
     }
-
     public function registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
     {
         // Verificar si el correo o el teléfono ya existe
@@ -27,15 +26,14 @@ class ApiUsuarios
         $hashedPassword = password_hash($contraseña, PASSWORD_DEFAULT);
 
         // Insertar información de usuario en la base de datos
-        $stmt = $this->pdo->prepare("INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo, validacion) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO usuario (nombre, apellido, telefono, fechaNac, password, correo) VALUES (?, ?, ?, ?, ?, ?)");
 
         if (!$stmt) {
             echo json_encode(['success' => false, 'error' => 'Error en la preparación de la consulta.']);
             return;
         }
 
-        $validacion = 'Espera';  // Si 'validacion' es un campo que siempre se pone así, bien.
-        if ($stmt->execute([$nombre, $apellido, $telefono, $fechaNac, $hashedPassword, $correo, $validacion])) {
+        if ($stmt->execute([$nombre, $apellido, $telefono, $fechaNac, $hashedPassword, $correo])) {
             $idUsuario = $this->pdo->lastInsertId();  // Obtener el ID del usuario insertado
 
             // Intentar registrar la dirección
@@ -67,7 +65,7 @@ class ApiUsuarios
 
     public function obtenerUsuarios()
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM usuario WHERE validacion = 'Si'");
+        $stmt = $this->pdo->prepare("SELECT * FROM usuario");
         if ($stmt->execute()) {
             $usuario = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo json_encode($usuario);
@@ -112,49 +110,6 @@ class ApiUsuarios
         } else {
             // Error en la consulta
             echo json_encode(['success' => false, 'error']);
-        }
-    }
-
-    public function validarUsuario($idUsuario, $opcion)
-    {
-        if($opcion !== "Si" && $opcion !== "No"){
-            echo json_encode(['La opcion es incorrecta']);
-            exit();
-        }else{
-            if ($opcion == "Si") {
-                $stmt = $this->pdo->prepare("UPDATE usuario SET validacion = 'Si' WHERE idUsuario = $idUsuario");
-            } else {
-                $stmt = $this->pdo->prepare("DELETE FROM usuario WHERE idUsuario = $idUsuario");
-            }
-        }
-
-        if ($stmt->execute()) {
-                // Consulta exitosa
-                if ($stmt->rowCount() > 0) {
-                    echo json_encode(['success' => true]);
-                } else {
-                    echo json_encode(['El usuario no existe...']);
-                }
-            } else {
-            // Error en la consulta
-            echo json_encode(['Error en la consulta']);
-        }
-    }
-
-    public function usuariosValidar()
-    {
-        $stmt = $this->pdo->prepare("SELECT * FROM usuario WHERE validacion = 'Espera'");
-        if ($stmt->execute()) {
-            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if (!empty($usuarios)) {
-                echo json_encode($usuarios);
-            } else {
-                // No hay usuarios en espera de validación
-                echo json_encode(['success' => false, 'message' => 'No hay usuarios en espera de validación']);
-            }
-        } else {
-            // Error en la consulta
-            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
         }
     }
 
@@ -324,13 +279,6 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
             $columna = $data['columna'];
             $tabla = $data['tabla'];
             $usuario->modificarUsuario($idUsuario, $dato, $columna, $tabla);
-            break;
-
-        case 'validar':
-            session_start();
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
-            $opcion = $data['opcion'];
-            $usuario->validarUsuario($idUsuario, $opcion);
             break;
     }
 }

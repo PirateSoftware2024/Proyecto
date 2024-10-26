@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soporte de Tickets</title>
+    <link rel="stylesheet" href="Estilos/ticket.css"> <!-- Vincula tu CSS aquí -->
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
+        <h1>AXIS - Soporte de Tickets</h1>
+    </header>
+    <main>
+        <section id="ticket-form">
+            <h2>Enviar Ticket</h2>
+            <form id="formTicket">
+                <label for="ingresoTicket">Ingrese su ticket:</label>
+                <input type="text" id="ingresoTicket" name="ingresoTicket" required>
+                <button type="submit">Enviar Ticket</button>
+            </form>
+        </section>
+        
+        <section id="responses">
+            <h2>Respuestas a Tickets</h2>
+            <div id="responseList"></div>
+        </section>
+    </main>
+    <footer>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="../logica/jquery-3.7.1.min.js"></script>
+    <script src="../logica/tickets.js"></script>
+</body>
+</html>

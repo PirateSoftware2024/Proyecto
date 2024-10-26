@@ -17,7 +17,7 @@ $pdo = $conexionDB->getPdo();
 $email = $_POST['email']; // Asegúrate de validar y sanitizar esta entrada
 
 
-$stmt = $pdo->prepare("SELECT idUsuario, COUNT(*) as count FROM usuario WHERE correo = ? AND validacion = 'Si'");
+$stmt = $pdo->prepare("SELECT idUsuario, COUNT(*) as count FROM usuario WHERE correo = ?");
 if (!$stmt) {
     die(json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']));
 }

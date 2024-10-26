@@ -144,7 +144,6 @@ function obtenerProductos(){
     .then(data => {
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-        console.log("productos::            "+jsonData );
         products = jsonData;
         actualizar();
     });

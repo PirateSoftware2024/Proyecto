@@ -134,9 +134,27 @@ class ApiEmpresa
                 case 'Cancelado':
                     $this->envioCancelado($id);
                     break;
+                case 'En preparación':
+                    $this->envioPreparacion($id);
+                    break;
             }
         } else {
             echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
+
+    public function envioPreparacion($id){
+        // Primera consulta para obtener el idPaquete
+        $stmt = $this->pdo->prepare("SELECT idPaquete FROM detalle_pedido WHERE id = ?;");
+
+        if ($stmt->execute([$id])) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC); // Obtenemos el resultado
+
+            if ($result) {
+                $idPaquete = $result['idPaquete']; // Asignamos el idPaquete
+                $this->mail($idPaquete, "un producto de su compra ya se esta preparando. <br>
+                Nos comunicaremos por proximas actualizaciones!");
+            }
         }
     }
 
@@ -150,8 +168,11 @@ class ApiEmpresa
 
             if ($result) {
                 $idPaquete = $result['idPaquete']; // Asignamos el idPaquete
-
-                // Segunda consulta para obtener el estado de preparación
+                
+                $this->mail($idPaquete, "un producto de su compra ha sido enviado al deposito. <br>
+                                Nos comunicaremos por proximas actualizaciones!");
+                
+                 // Segunda consulta para obtener el estado de preparación
                 $stmt = $this->pdo->prepare("SELECT estado_preparacion FROM detalle_pedido WHERE idPaquete = ?;");
                 if($stmt->execute([$idPaquete])) {
                     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -167,6 +188,8 @@ class ApiEmpresa
                     // Si todos los productos están "Enviado a depósito", modificamos el estado del paquete
                     $stmt = $this->pdo->prepare("UPDATE paquete SET estadoEnvio = 'En depósito' WHERE idPaquete = ?;");
                     if($stmt->execute([$idPaquete])) {
+                        $this->mail($idPaquete, "todos los productos estan en nuestro deposito. <br>
+                        Nos comunicaremos cuando el pedido sea enviado a su domicilio!");
                         echo json_encode(['success' => true, 'message' => 'Estado de envío del paquete modificado']);
                     } else {
                     echo json_encode(['success' => false, 'message' => 'Error al modificar el envío']);
@@ -192,7 +215,8 @@ class ApiEmpresa
 
             if ($result) {
                 $idPaquete = $result['idPaquete']; // Asignamos el idPaquete
-
+                $this->mail($idPaquete, "un producto de su compra ha sido cancelado. <br>
+                Le reintegraremos el dinero en las proximas horas!");
                 // Segunda consulta para obtener el estado de preparación
                 $stmt = $this->pdo->prepare("SELECT estado_preparacion FROM detalle_pedido WHERE idPaquete = ?;");
                 if($stmt->execute([$idPaquete])) {
@@ -209,6 +233,8 @@ class ApiEmpresa
                     // Si todos los productos están "Enviado a depósito", modificamos el estado del paquete
                     $stmt = $this->pdo->prepare("UPDATE paquete SET estadoEnvio = 'Cancelado' WHERE idPaquete = ?;");
                     if($stmt->execute([$idPaquete])) {
+                        $this->mail($idPaquete, "su compra a sido cancelada.. <br>
+                Le reintegraremos el dinero en las proximas horas!");
                         echo json_encode(['success' => true, 'message' => 'Estado de envío del paquete modificado']);
                     } else {
                     echo json_encode(['success' => false, 'message' => 'Error al modificar el envío']);
@@ -253,12 +279,12 @@ class ApiEmpresa
                 $mail->CharSet = 'UTF-8';
 
                 // Destinatarios
-                $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Pago exitoso');
+                $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Info. compra');
                 $mail->addAddress($email);
 
                 // Contenido
                 $mail->isHTML(true);
-                $mail->Subject = 'Infromacion sobre su envio';
+                $mail->Subject = 'Infromacion sobre su compra';
                 $mail->Body = "Hola, $nombreUsuario!<br>
                             Le queremos informar que $texto";
 

@@ -329,63 +329,63 @@ body.modal-open::before {
 
 /* Estilos para el footer */
 .footer {
-	text-align: center;
-	margin-top: 20px;
-	background-color: #333;
-	color: #fff;
-	padding: 20px 1px;
+    text-align: center;
+    margin-top: 20px;
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0; /* Cambia el padding horizontal a 0 para centrar mejor */
 }
 
 .footer-container {
-	display: flex;
-	flex-wrap: wrap;
-	justify-content: space-between;
-	max-width: 1200px;
-	margin-left: 100px;
-	
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto; /* Centra el contenedor */
 }
 
 .footer-section {
-	flex: 1 1 200px;
-	margin: auto;
+    flex: 1 1 200px; /* Mantiene la flexibilidad */
+    margin: 10px; /* Agrega margen a las secciones */
 }
 
 .footer-section h3 {
-	margin-bottom: 15px;
-	font-size: 18px;
-	border-bottom: 1px solid #555;
-	padding-bottom: 5px;
-	text-align: left;
+    margin-bottom: 15px;
+    font-size: 18px;
+    border-bottom: 1px solid #555;
+    padding-bottom: 5px;
+    text-align: left;
 }
 
 .footer-section p,
 .footer-section ul {
-	margin: 10px 0;
-	text-align: left;
+    margin: 10px 0;
+    text-align: left;
 }
 
 .footer-section ul {
-	text-align: left;
-	list-style: none;
-	padding: 0;
+    text-align: left;
+    list-style: none;
+    padding: 0;
 }
 
 .footer-section ul li {
-	margin: 5px 0;
+    margin: 5px 0;
 }
 
 .footer-section ul li a {
-	color: #fff;
-	text-decoration: none;
+    color: #fff;
+    text-decoration: none;
 }
 
 .footer-section ul li a:hover {
-	text-decoration: underline;
+    text-decoration: underline;
 }
 
-#copy{
-	padding: 10px;
-	border-top: 1px solid #555;
+#copy {
+    padding: 10px;
+    border-top: 1px solid #555;
+    margin-top: 20px; /* Agrega margen superior para separación */
 }
 
 @media (max-width: 1237px) {
@@ -647,9 +647,7 @@ body.modal-open::before {
 	
 	.boton-producto:hover {
 		background-color: #45a049;
-	}
-    
-    
+	}    
 }
 
 .loader {
@@ -680,5 +678,6 @@ body.modal-open::before {
     background-color: rgb(223, 65, 65);; /* Color de fondo más oscuro al hacer hover */
     color: white;
 }
+
 
 

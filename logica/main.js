@@ -51,7 +51,7 @@ function buscar() {
         if (jsonData === false) {
             alert('No hay productos disponibles.'); // Mostrar alerta si no hay productos
         } else {
-            console.log('Datos JSON:', jsonData);
+            
             products = jsonData; // Una vez leído los datos, actualizamos
             actualizar(); // Asegúrate de que esta función esté definida
         }
@@ -78,7 +78,7 @@ function buscarProductosCategoria(){
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
 
-        console.log('Datos JSON:', jsonData);
+        
         products = jsonData; // Una vez leido los datos acutalizamos
         actualizar();
     });
@@ -102,7 +102,6 @@ $(document).ready(function() {
     cargarCategorias(); //Obtenemos categorias de la BD
     cargarDatos(); // Obtenemos productos de la BD
     nuevoCarrito();// Verificamos si el usuario tiene un  carrito "Pendiente", si es asi obtenemos los productos
-    
     $("#salir").click(pantallaCarga);
     $("#productContainer").on("click", ".boton-producto", añadir);
     $("#cuadroInformacion").on("click", ".boton-producto", añadir);
@@ -117,7 +116,6 @@ $(document).ready(function() {
     $("#btnBuscar").click(buscar);
 
     $("#right-arrow").on("click", function() {
-        console.log('Right arrow clicked');
         $(".navbar").animate({scrollLeft: '+=150px'}, 300);
     });
     
@@ -130,6 +128,8 @@ $(document).ready(function() {
         $('#cuadroInformacion').fadeOut();
         $('body').removeClass('modal-open');
     });
+
+    $("#productosVistos").click(productosVistos);
 });
 
 function obtenerReseñas(idProducto){
@@ -160,8 +160,40 @@ function obtenerReseñas(idProducto){
     });
 }
 
+function productosVistos() {
+    fetch('../persistencia/producto/producto.php?accion=obtenerProductosVistos', {
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => { 
+        if (data.success) {
+            products = data.resultados;
+            actualizar();
+        } else {
+            alert(data.message); // Muestra un mensaje si no hay productos vistos
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+
+
 let reseñas = [];
 function verMas(idBoton){
+    fetch('../persistencia/producto/producto.php', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            id: idBoton,
+            accion: "productoVisto"
+        })
+    });
+
     const producto = products.find(producto => Number(producto.id) === idBoton);
     let reseñasProducto = "<ul>";
     if(reseñas === 'Sin reseñas'){
@@ -231,7 +263,7 @@ function nuevoCarrito() {
         }
     })
     .catch(error => {
-        console.log("Nose");
+        
     });
 }
 
