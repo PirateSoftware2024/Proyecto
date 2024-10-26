@@ -1,6 +1,12 @@
 <?php
 require("../ConexionDB.php");
 header(header: 'Content-Type: application/json');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
+require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
+require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php';
 
 class ApiEmpresa
 {
@@ -114,7 +120,7 @@ class ApiEmpresa
     }
 
     public function modificarEstado($nuevoEstado, $id)
-    {
+    {   
         $stmt = $this->pdo->prepare("UPDATE detalle_pedido
                                     SET estado_preparacion = ?
                                     WHERE id = ?;");
@@ -215,6 +221,54 @@ class ApiEmpresa
             }
         } else {
             echo json_encode(['success' => false, 'message' => 'Error en la consulta para obtener el paquete']);
+        }
+    }
+
+    function mail($idPaquete, $texto)
+    {
+        //Con el id del paquete obtenremos el correo de la persona que realizo la compra
+        $stmt = $this->pdo->prepare("SELECT u.correo, u.nombre
+                                    FROM paquete p
+                                    JOIN usuario u ON u.idUsuario = p.idUsuario
+                                    WHERE p.idPaquete = ?;");
+    
+        if ($stmt->execute([$idPaquete])) {
+            $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
+            session_start();
+            // Configuración de PHPMailer
+            $mail = new PHPMailer(true);
+            $email = $result['correo'];
+            $nombreUsuario = $result['nombre'];
+            try {
+                // Configuración del servidor
+                $mail->isSMTP();
+                $mail->Host = 'smtp.gmail.com';
+                $mail->SMTPAuth = true;
+                $mail->Username = 'noreplyaxiemarket@gmail.com';
+                $mail->Password = 'munxlimofkyyfskn'; // Asegúrate de usar la contraseña de aplicación aquí
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+                $mail->Port = 587;
+
+                // Establecer la codificación de caracteres
+                $mail->CharSet = 'UTF-8';
+
+                // Destinatarios
+                $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Pago exitoso');
+                $mail->addAddress($email);
+
+                // Contenido
+                $mail->isHTML(true);
+                $mail->Subject = 'Infromacion sobre su envio';
+                $mail->Body = "Hola, $nombreUsuario!<br>
+                            Le queremos informar que $texto";
+
+                $mail->send(); // Envía el correo
+                echo json_encode(['success' => true, 'message' => 'Correo enviado.']);
+            } catch (Exception $e) {
+                echo json_encode(['success' => false, 'message' => 'Error al enviar el correo: {$mail->ErrorInfo}']);
+            }
+        }else{
+            echo json_encode(['success' => false, 'message' => 'No se encontro el correo del usuario']);
         }
     }
 }

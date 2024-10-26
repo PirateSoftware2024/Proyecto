@@ -31,9 +31,9 @@ if ($result['count'] < 1) {
 } 
 
 
-    require 'C:\xampp\htdocs\PHPMailer\src\Exception.php'; // Ajusta la ruta
-    require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php'; // Ajusta la ruta
-    require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php'; // Ajusta la ruta
+    require 'C:\xampp\htdocs\PHPMailer\src\Exception.php'; 
+    require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
+    require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php'; 
 
     // Generar un token aleatorio de 6 dígitos
     $token = mt_rand(100000, 999999);
@@ -59,7 +59,7 @@ if ($result['count'] < 1) {
         $mail->CharSet = 'UTF-8';
 
         // Destinatarios
-        $mail->setFrom('noreplyaxiemarket@gmail.com', 'Nombre del Remitente');
+        $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Token');
         $mail->addAddress($email);
 
         // Contenido

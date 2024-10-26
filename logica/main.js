@@ -310,6 +310,7 @@ function modificarCarrito(){
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     let total = 30; 
     let cantidad = 0;
+    let iva = 0;
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
@@ -318,6 +319,7 @@ function modificarCarrito(){
         const subtotal = item.precio * item.cantidad;
         total += subtotal;
         cantidad += item.cantidad;
+        iva += subtotal*0.22;
     }
     fetch('../persistencia/carrito/carrito.php', {
         method: 'PUT',
@@ -326,7 +328,7 @@ function modificarCarrito(){
         },
         body: JSON.stringify({
             cantidadProductos: cantidad,
-            precioTotal: total,
+            precioTotal: total+iva,
             accion: "actualizarCarrito"
         })
     })

@@ -139,14 +139,18 @@ function elimiarDelCarrito(idProducto) {
 function sumarCantidad() {
     const idBoton = $(this).data("id");
     const index = carrito.findIndex(producto => Number(producto.id)  === idBoton);
-    carrito[index].cantidad++;
+    if(carrito[index].cantidad < carrito[index].stock){
+        carrito[index].cantidad++;
     
-    // Actualizar localStorage y volver a renderizar el carrito
-    localStorage.setItem('carrito', JSON.stringify(carrito));
-    mostrarProductosEnCarrito();
+        // Actualizar localStorage y volver a renderizar el carrito
+        localStorage.setItem('carrito', JSON.stringify(carrito));
+        mostrarProductosEnCarrito();
     
-    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
-    modificarCarrito();
+        agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+        modificarCarrito();
+    }else{
+        alert("La cantidad que desea ingresar supera el stock!");
+    }
 }
 
 function restarCantidad() {
@@ -167,60 +171,67 @@ function restarCantidad() {
 }
 
 
-function resumenPedido(){
+function resumenPedido() {
     let html = '';
-    let total = 30; // Es igula a 30 por el empaque y la tarifa de Axie
+    let total = 30; // Incluye el empaque y la tarifa de Axie
+    let iva = 0;    // Inicializa el IVA
     let elementoHtml = '<ul class="order-items">';
-    
-    if(carrito.length<1){
+
+    if (carrito.length < 1) {
         $("#titulo").html("No tiene productos agregados...");
         $("#comprar").css("display", "none");
         $("#pedido").html("");
-    }else{
-    $("#comprar").css("display", "flex");
-    // Recorrer cada producto en la orden actual
-    for (let j = 0; j < carrito.length; j++) {
-        const item = carrito[j];
-            
-        // Calcula el subtotal del producto y agregarlo al total del pedido
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
-            
-        // Agregar el producto a la lista de elementos 
+    } else {
+        $("#comprar").css("display", "flex");
+
+        // Recorrer cada producto en la orden actual
+        for (let j = 0; j < carrito.length; j++) {
+            const item = carrito[j];
+
+            const subtotal = item.precio * item.cantidad;
+            const ivaPorProducto = subtotal * 0.22; // Calcular IVA por producto
+            iva += ivaPorProducto; // Acumular IVA
+            total += subtotal; // Sumar subtotal al total
+
+            // Agregar el producto a la lista de elementos 
+            elementoHtml += `
+                <li class="order-item">
+                    <span>${item.nombre} (x${item.cantidad})</span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </li>`;
+        }
+
+        // Agregar empaque, tarifa y IVA a la lista
         elementoHtml += `
             <li class="order-item">
-                <span>${item.nombre} (x${item.cantidad})</span>
-                <span>$${subtotal.toFixed(2)}</span>
-            </li>`;
-        }
-        
+                <span>Empaque</span>
+                <span>$10.00</span>
+            </li>
+            <li class="order-item">
+                <span>Tarifa Axis Market</span>
+                <span>$20.00</span>
+            </li>
+            <li class="order-item">
+                <span>IVA</span>
+                <span>$${iva.toFixed(2)}</span>
+            </li>
+        </ul>`;
 
-        // Cerramos la lista
-        elementoHtml += `
-                <li class="order-item">
-                    <span>Empaque</span>
-                    <span>$10.00</span>
-                </li>
-                <li class="order-item">
-                    <span>Tarifa Axis Markets</span>
-                    <span>$20.00</span>
-                </li>
-                <li class="order-item">
-                    <span>Impuestos</span>
-                    <span> Calcular los impuestos :)</span>
-                </li>
-            </ul>
-        `;
+        // Calcular el total final sumando el IVA
+        total += iva
+
         html += `
-                <div class="order">
+            <div class="order">
                 ${elementoHtml}
                 <div class="total">Total: $${total.toFixed(2)}</div>
             </div>
         `;
-    
-    $("#pedido").html(html);
+
+        // Mostrar el HTML en la página
+        $("#pedido").html(html);
     }
 }
+
 
 let empresa = [];
 let usuario = [];
@@ -242,6 +253,7 @@ function modificarCarrito(){
     let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
     let total = 30; 
     let cantidad = 0;
+    let iva = 0;
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
@@ -250,6 +262,7 @@ function modificarCarrito(){
         const subtotal = item.precio * item.cantidad;
         total += subtotal;
         cantidad += item.cantidad;
+        iva += subtotal*0.22;
     }
     fetch('../persistencia/carrito/carrito.php', {
         method: 'PUT',
@@ -258,7 +271,7 @@ function modificarCarrito(){
         },
         body: JSON.stringify({
             cantidadProductos: cantidad,
-            precioTotal: total,
+            precioTotal: (total+iva),
             accion: "actualizarCarrito"
         })
     })
@@ -308,7 +321,8 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
 }
 
 let totalCarrito = () => {
-    let total = 0; 
+    let total = 30;
+    let iva = 0;
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
@@ -316,7 +330,9 @@ let totalCarrito = () => {
         // Calcula el subtotal del producto y agregarlo al total del carrito
         const subtotal = item.precio * item.cantidad;
         total += subtotal;
+        iva += subtotal*0.22;
     }
+    total += iva;
     // Convertir el total a dólares
     let aDolar = total / 40.26; // Redondear a dos decimales
     return aDolar; // Convertir a número flotante
@@ -325,44 +341,54 @@ let totalCarrito = () => {
 paypal.Buttons({
     // Configuración del botón
     createOrder: function(data, actions) {
-      return actions.order.create({
-        purchase_units: [{
-          amount: {
-            currency_code: 'USD', // Asegúrate de que la moneda sea USD
-            value: 10.00 // Total en dólares
-          }
-        }]
-      });
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    currency_code: 'USD', // Asegúrate de que la moneda sea USD
+                    value: totalCarrito().toFixed(2) // Total en dólares
+                }
+            }]
+        }).catch(function(err) {
+            console.log('Error al crear la orden', err);
+            alert('Hubo un problema al crear la orden. Por favor, intenta de nuevo.');
+        });
     },
     
     // Esta función se ejecuta cuando el pago fue exitoso
     onApprove: function(data, actions) {
-      return actions.order.capture().then(function(details) {
-        alert('Pago completado por ' + details.payer.name.given_name);
-        generarOrden();
-        nuevoEnvio();
-        actualizarPage();
-        // Redirigir a una página específica
-        window.location.href = '../interfaz/pagoExitoso.html'; // Reemplaza con tu URL deseada
-      });
+        return actions.order.capture().then(function(details) {
+            const idTransaccion = details.id;
+            const metodoPago = details.payer.payment_method || "PayPal"; // 'credit_card' o 'PayPal'
+            const mailPaypal = details.payer.email_address;
+
+            generarOrden(metodoPago, idTransaccion, mailPaypal);
+            nuevoEnvio();
+            actualizarPage();
+            // Redirigir a una página específica
+            window.location.href = '../interfaz/pagoExitoso.html'; // Reemplaza con tu URL deseada
+        });
     },
     
     // Manejar errores en el pago
     onError: function(err) {
-      console.log('Ocurrió un error con el pago', err);
-      alert('Hubo un problema con el pago. Por favor, intenta de nuevo.');
+        console.log('Ocurrió un error con el pago', err);
+        alert('Hubo un problema con el pago. Por favor, intenta de nuevo.');
     }
-  }).render('#paypal-button-container'); // ID del contenedor donde se mostrará el botón de PayPal
+}).render('#paypal-button-container'); // ID del contenedor donde se mostrará el botón de PayPal
+
   
 
-function generarOrden(){
+function generarOrden(metodoPago, idTransaccion, mailPaypal){
     fetch('../persistencia/carrito/carrito.php', {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-            accion: "generarOrden"
+            accion: "generarOrden",
+            idTransaccion: idTransaccion, 
+            mailPaypal: mailPaypal,
+            metodoPago: metodoPago
         }),
     })
     .then(response => response.json())

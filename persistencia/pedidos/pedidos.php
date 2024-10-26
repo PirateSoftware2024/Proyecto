@@ -191,10 +191,11 @@ class ApiPedidos
         $result1 = $stmt1->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
 
         // Prepara la segunda consulta
-        $stmt2 = $this->pdo->prepare("SELECT p.nombre, d2.cantidad, p.precio, p.descripcion, d2.estado_preparacion, p.file_path
+        $stmt2 = $this->pdo->prepare("SELECT d2.idPaquete, p.nombre, d2.cantidad, p.precio, p.descripcion, d2.estado_preparacion, p.file_path
             FROM detalle_pedido d2
             JOIN producto p ON p.id = d2.idProducto
-            WHERE d2.idPaquete IN (SELECT idPaquete FROM paquete WHERE idUsuario = ?);"); // Ajustar para que tome todos los paquetes del usuario
+            WHERE d2.idPaquete IN (SELECT idPaquete FROM paquete WHERE idUsuario = ?)
+            ;"); // Ajustar para que tome todos los paquetes del usuario
         $stmt2->execute([$idUsuario]);
         $result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
 

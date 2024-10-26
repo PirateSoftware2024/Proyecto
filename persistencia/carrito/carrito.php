@@ -1,6 +1,13 @@
 <?php 
 require("../ConexionDB.php");
 header('Content-Type: application/json');
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'C:\xampp\htdocs\PHPMailer\src\Exception.php';
+require 'C:\xampp\htdocs\PHPMailer\src\PHPMailer.php';
+require 'C:\xampp\htdocs\PHPMailer\src\SMTP.php';
+
 class ApiCarrito
 {
     private $pdo;
@@ -23,7 +30,7 @@ class ApiCarrito
             $_SESSION['usuario']['idCarrito'] = $idCarrito;
 
             // Obtener los productos del carrito
-            $stmt = $this->pdo->prepare("SELECT a.id, a.cantidad, a.precio, p.nombre, p.file_path
+            $stmt = $this->pdo->prepare("SELECT a.id, a.cantidad, a.precio, p.nombre, p.file_path, p.stock
                                         FROM almacena a
                                         JOIN producto p ON a.id = p.id
                                         WHERE a.idCarrito = ?");
@@ -108,11 +115,12 @@ class ApiCarrito
         }
     }
 
-    public function generarOrden($idCarrito)
+    public function generarOrden($idCarrito, $metodo, $mail, $idTransaccion, $idUsuario)
     {
         $stmt = $this->pdo->prepare("UPDATE carrito SET estadoCarrito = 'Confirmado' WHERE idCarrito = ?");
         // Ejecutar la consulta
         if ($stmt->execute([$idCarrito])) {
+            $this->datosPago($idUsuario, $idCarrito, $metodo, $mail, $idTransaccion);
             if($this->descontarEnStock($idCarrito)){
                 echo json_encode(['success' => true]);
             }else{
@@ -121,8 +129,14 @@ class ApiCarrito
         } else {
             echo json_encode(['success' => false, 'error' => mysqli_error($conexion)]);
         }
+        $this->mail();
     }
 
+    function datosPago($idUsuario, $idCarrito, $metodo, $mail, $idTransaccion){
+        $stmt = $this->pdo->prepare("INSERT INTO pagos (idUsuario, idOrden, metodo_pago, mail, transaccion_id) 
+        VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$idUsuario, $idCarrito, $metodo, $mail, $idTransaccion]);
+    }
 
     function descontarEnStock($idCarrito)
     {
@@ -183,7 +197,7 @@ class ApiCarrito
                 );
             
                 if ($stmt) {
-                    // Ejecutar la consulta para obtener los detalles del carrito confirmado
+                    // Ejecutar la consulta para     obtener los detalles del carrito confirmado
                     $stmt->execute([$idUsuario]);
                     $carritos = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recuperar todas las filas
                     // Retornar los resultados en formato JSON
@@ -200,6 +214,42 @@ class ApiCarrito
             // Error en la consulta para obtener el carrito confirmado
             echo json_encode(['success' => false, 'error' => 'Error al buscar el carrito confirmado.']);
         }
+    }
+
+    function mail()
+    {
+        session_start();
+         // Configuración de PHPMailer
+        $mail = new PHPMailer(true);
+        $email = $_SESSION['usuario']['correo'];
+        try {
+            // Configuración del servidor
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'noreplyaxiemarket@gmail.com';
+            $mail->Password = 'munxlimofkyyfskn'; // Asegúrate de usar la contraseña de aplicación aquí
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            // Establecer la codificación de caracteres
+            $mail->CharSet = 'UTF-8';
+
+            // Destinatarios
+            $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Pago exitoso');
+            $mail->addAddress($email);
+
+            // Contenido
+            $mail->isHTML(true);
+                $mail->Subject = 'Infromacion sobre su envio';
+            $mail->Body = "Su compra a sido realizada con exito! <br> 
+                        Lo mantendermos informado sobre el estado de la compra!";
+
+            $mail->send(); // Envía el correo
+            echo json_encode(['success' => true, 'message' => 'Correo enviado.']);
+        } catch (Exception $e) {
+        echo json_encode(['success' => false, 'message' => 'Error al enviar el correo: {$mail->ErrorInfo}']);
+    }
     }
 }
 
@@ -283,7 +333,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
         case 'generarOrden':
             session_start();
             $idCarrito = $_SESSION['usuario']['idCarrito'];
-            $carrito->generarOrden($idCarrito);
+            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $metodo = $data['metodoPago'];
+            $mail = $data['mailPaypal'];
+            $idTransaccion = $data['idTransaccion'];
+            $carrito->generarOrden($idCarrito, $metodo, $mail, $idTransaccion, $idUsuario);
             break;
 
         default:

@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 23-10-2024 a las 11:44:57
+-- Tiempo de generación: 26-10-2024 a las 20:12:35
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.1.25
+-- Versión de PHP: 8.0.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -68,7 +68,12 @@ INSERT INTO `almacena` (`idCarrito`, `id`, `cantidad`, `precio`) VALUES
 (956, 62, 1, 1200),
 (959, 57, 1, 1200),
 (959, 62, 2, 1200),
-(961, 58, 1, 1200);
+(961, 59, 12, 1200),
+(1009, 57, 3, 1200),
+(1011, 57, 3, 1200),
+(1013, 57, 3, 1200),
+(1015, 57, 3, 1200),
+(1016, 58, 1, 1200);
 
 -- --------------------------------------------------------
 
@@ -82,40 +87,45 @@ CREATE TABLE `carrito` (
   `estadoCarrito` enum('Pendiente','Confirmado','Cancelado') DEFAULT NULL,
   `idUsuario` int(11) DEFAULT NULL,
   `cantidadProductos` int(10) NOT NULL,
-  `precioTotal` int(10) NOT NULL,
-  `idPaquete` int(11) DEFAULT NULL
+  `precioTotal` int(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `carrito`
 --
 
-INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cantidadProductos`, `precioTotal`, `idPaquete`) VALUES
-(816, '2024-10-14', 'Confirmado', 34, 3, 3630, NULL),
-(817, '2024-10-14', 'Confirmado', 34, 1, 1230, NULL),
-(827, '2024-10-14', 'Confirmado', 50, 2, 2430, NULL),
-(828, '2024-10-14', 'Confirmado', 50, 3, 3630, NULL),
-(832, '2024-10-14', 'Confirmado', 34, 1, 1230, NULL),
-(833, '2024-10-14', 'Pendiente', 34, 1, 1230, NULL),
-(840, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(864, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(866, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(868, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(869, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(871, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(872, '2024-10-20', 'Confirmado', 50, 0, 0, NULL),
-(873, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(876, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(877, '2024-10-20', 'Confirmado', 50, 0, 0, NULL),
-(878, '2024-10-20', 'Confirmado', 50, 1, 1230, NULL),
-(904, '2024-10-21', 'Confirmado', 50, 1, 1230, NULL),
-(905, '2024-10-21', 'Confirmado', 50, 1, 1230, NULL),
-(906, '2024-10-21', 'Confirmado', 50, 3, 3630, NULL),
-(953, '2024-10-22', 'Confirmado', 50, 2, 2430, NULL),
-(955, '2024-10-22', 'Confirmado', 50, 1, 1230, NULL),
-(956, '2024-10-22', 'Confirmado', 50, 1, 1230, NULL),
-(959, '2024-10-22', 'Confirmado', 50, 3, 3630, NULL),
-(961, '2024-10-22', 'Pendiente', 50, 1, 1230, NULL);
+INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cantidadProductos`, `precioTotal`) VALUES
+(816, '2024-10-14', 'Confirmado', 34, 3, 3630),
+(817, '2024-10-14', 'Confirmado', 34, 1, 1230),
+(827, '2024-10-14', 'Confirmado', 50, 2, 2430),
+(828, '2024-10-14', 'Confirmado', 50, 3, 3630),
+(832, '2024-10-14', 'Confirmado', 34, 1, 1230),
+(833, '2024-10-14', 'Pendiente', 34, 1, 1230),
+(840, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(864, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(866, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(868, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(869, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(871, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(872, '2024-10-20', 'Confirmado', 50, 0, 0),
+(873, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(876, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(877, '2024-10-20', 'Confirmado', 50, 0, 0),
+(878, '2024-10-20', 'Confirmado', 50, 1, 1230),
+(904, '2024-10-21', 'Confirmado', 50, 1, 1230),
+(905, '2024-10-21', 'Confirmado', 50, 1, 1230),
+(906, '2024-10-21', 'Confirmado', 50, 3, 3630),
+(953, '2024-10-22', 'Confirmado', 50, 2, 2430),
+(955, '2024-10-22', 'Confirmado', 50, 1, 1230),
+(956, '2024-10-22', 'Confirmado', 50, 1, 1230),
+(959, '2024-10-22', 'Confirmado', 50, 3, 3630),
+(961, '2024-10-22', 'Confirmado', 50, 12, 17598),
+(1009, '2024-10-25', 'Confirmado', 50, 3, 4422),
+(1011, '2024-10-25', 'Confirmado', 50, 3, 4422),
+(1013, '2024-10-25', 'Confirmado', 50, 3, 4422),
+(1015, '2024-10-25', 'Confirmado', 50, 3, 4422),
+(1016, '2024-10-25', 'Confirmado', 50, 1, 1494),
+(1019, '2024-10-25', 'Pendiente', 50, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -184,8 +194,14 @@ CREATE TABLE `detalle_pedido` (
 --
 
 INSERT INTO `detalle_pedido` (`id`, `idEmpresa`, `idPaquete`, `idProducto`, `cantidad`, `estado_preparacion`) VALUES
-(2, 13, 14, 57, 1, 'Pendiente'),
-(3, 11, 14, 62, 2, 'En preparación');
+(2, 11, 14, 57, 1, 'Enviado a depósito'),
+(3, 11, 14, 62, 2, 'Enviado a depósito'),
+(4, 13, 15, 59, 12, 'Pendiente'),
+(5, 13, 16, 57, 3, 'Pendiente'),
+(6, 13, 17, 57, 3, 'Pendiente'),
+(7, 13, 18, 57, 3, 'Pendiente'),
+(8, 11, 19, 57, 3, 'Enviado a depósito'),
+(9, 13, 20, 58, 1, 'Pendiente');
 
 -- --------------------------------------------------------
 
@@ -249,6 +265,29 @@ INSERT INTO `empresa` (`idEmpresa`, `nombre`, `rut`, `numeroCuenta`, `telefono`,
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `pagos`
+--
+
+CREATE TABLE `pagos` (
+  `id` int(11) NOT NULL,
+  `idUsuario` int(11) DEFAULT NULL,
+  `idOrden` int(11) DEFAULT NULL,
+  `mail` varchar(100) NOT NULL,
+  `metodo_pago` varchar(50) DEFAULT NULL,
+  `transaccion_id` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `pagos`
+--
+
+INSERT INTO `pagos` (`id`, `idUsuario`, `idOrden`, `mail`, `metodo_pago`, `transaccion_id`) VALUES
+(1, 50, 1015, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '65Y201913E795214C'),
+(2, 50, 1016, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '5LF615552P2947032');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `paquete`
 --
 
@@ -267,7 +306,13 @@ CREATE TABLE `paquete` (
 --
 
 INSERT INTO `paquete` (`idPaquete`, `idDireccion`, `idUsuario`, `idCarrito`, `fecha`, `estadoEnvio`, `tipoEntrega`) VALUES
-(14, 13, 50, 959, '2024-10-22 22:03:16', 'Pendiente', 'Domicilio');
+(14, 13, 50, 959, '2024-10-22 22:03:16', 'En depósito', 'Domicilio'),
+(15, 13, 50, 961, '2024-10-25 22:01:44', 'Pendiente', 'Domicilio'),
+(16, 13, 50, 1009, '2024-10-25 22:05:24', 'Pendiente', 'Domicilio'),
+(17, 13, 50, 1011, '2024-10-25 22:09:02', 'Pendiente', 'Domicilio'),
+(18, 13, 50, 1013, '2024-10-25 22:11:17', 'Pendiente', 'Domicilio'),
+(19, 13, 50, 1015, '2024-10-25 22:13:23', 'En depósito', 'Domicilio'),
+(20, 13, 50, 1016, '2024-10-25 22:36:38', 'Pendiente', 'Domicilio');
 
 -- --------------------------------------------------------
 
@@ -314,8 +359,8 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `oferta`, `condicion`, `file_path`, `categoria`, `idEmpresa`) VALUES
-(57, 'Remera', 'Beigeasdasd', 1200, 3, 'Si', 'Usado', '670d87877a2a3.png', 'Instrumentos Musicales', 13),
-(58, 'Pantalon', 'Beige muy lindo', 1200, 7, 'Si', 'Usado', '670d8792d9a1a.png', 'Instrumentos Musicales', 13),
+(57, 'Remera', 'Beigeasdasd', 1200, 0, 'Si', 'Usado', '670d87877a2a3.png', 'Instrumentos Musicales', 13),
+(58, 'Pantalon', 'Beige muy lindo', 1200, 6, 'Si', 'Usado', '670d8792d9a1a.png', 'Instrumentos Musicales', 13),
 (59, 'Indio', 'Beige muy lindo', 1200, 12, 'Si', 'Usado', 'asdadw', 'Instrumentos Musicales', 13),
 (62, 'Juego', 'Ruggrats', 1500, 4, 'Si', 'Nuevo', '6717f04eaa2a7.png', 'Electrónica', 11);
 
@@ -387,8 +432,7 @@ ALTER TABLE `almacena`
 --
 ALTER TABLE `carrito`
   ADD PRIMARY KEY (`idCarrito`),
-  ADD KEY `idUsuario` (`idUsuario`),
-  ADD KEY `fk_carrito_idPaquete` (`idPaquete`);
+  ADD KEY `idUsuario` (`idUsuario`);
 
 --
 -- Indices de la tabla `categorias`
@@ -421,6 +465,14 @@ ALTER TABLE `empresa`
   ADD UNIQUE KEY `rut` (`rut`),
   ADD UNIQUE KEY `correo` (`correo`),
   ADD UNIQUE KEY `telefono` (`telefono`);
+
+--
+-- Indices de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idUsuario` (`idUsuario`),
+  ADD KEY `idOrden` (`idOrden`);
 
 --
 -- Indices de la tabla `paquete`
@@ -468,13 +520,13 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1004;
+  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1022;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pedido`
 --
 ALTER TABLE `detalle_pedido`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `direcciones`
@@ -489,10 +541,16 @@ ALTER TABLE `empresa`
   MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
+-- AUTO_INCREMENT de la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT de la tabla `paquete`
 --
 ALTER TABLE `paquete`
-  MODIFY `idPaquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `idPaquete` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT de la tabla `pass_reset`
@@ -533,9 +591,7 @@ ALTER TABLE `almacena`
 -- Filtros para la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
-  ADD CONSTRAINT `fk_carrito_idPaquete` FOREIGN KEY (`idPaquete`) REFERENCES `paquete` (`idPaquete`),
-  ADD CONSTRAINT `fk_paquete` FOREIGN KEY (`idPaquete`) REFERENCES `paquete` (`idPaquete`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `carrito_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`);
 
 --
 -- Filtros para la tabla `detalle_pedido`
@@ -551,6 +607,13 @@ ALTER TABLE `detalle_pedido`
 ALTER TABLE `direcciones`
   ADD CONSTRAINT `fk_direcciones_idEmpresa` FOREIGN KEY (`idEmpresa`) REFERENCES `empresa` (`idEmpresa`),
   ADD CONSTRAINT `fk_direcciones_idUsuario` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`);
+
+--
+-- Filtros para la tabla `pagos`
+--
+ALTER TABLE `pagos`
+  ADD CONSTRAINT `pagos_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`),
+  ADD CONSTRAINT `pagos_ibfk_2` FOREIGN KEY (`idOrden`) REFERENCES `carrito` (`idCarrito`);
 
 --
 -- Filtros para la tabla `paquete`
