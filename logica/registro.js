@@ -18,12 +18,16 @@ $(document).ready(function() {
         let indicaciones = $("#indicaciones").val();
         if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina)){
         var formData = new FormData(this); 
+        formData.append('accion', 'registrar');
         registrar(formData);
         }
     });
 });
 
 function registrar(formData) {
+    for (const [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+    }
     $.ajax({
         url: '../persistencia/usuario/usuario.php',
         type: 'POST',

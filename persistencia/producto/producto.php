@@ -338,7 +338,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 exit; // Terminar la ejecución
             }
             session_start();
-            $idEmpresa = $_SESSION['empresa']['idEmpresa'] ?? $_POST['idEmpresa'] ?? null;
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'] ?? $_POST['idEmpresa'] ?? null;
             $nombre = $_POST['nombre'];
             $descripcion = $_POST['descripcion'];
             $precio = $_POST['precio'];

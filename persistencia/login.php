@@ -12,45 +12,54 @@ $password = '';
 $conexionDB = new ConexionDB($host, $dbname, $username, $password);
 $pdo = $conexionDB->getPdo();
 
+// Iniciar sesión
+session_start();
+
 // Obtener valores del formulario
-$correo = $_POST['correo'];
-$contraseña = $_POST['contraseña'];  // Esta será la contraseña ingresada
-$tipoUsuario = $_POST['tipoCuenta'];
+$correo = $_POST['correo'] ?? null; // Usar null coalescing para evitar Undefined Index
+$contraseña = $_POST['contraseña'] ?? null; // Lo mismo aquí
 
-if ($tipoUsuario === 'comprador') {
-    $stmt = $pdo->prepare("SELECT password FROM usuario WHERE correo = ?");
-} else {
-    $stmt = $pdo->prepare("SELECT password FROM empresa WHERE correo = ?");
-}
+// Preparar la consulta
+$stmt = $pdo->prepare("SELECT * FROM vista_usuarios_empresas WHERE correo = ?");
 
-// Verificar si la preparación de la declaración SQL fue exitosa
 if (!$stmt) {
-    die(json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']));
+    echo json_encode(['success' => false, 'message' => 'Error en la preparación de la consulta.']);
+    exit;
 }
+
 // Ejecutar la consulta
 $stmt->execute([$correo]);
-// Obtener el resultado
 $result = $stmt->fetch(PDO::FETCH_ASSOC);
-// Verificar si se encontró al usuario
+
 if ($result) {
     $contraseñaAlmacenada = $result['password'];
     // Verificar la contraseña ingresada con la almacenada (hash)
     if (password_verify($contraseña, $contraseñaAlmacenada)) {
-        echo json_encode(['success' => true, 'message' => 'Contraseña válida.']);
-        session_start();
-        if ($tipoUsuario === 'comprador') {
-            $stmt = $pdo->prepare("SELECT * FROM usuario WHERE correo = ? AND password = ?");
-            $stmt->execute([$correo, $contraseñaAlmacenada]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $_SESSION['usuario'] = $result; // Los guardamos en la session usuario
-            $_SESSION['loggedin'] = true;
+        // Guardar los datos en la sesión
+        $tipoUsuario = $result['tipo'];
+        $idUsuario = $result['id'];
+        
+        if ($tipoUsuario === 'Comprador') {
+            $stmt = $pdo->prepare("SELECT * FROM usuario WHERE idUsuario = ?");
+            $stmt->execute([$idUsuario]); // Corregido aquí
+            $datosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['usuario'] = $datosUsuario; // Guardamos en la sesión
         } else {
-            $stmt = $pdo->prepare("SELECT * FROM empresa WHERE correo = ? AND password = ?");
-            $stmt->execute([$correo, $contraseñaAlmacenada]);
-            $result = $stmt->fetch(PDO::FETCH_ASSOC);
-            $_SESSION['empresa'] = $result; // Los guardamos en la session usuario
-            $_SESSION['loggedin'] = true;
+            $stmt = $pdo->prepare("SELECT * FROM empresa WHERE idEmpresa = ?");
+            $stmt->execute([$idUsuario]);
+            $datosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['usuario'] = $datosUsuario; // Guardamos en la sesión
         }
+        
+        $_SESSION['loggedin'] = true;
+
+        // Enviar la respuesta JSON final
+        if($idUsuario === "1"){
+            echo json_encode(['success' => true, 'tipo' => "admin"]);
+        } else {
+            echo json_encode(['success' => true, 'tipo' => $result['tipo']]);
+        }
+
     } else {
         echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta.']);
     }

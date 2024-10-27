@@ -28,16 +28,13 @@ header{
     padding: 10px;
     text-align: center;
 }
-
-.register-container:hover {
-    transform: scale(1.05);
-}
-
-#carpeta{
-    align-items: center;
+#carpeta {
     width: 150px;
     height: 150px;
+    display: block; /* Asegúrate de que sea un bloque */
+    margin: 0 auto; /* Centra la imagen horizontalmente */
 }
+
 .register-container button {
     margin: 10px;
     width: 150px;

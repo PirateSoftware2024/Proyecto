@@ -17,8 +17,6 @@ function cargarDatos(){
    del documento esté completamente cargado
 */
 $(document).ready(function() {
-    $("#filas4").on("click", ".opcionValidar", subirValidacion);
-    $("#botonValidar").click(validar);
 
     //$("#agregar").click(tomarDatos);
     $("#botonBuscarNombre").click(buscarProducto);
@@ -531,66 +529,6 @@ function validar(){
     });
 }
 
-function usuariosValidar() {
-    $("#filas4").empty(); // Limpiar las filas anteriores
-    for (let i = 0; i < usuariosParaValidar.length; i++) {
-        const usuario = usuariosParaValidar[i];
-        let fila = $(`
-            <tr>
-                <td>${usuario.nombre}</td>
-                <td>${usuario.apellido}</td>
-                <td>${usuario.telefono}</td>
-                <td>${usuario.correo}</td>
-                <td>${usuario.fechaNac}</td>
-                <td>
-                    <select id="selectValidacion">
-                        <option value="Si">Si</option>
-                        <option value="No">No</option>
-                    </select>
-                </td>
-                <td><button class="opcionValidar" data-id=${usuario.idUsuario}>Validar</button></td>
-            </tr>
-    `);
-        $("#filas4").append(fila);
-    }
-}
-
-function subirValidacion() {
-    // Obtener la opción seleccionada y el idUsuario del botón
-    let opcion = $("#selectValidacion").val();
-    let idUsuario = $(this).data("id");
-
-    // Enviar los datos al archivo PHP
-    fetch('../persistencia/usuario/usuario.php', {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            idUsuario: idUsuario,
-            opcion: opcion,
-            accion: "validar"
-        })
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-        return response.json();
-    })
-    .then(data => {
-        console.log('Datos recibidos del servidor:', data);
-        if (data.success) {
-            alert('Validación exitosa');
-            $("#filas4").empty();
-        } else {
-            alert('Error: ' + data.error);
-        }
-    })
-    .catch(error => {
-        console.error('Error al enviar los datos:', error);
-    });
-}
 
 // Reseñas
 let reseñas = [];

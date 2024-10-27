@@ -13,7 +13,7 @@
         <h1>
             <?php
                 session_start();
-                echo $_SESSION['empresa']['nombre'];
+                echo $_SESSION['usuario']['nombre'];
             ?>
         </h1>
         <nav>

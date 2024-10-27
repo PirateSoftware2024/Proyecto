@@ -11,7 +11,7 @@
     <header>
         <div class="logo"><img src="images/logo.png" alt="Logo" width="105" height="100"></div>
         <h1><?php session_start();
-        echo $_SESSION['empresa']['nombre'];
+        echo $_SESSION['usuario']['nombre'];
         ?>
         - Mis productos
         </h1>

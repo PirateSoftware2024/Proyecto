@@ -279,7 +279,7 @@ class ApiEmpresa
                 $mail->CharSet = 'UTF-8';
 
                 // Destinatarios
-                $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Info. compra');
+                $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axis Market Info. compra');
                 $mail->addAddress($email);
 
                 // Contenido
@@ -318,14 +318,14 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     {
         case 'obtenerDatos':
             session_start();
-            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'];
             $empresaDatos = $empresa->obtenerDatos($idEmpresa);
             echo json_encode($empresaDatos);
             break;
 
         case 'obtenerVentas':
             session_start();
-            $idEmpresa = $_SESSION['empresa']['idEmpresa'];
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'];
             $datosVentas = $empresa->ventasEmpresa($idEmpresa);
             echo json_encode($datosVentas);
             break;

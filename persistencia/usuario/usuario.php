@@ -13,7 +13,7 @@ class ApiUsuarios
     public function registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $localidad, $departamento, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
     {
         // Verificar si el correo o el teléfono ya existe
-        $stmt = $this->pdo->prepare("SELECT idUsuario FROM usuario WHERE correo = ? OR telefono = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM vista_usuarios_empresas WHERE correo = ? OR telefono = ?");
         $stmt->execute([$correo, $telefono]);
 
         // Verificar si ya existe un usuario con ese correo o teléfono
@@ -223,27 +223,27 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // Obtener valores de POST
     // Datos Personales
     $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
+    $accion = $_POST['accion'];
     
     switch($accion)
     {
-        case 'registrar':
-    $nombre = $data['nombre'];
-    $apellido = $data['apellido'];
-    $telefono = $data['telefono'];
-    $fechaNac = $data['fecha'];
-    $contraseña = $data['contraseña'];
-    $correo = $data['correo'];
+    case 'registrar':
+    $nombre = $_POST['nombre'];
+    $apellido = $_POST['apellido'];
+    $telefono = $_POST['telefono'];
+    $fechaNac = $_POST['fecha'];
+    $contraseña = $_POST['contraseña'];
+    $correo = $_POST['correo'];
     /////////////////////////////////////
     // Dirección
-    $departamento = $data['departamentos'];
-    $localidad = $data['localidad'];
-    $calle = $data['calle'];
-    $esquina = $data['esquina'];
-    $nPuerta = $data['nPuerta'];
-    $nApartamento = $data['nApartamento'];
-    $cPostal = $data['cPostal'];
-    $indicaciones = $data['indicaciones'];
+    $departamento = $_POST['departamentos'];
+    $localidad = $_POST['localidad'];
+    $calle = $_POST['calle'];
+    $esquina = $_POST['esquina'];
+    $nPuerta = $_POST['nPuerta'];
+    $nApartamento = $_POST['nApartamento'];
+    $cPostal = $_POST['cPostal'];
+    $indicaciones = $_POST['indicaciones'];
     /////////////////////////////////////
     $usuario->registrar($nombre, $apellido, $telefono, $fechaNac, $contraseña, $correo, $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones);
     break;
@@ -251,7 +251,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     case 'verificarContra':
         session_start();
         $idUsuario = $_SESSION['usuario']['idUsuario'];
-        $contra = $data['contra'];
+        $contra = $_POST['contra'];
         $usuario->verificarContra($contra, $idUsuario);
         break;
     }

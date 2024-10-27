@@ -59,13 +59,13 @@ if ($result['count'] < 1) {
         $mail->CharSet = 'UTF-8';
 
         // Destinatarios
-        $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axie Market Token');
+        $mail->setFrom('noreplyaxiemarket@gmail.com', 'Axis Market Token');
         $mail->addAddress($email);
 
         // Contenido
         $mail->isHTML(true);
         $mail->Subject = 'Restablecer su contraseña';
-        $mail->Body = 'Token para restablecer su contraseña en Axie Market<br>
+        $mail->Body = 'Token para restablecer su contraseña en Axis Market<br>
                    <p>' . htmlspecialchars($token) . '</p>'; // Escapar el token
 
         $mail->send(); // Envía el correo

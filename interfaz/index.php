@@ -27,7 +27,7 @@
                     session_start();
                     if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
                     <!-- Si el usuario no esta logueado mostramos los enlaces de "Crear cuenta" y "Login" -->
-                        <li id="crearCuenta"><a href="registro.html">Crea tu cuenta</a></li>
+                        <li id="crearCuenta"><a href="seleccionRegistro.html">Crea tu cuenta</a></li>
                         <li id="login"><a href="login.html">Inicio sesión</a></li>
                     <?php else: ?>
                         <li><a href="misEnvios.html">Envíos</a></li>
