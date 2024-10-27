@@ -39,7 +39,7 @@ function registrar(formData) {
                 $("#result").html(data.error); // Mostrar el error del PHP si no tuvo éxito
             }
         },
-        error: function(jqXHR) {dsfsd
+        error: function(jqXHR) {
             // Intentar obtener el mensaje de error devuelto por el PHP
             let errorMsg = "Ocurrió un error en la solicitud.";
             if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
