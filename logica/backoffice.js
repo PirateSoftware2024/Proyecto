@@ -2,7 +2,7 @@
 let productos = [];
 // Obtenemos productos de la BD
 function cargarDatos(){
-    fetch('../persistencia/producto/producto.php?accion=productos')
+    fetch('../persistencia/producto/producto.php?accion=obtenerTodosProductos')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -12,31 +12,302 @@ function cargarDatos(){
     });
 }
 
+let empresas = [];
+function obtenerEmpresas(){
+    fetch('../persistencia/empresa/empresa.php?accion=obtenerTodas')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        empresas = jsonData; // Guardamos productos
+        actualizarEmpresa();
+    });
+}
+
+function actualizarEmpresa() {
+    $("#filas4").empty(); // Limpiar las filas anteriores
+
+    // Generar filas para cada producto
+    for (let i = 0; i < empresas.length; i++) {
+        const empresa = empresas[i];
+        let fila = $(`
+            <tr>
+                <td>${empresa.idEmpresa}</td>
+                <td>${empresa.nombre}</td>
+                <td>${empresa.rut}</td>
+                <td>${empresa.numeroCuenta}</td>
+                <td>${empresa.correo}</td>
+                <td>${empresa.telefono}</td>
+                <td>
+                <button class="eliminarEmpresa" data-id="${empresa.idEmpresa}"><i class="bi bi-trash-fill"></i></button>
+                <button class="modificarEmpresa" data-id="${empresa.idEmpresa}"><i class="bi bi-check-circle"></i></button>
+                </td>
+            </tr>
+        `);
+        $("#filas4").append(fila);
+    }
+}
+
+function eliminarEmpresa(){
+    let idEmpresa = $(this).data("id");
+    fetch('../persistencia/empresa/empresa.php', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            id: idEmpresa
+        })
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            alert('Empresa eliminada exitosamente');
+            obtenerEmpresas();
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
+function eliminarComprador(){
+    let idUsuario = $(this).data("id");
+    fetch('../persistencia/usuario/usuario.php', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            id: idUsuario
+        })
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            alert('Usuario eliminado exitosamente');
+            cargarDatosUsuario();
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
+function buscarPorNombre() {
+    let dato = $("#buscarUsuario1").val(); // Mantener 'dato'
+    fetch(`../persistencia/usuario/usuario.php?dato=${dato}&accion=buscarPorNombre`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            usuarios = data.data;
+            actualizarUsuarios();
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
+function buscarPorNombreEmpresa() {
+    let dato = $("#buscarEmpresa").val(); // Mantener 'dato'
+    fetch(`../persistencia/empresa/empresa.php?dato=${dato}&accion=buscarPorNombre`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())  // Procesar la respuesta como JSON
+    .then(data => {
+        if (data.success) {
+            empresas = data.data;
+            actualizarEmpresa();
+            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
+        } else {
+            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+    });
+}
+
 /* Asegura que el código dentro de la función 
    se ejecutará solo después de que el DOM 
    del documento esté completamente cargado
 */
 $(document).ready(function() {
-
-    //$("#agregar").click(tomarDatos);
+    $("#botonBuscar").click(buscarPorNombre);
     $("#botonBuscarNombre").click(buscarProducto);
     $("#botonStock").click(buscarStock);
     $("#botonTodos").click(cargarDatos);
-    $("#botonTodos2").click(cargarDatosPedido);
     $("#buscarPedido").click(pedidoBuscar);
     $("#botonFecha").click(buscarPorFecha);
     $("#botonUsuarioTodos").click(cargarDatosUsuario);
+    $("#botonTodosEmpresa").click(obtenerEmpresas);
     $("#filas5").on("click", ".boton-eliminar-reseña", eliminarReseña);
     $("#botonReseñas").click(cargarDatosReseñas);
+    $("#botonBuscarEmpresa").click(buscarPorNombreEmpresa);
+    $("#cancelarEmpresa").click(function () {
+        $("#filas4").empty();
+    })
+    $("#cancelarUsuario").click(function () {
+        $("#filas3").empty();
+    })
+    
     $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
     $("#filas").on("click", ".boton-cancelar", cancelar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
+    $("#filas4").on("click", ".eliminarEmpresa", eliminarEmpresa);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
+    $("#filas3").on("click", ".eliminarUsuario", eliminarComprador);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
     cargarCategorias();
     $("#formulario").submit(function(event) {
     event.preventDefault(); // Evita el envío del formulario por defecto    
     });
+
+    $(document).on('click', '.modificarEmpresa', function () {
+        $('#cuadroInformacion').fadeIn();
+        $('body').addClass('modal-open');
+        idUsuario = $(this).data("id");
+        const empresa = empresas.find(empresa => Number(empresa.idEmpresa) === idUsuario); // Buscamos el producto
+
+        $("#nombreEmpresa").val(empresa.nombre);
+        $("#rutEmpresa").val(empresa.rut);
+        $("#numeroCuenta").val(empresa.numeroCuenta);
+        $("#correoEmpresa").val(empresa.correo);
+        $("#telefonoEmpresa").val(empresa.telefono);
+    
+    });
+
+    $(document).on('click', '.modificarUsuario', function () {
+        $('#cuadroInformacionComprador').fadeIn();
+        $('body').addClass('modal-open');
+
+        idUsuario = $(this).data("id");
+        const usuario = usuarios.find(usuario => Number(usuario.idUsuario) === idUsuario); // Buscamos el producto
+
+        $("#nombreComprador").val(usuario.nombre);
+        $("#apellidoComprador").val(usuario.apellido);
+        $("#telefonoComprador").val(usuario.telefono);
+        $("#correoComprador").val(usuario.correo);
+        $("#fechaComprador").val(usuario.fechaNac);
+    
+    });
+
+    $('#cerrarCuadro').click(function() {
+        $('#cuadroInformacion').fadeOut();
+        $('body').removeClass('modal-open');
+    });
+
+    $('#cerrarCuadroComprador').click(function() {
+        $('#cuadroInformacionComprador').fadeOut();
+        $('body').removeClass('modal-open');
+    });
+
+    $('#enviarEmpresa').click(function() {
+        $('#cuadroInformacionComprador').fadeOut();
+        $('body').removeClass('modal-open');
+    });
+
+    $('#enviarComprador').click(function() {
+        $('#cuadroInformacionComprador').fadeOut();
+        $('body').removeClass('modal-open');
+    });
+
+    $("#nom").click(function (){
+        let nombre = $("#nombreComprador").val();
+        modificarUsuario(nombre, "nombre", "usuario");
+    });
+    $("#ape").click(function (){
+        let apellido = $("#apellidoComprador").val();
+        modificarUsuario(apellido, "apellido", "usuario");
+    });
+    $("#tel").click(function (){
+        let telefono = $("#telefonoComprador").val();
+        modificarUsuario(telefono, "telefono", "usuario");
+    });
+    $("#fech").click(function (){
+        let fecha = $("#fechaComprador").val();
+        modificarUsuario(fecha, "fechaNac", "usuario");
+    });
+    $("#mail").click(function (){
+        let correo = $("#correoComprador").val();
+        modificarUsuario(correo, "correo", "usuario");
+    });
+
+    ///////////////////////////////////////////////////
+    $("#nomEm").click(function (){
+        let nombre = $("#nombreEmpresa").val();
+        modificarUsuario(nombre, "nombre", "empresa");
+    });
+    $("#rut").click(function (){
+        let rut = $("#rutEmpresa").val();
+        modificarUsuario(rut, "rut","empresa");
+    });
+    $("#nCuenta").click(function (){
+        let nCuenta = $("#numeroCuenta").val();
+        modificarUsuario(nCuenta, "numeroCuenta", "empresa");
+    });
+    $("#mail").click(function (){
+        let correo = $("#correoEmpresa").val();
+        modificarUsuario(correo, "correo", "empresa");
+    });
+    $("#tel").click(function (){
+        let telefono = $("#telefonoEmpresa").val();
+        modificarUsuario(telefono, "telefono","empresa");
+    });
 });
+
+let idUsuario;
+function modificarUsuario(dato, columna, tabla) {
+    fetch('../persistencia/usuario/usuario.php', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            columna: columna, // Almacenamos el nombre de la columna a modificar
+            dato: dato,
+            accion: 'modificar',
+            tabla: tabla,
+            idUsuario: idUsuario
+        })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta del servidor'); // Lanza un error si la respuesta no es ok
+        }
+        return response.json(); // Asegúrate de parsear como JSON
+    })
+    .then(data => {
+        if (data.success) {
+            alert("Dato modificado correctamente!");
+            cargarDatosUsuario();
+            obtenerEmpresas();
+        } else {
+            alert("Error al modificar el dato: " + (data.error || ''));
+        }
+    })
+    .catch(error => {
+        console.error('Error al obtener los datos:', error);
+        alert('Ocurrió un error: ' + error.message); // Muestra el error al usuario
+    });
+}
 
 function buscarStock() {
     let stock = $("#buscarProducto").val();
@@ -122,17 +393,15 @@ $('#uploadForm').on('submit', function(event) {
     let precio = Number($("#precio").val());
 
     if(validacion(nombre, descripcion, precio)){
-    var formData = new FormData(this); // Crear un nuevo FormData con el formulario
-    formData.append('accion', 'agregar'); // Agregar el parámetro 'accion' para que entre en el switch
-    formData.append('idEmpresa', '9'); // Agregar el parámetro 'accion' para que entre en el switch
-    //let nom = $("#nom").val();
-    //let desc = $("#desc").val();
+    var formData = new FormData(this);
+    formData.append('accion', 'agregar');
+
     $.ajax({
         url: '../persistencia/producto/producto.php',
         type: 'POST',
         data: formData,
-        contentType: false, // No establecer el tipo de contenido
-        processData: false, // No procesar los datos (FormData se encarga)
+        contentType: false,
+        processData: false,
         success: function(data) {
             if (data.success) {
                 alert("Producto publicado!")
@@ -225,6 +494,7 @@ function mostrarDatos(){
     $("#nombre").css("border-color", "green"); // Cambiamos border color del input
     $("#descripcion").css("border-color", "green");
     $("#precio").css("border-color", "green");
+    $("#stock").css("border-color", "green");
 
     // Seteamos datos del producto en los input
     $("#nombre").val(productos[index].nombre);
@@ -250,8 +520,6 @@ function mostrarDatos(){
     $("html, body").animate({ scrollTop: 0 }, "slow");
 }   
 
-
-
 function cancelarBotones(){
     $(".boton-eliminar").attr("disabled", "disabled");
     $(".boton-editar").attr("disabled", "disabled");
@@ -271,11 +539,12 @@ function modificar(){
     let nombre = $("#nombre").val(); 
     let descripcion = $("#descripcion").val();
     let precio = Number($("#precio").val());
+    let stock = Number($("#stock").val());
 
     if(validacion(nombre, descripcion, precio)){
          // Modificamos los datos del producto
         //Modificamos en BD
-        modificarProducto(idBoton, nombre, descripcion, precio); 
+        modificarProducto(idBoton, nombre, descripcion, precio, stock); 
 
         actualizar();
         habilitarBotones();
@@ -350,7 +619,7 @@ function eliminarProducto() {
 }
 
 
-function modificarProducto(idProducto, nombre, descripcion, precio) {
+function modificarProducto(idProducto, nombre, descripcion, precio, stock) {
     fetch('../persistencia/producto/producto.php', {
         method: 'PUT',
         headers: {
@@ -360,21 +629,20 @@ function modificarProducto(idProducto, nombre, descripcion, precio) {
             id: idProducto,
             nombre: nombre,
             descripcion: descripcion,
-            precio: precio
+            precio: precio,
+            stock: stock,
+            accion: "modificarBackoffice"
         })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            // Si la modificación fue exitosa
             alert("Producto modificado con éxito");
             productos[index].nombre = nombre;
             productos[index].descripcion = descripcion;
             productos[index].precio = precio;
-            
-            // Puedes actualizar la interfaz aquí si es necesario
+            actualizar();
         } else {
-            // Si hubo un error en la modificación
             alert(data.error);
         }
         $("#categoria").val(productos[index].nombre).prop('disabled', false);
@@ -410,6 +678,7 @@ function buscarPorFecha(){
         }
     })
 }
+
 function pedidoBuscar(){
     let dato = Number($("#buscarOrden").val());
     fetch('../persistencia/pedidos/pedidos.php', {
@@ -434,60 +703,17 @@ function pedidoBuscar(){
     })
 }
 
-let pedidos = [];
-function cargarDatosPedido(){
-    fetch('../persistencia/pedidos/pedidos.php')
-    .then(response => response.text())
-    .then(data => {
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-        pedidos = jsonData; // Una vez leido los datos acutalizamos
-        actualizarPedidos();
-    });
-}
-function actualizarPedidos() {
-    $("#filas2").empty(); // Limpiar las filas anteriores
-
-    //$("#buscarProducto").val(''); // Limpiamos los campos (input)
-    //$("#fechaPedido").val('');
-
-    // Generar filas para cada producto
-    for (let i = 0; i < pedidos.length; i++) {
-        const pedido = pedidos[i];
-        let fila = $(`
-            <tr>
-                <td>${pedido.idCarrito}</td>
-                <td>${pedido.idUsuario}</td>
-                <td>${pedido.fecha}</td>
-                <td>${pedido.cantidadProductos}</td>
-                <td>${pedido.precioTotal}</td>
-                <td>${pedido.idPaquete}</td>
-                <td>
-                <button class="boton-eliminar" data-id="${pedido.idCarrito}">Eliminar</button>
-                <button class="boton-editar" data-id="${pedido.idCarrito}">Editar</button>
-                <button class="boton-modificar" data-id="${pedido.idCarrito}">Modificar</button>
-                </td>
-            </tr>
-        `);
-        $("#filas2").append(fila); // Agregamos fila que almacena los tr(table row) para generar la lineas
-    }
-    $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
-    //let productosJSON = JSON.stringify(productos);      // Convertimos el array productos en
-    //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
-}
-
 let usuarios = [];
 function cargarDatosUsuario(){
     fetch('../persistencia/usuario/usuario.php?accion=obtenerUsuarios')
     .then(response => response.text())
     .then(data => {
-        console.log('Datos recibidos:', data);
-        //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
         usuarios = jsonData; // Una vez leido los datos acutalizamos
         actualizarUsuarios();
     });
 }
+
 function actualizarUsuarios() {
     $("#filas3").empty(); // Limpiar las filas anteriores
 
@@ -503,7 +729,8 @@ function actualizarUsuarios() {
                 <td>${usuario.correo}</td>
                 <td>${usuario.fechaNac}</td>
                 <td>
-                <button class="boton-eliminar" data-id="${usuario.idUsuario}">Eliminar</button>
+                <button class="eliminarUsuario" data-id="${usuario.idUsuario}"><i class="bi bi-trash-fill"></i></button><br>
+                <button class="modificarUsuario" data-id="${usuario.idUsuario}"><i class="bi bi-check-circle"></i></button>
                 </td>
             </tr>
         `);
@@ -514,22 +741,6 @@ function actualizarUsuarios() {
     //localStorage.setItem('productos', productosJSON);   // JSON para setearlo en el localStorage con el nick "productos"
 }
 
-let usuariosParaValidar = [];
-function validar(){
-    fetch('../persistencia//usuario/usuario.php?accion=usuariosValidar')
-    .then(response => response.text())
-    .then(data => {
-        console.log('Datos recibidos:', data);
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-
-        console.log('Datos JSON:', jsonData);
-        usuariosParaValidar = jsonData; // Una vez leido los datos acutalizamos
-        usuariosValidar();
-    });
-}
-
-
 // Reseñas
 let reseñas = [];
 function cargarDatosReseñas(){
@@ -538,7 +749,6 @@ function cargarDatosReseñas(){
     .then(data => {
         //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
-        console.log(jsonData);
         reseñas = jsonData; // Una vez leido los datos acutalizamos
         actualizarReseñas();
     });

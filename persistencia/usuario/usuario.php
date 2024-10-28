@@ -96,14 +96,22 @@ class ApiUsuarios
             $dato = password_hash($dato, PASSWORD_DEFAULT);
         }
 
-        // Ejecutar la consulta
-        if($columna == "telefono"){
-            $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idUsuario = $idUsuario");
+        if($tabla === "usuario"){
+            // Ejecutar la consulta
+            if($columna == "telefono"){
+                $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idUsuario = $idUsuario");
+            }else{
+                // Consulta SQL para eliminar un registro
+                $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idUsuario = $idUsuario");
+            }
         }else{
-            // Consulta SQL para eliminar un registro
-            $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idUsuario = $idUsuario");
+            if($columna == "telefono"){
+                $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idEmpresa = $idUsuario");
+            }else{
+                // Consulta SQL para eliminar un registro
+                $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idEmpresa = $idUsuario");
+            } 
         }
-
         if ($stmt->execute()) {
             // Consulta exitosa
             echo json_encode(['success' => true]);
@@ -177,6 +185,43 @@ class ApiUsuarios
             echo json_encode(['success' => false, 'error']);
         }
     }
+
+    function buscarPorNombre($dato)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM usuario WHERE nombre = ? OR idUsuario = ?");
+        $stmt->execute([$dato, $dato]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminarUsuario($id)
+    {
+        // Verificar si el producto está en un carrito
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as conteo 
+                                    FROM paquete p
+                                    JOIN usuario u ON u.idUsuario = p.idUsuario
+                                    WHERE p.idUsuario = ? AND p.estadoEnvio= 'Entregado';");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+
+        if ($result){
+            if ($result['conteo'] > 0){
+                // Producto está en un carrito, no se puede modificar el precio
+                echo json_encode(['success' => false, 'error' => 'No se puede eliminar la cuenta porque tiene compras pendientes.']);
+                return;
+            } 
+        }else{
+            // Error al verificar la existencia del producto en un carrito
+            echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito']);
+            return;
+        }
+
+        $stmt = $this->pdo->prepare("DELETE FROM usuario WHERE idUsuario = ?");
+        if ($stmt->execute([$id])) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al eliminar el producto']);
+        }
+    }
 }
 
 // Configuracion de la base de datos
@@ -193,7 +238,6 @@ $usuario = new ApiUsuarios($pdo);
 /////////////////////////////////////////////////////////////////////
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    $data = json_decode(file_get_contents('php://input'), true);
     $accion = $_GET['accion'];
     switch($accion)
     {
@@ -214,6 +258,21 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         case 'grafica':
             $usuario->graficaDatos();
             break;
+        
+        case 'buscarPorNombre':
+            $dato = isset($_GET['dato']) ? $_GET['dato'] : null; // Verifica que 'dato' esté definido
+            if ($dato !== null) {
+                $usuarios = $usuario->buscarPorNombre($dato);
+                // Verifica si se encontraron usuarios
+                if (!empty($usuarios)) {
+                    echo json_encode(['success' => true, 'data' => $usuarios]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'No se encontraron usuarios.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Dato no proporcionado.']);
+            }
+            break;       
     }
 }
 
@@ -274,7 +333,7 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
 
         case 'modificar':
             session_start();
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
+            $idUsuario = $_SESSION['usuario']['idUsuario'] ?? $_SESSION['usuario']['idEmpresa'] ?? $data['idUsuario'];
             $dato = $data['dato'];
             $columna = $data['columna'];
             $tabla = $data['tabla'];
@@ -284,15 +343,9 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
 }
 
 ////////////////////////////////////////////////////////////////////////
-/*if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
     $data = json_decode(file_get_contents('php://input'), true);
     $id = $data['id'];
-    // Formas de validar
-    if($id < 5)
-    {
-        echo "Error...";
-        exit(); // Deja de ejecutar el archivo
-    }
-    $producto->eliminar($id);
-}*/
+    $usuario->eliminarUsuario($id);
+}
 ?>

@@ -17,6 +17,13 @@ class ApiEmpresa
         $this->pdo = $pdo;
     }
 
+    public function obtenerTodas()
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM empresa");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function obtenerDatos($idEmpresa)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE idEmpresa = $idEmpresa");
@@ -297,8 +304,44 @@ class ApiEmpresa
             echo json_encode(['success' => false, 'message' => 'No se encontro el correo del usuario']);
         }
     }
-}
 
+    public function eliminarEmpresa($id)
+    {
+        // Verificar si el producto está en un carrito
+        $stmt = $this->pdo->prepare("SELECT COUNT(*) as conteo 
+                                    FROM almacena a
+                                    JOIN producto p ON p.id = a.id
+                                    WHERE p.idEmpresa = ?");
+        $stmt->execute([$id]);
+        $result = $stmt->fetch();
+
+        if ($result){
+            if ($result['conteo'] > 0){
+                // Producto está en un carrito, no se puede modificar el precio
+                echo json_encode(['success' => false, 'error' => 'No se puede eliminar la cuenta porque sus productos estan en un carrito.']);
+                return;
+            } 
+        }else{
+            // Error al verificar la existencia del producto en un carrito
+            echo json_encode(['success' => false, 'error' => 'Error al verificar el carrito']);
+            return;
+        }
+
+        $stmt = $this->pdo->prepare("DELETE FROM empresa WHERE idEmpresa = ?");
+        if ($stmt->execute([$id])) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'error' => 'Error al eliminar el producto']);
+        }
+    }
+
+    function buscarPorNombre($dato)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM empresa WHERE nombre = ? OR idEmpresa = ?");
+        $stmt->execute([$dato, $dato]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
 // Configuracion de la base de datos
 $host = 'localhost';
 $dbname = 'producto';
@@ -333,6 +376,26 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
         case 'grafica':
             $empresa->graficaDatos();
             break;
+        
+        case 'obtenerTodas':
+            $empresas = $empresa->obtenerTodas();
+            echo json_encode($empresas);
+            break;
+            
+        case 'buscarPorNombre':
+            $dato = isset($_GET['dato']) ? $_GET['dato'] : null; // Verifica que 'dato' esté definido
+            if ($dato !== null) {
+                $empresas = $empresa->buscarPorNombre($dato);
+                // Verifica si se encontraron usuarios
+                if (!empty($empresas)) {
+                    echo json_encode(['success' => true, 'data' => $empresas]);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'No se encontraron usuarios.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'error' => 'Dato no proporcionado.']);
+            }
+            break; 
     }
 }
 
@@ -365,5 +428,11 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
 
     $empresa->modificarEstado($nuevoEstado, $id);
 }
-?>
 
+
+if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+    $data = json_decode(file_get_contents('php://input'), true);
+    $id = $data['id'];
+    $empresa->eliminarEmpresa($id);
+}
+?>

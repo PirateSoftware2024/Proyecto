@@ -51,6 +51,7 @@ if ($result) {
             $_SESSION['usuario'] = $datosUsuario; // Guardamos en la sesión
         }
         
+        $_SESSION['usuario']['tipo'] = $tipoUsuario;
         $_SESSION['loggedin'] = true;
 
         // Enviar la respuesta JSON final

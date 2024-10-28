@@ -114,7 +114,8 @@ function modificarProducto(dato, columna) {
         body: JSON.stringify({
             columna: columna, // Almacenamos el nombre de la columna a modificar
             dato: dato,
-            id: idProducto
+            id: idProducto,
+            accion: "modificar"
         })
     })
     .then(response => {

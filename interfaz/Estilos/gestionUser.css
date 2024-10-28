@@ -1,0 +1,192 @@
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background-color: #333;
+    color: white;
+}
+
+header .logo img {
+    margin-right: 10px;
+}
+
+header h1 {
+    flex-grow: 1;
+}
+
+main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carta {
+    margin: 20px auto;
+    max-width: 800px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.carta:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+    font-size: 22px;
+    color: #000000;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #000000;
+    padding-bottom: 5px;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    display: inline-block;
+    color: #555;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+select {
+    width: 97%;
+    padding: 10px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+#oferta, #categoria, #condicion {
+    width: 100%;
+}
+
+button {
+    background-color: #27ae60;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
+    background-color: #2ecc71;
+}
+
+.boton-modificar, .modificarEmpresa, .modificarUsuario {
+    background-color: #1cb95a;
+}
+
+.boton-modificar:hover, .modificarEmpresa:hover, .modificarUsuario:hover {
+    background-color: #0e4728;
+} 
+
+.boton-eliminar, .eliminarEmpresa, .eliminarUsuario {
+    background-color: rgb(212, 21, 21);
+}
+
+.boton-editar {
+    background-color: rgb(230, 206, 27);
+}
+
+.boton-cancelar {
+    background-color: #30388f;
+}
+
+.boton-eliminar:hover, .eliminarEmpresa:hover, .eliminarUsuario:hover {
+    background-color: #711512;
+}
+
+.boton-editar:hover {
+    background-color: #7a6713;
+}
+
+.boton-cancelar:hover {
+    background-color: #30388f;
+} 
+
+table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+
+th {
+    background-color: #ecf0f1;
+    font-weight: bold;
+}
+
+tr:hover {
+    background-color: #f9f9f9;
+}
+
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 15px;
+    width: 100%;
+    position: relative;
+    margin-top: auto;
+}
+
+
+/* CUADRO INFO */
+/* ######################################################## */
+.cuadro {
+    display: none; /* Oculto por defecto */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 25px;
+    background-color: #f9f9f9; /* Color de fondo más suave */
+    border-radius: 10px; /* Bordes redondeados */
+    border: 2px solid #007bff; /* Borde azul elegante */
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    display: none;
+}
+
+body.modal-open::before {
+    display: block;
+}

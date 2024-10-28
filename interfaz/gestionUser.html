@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="Estilos/backoffice.css">
+        <link rel="stylesheet" href="Estilos/gestionUser.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
         <title>Gestión de Usuarios</title>
     </head>
     <body>
@@ -15,11 +16,12 @@
         <!-- GESTIÓN DE USUARIOS -->
         <div class="carta">
             <div class="buscarUsuario">
-                <h2>Gestión de Usuarios</h2>
+                <h2>Gestión de Usuarios (Comprador)</h2>
                 <label for="buscarUsuario">Buscar Usuario (Por id o nombre)</label><br>
                 <input type="text" id="buscarUsuario1" placeholder="Ingrese dato...">
                 <button id="botonBuscar">Buscar</button>
-                <button id="botonUsuarioTodos">Todos</button><br><br>
+                <button id="botonUsuarioTodos">Todos</button>
+                <button id="cancelarUsuario">Limpiar</button><br><br>
                 <table id="tablaUsuario">
                     <thead>
                         <tr>
@@ -37,6 +39,91 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+
+        <div class="carta">
+            <div class="buscarUsuario">
+                <h2>Gestión de Usuarios (Vendedor)</h2>
+                <label for="buscarEmpresa">Buscar Usuario (Por id o nombre)</label><br>
+                <input type="text" id="buscarEmpresa" placeholder="Ingrese dato...">
+                <button id="botonBuscarEmpresa">Buscar</button>
+                <button id="botonTodosEmpresa">Todos</button>
+                <button id="cancelarEmpresa">Limpiar</button><br><br>
+                <table id="tablaEmpresa">
+                    <thead>
+                        <tr>
+                            <th>IdUsuario</th>
+                            <th>Nombre</th>
+                            <th>RUT</th>
+                            <th>Numero Cuenta</th>
+                            <th>Correo</th>
+                            <th>Telefono</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filas4">
+                        <!-- Aquí se insertarán dinámicamente las filas de los usuarios -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- CUADRO VER MÁS -->
+        <div id="cuadroInformacionComprador" class="cuadro">
+            <div id="modificarComprador">
+                <h3>Modificar Datos Comprador</h3>
+                
+                <label for="nombre">Ingrese nombre:</label>
+                <input type="text" id="nombreComprador" name="nombre" placeholder="Ingrese nombre">
+                <button id="nom">Editar</button><br><br>
+
+                <label for="rut">Ingrese apellido:</label>
+                <input type="text" id="apellidoComprador" name="apellido" placeholder="Ingrese apellido">
+                <button id="ape">Editar</button><br><br>
+
+                <label for="nombre">Ingrese telefono:</label>
+                <input type="text" id="telefonoComprador" name="telefono" placeholder="Ingrese telefono">
+                <button id="tel">Editar</button><br><br>
+
+                <label for="nombre">Ingrese correo:</label>
+                <input type="text" id="correoComprador" name="correo" placeholder="Ingrese correo">
+                <button id="mail">Editar</button><br><br>
+
+                <label for="nombre">Ingrese fecha de nacimiento:</label>
+                <input type="text" id="fechaComprador" name="fechaNac" placeholder="Ingrese fecha nacimiento">
+                <button id="fech">Editar</button><br><br>
+            </div>
+            <button id="cerrarCuadroComprador">Cerrar</button>
+        </div>
+
+         <!-- CUADRO VER MÁS -->
+         <div id="cuadroInformacion" class="cuadro">
+            <div id="modificarEmpresa">
+                <h3>Modificar Datos Empresa</h3>
+                
+                <label for="nombre">Ingrese nombre:</label>
+                <input type="text" id="nombreEmpresa" placeholder="Ingrese nombre">
+                <button id="nomEm">Editar</button><br><br>
+
+                <label for="rut">Ingrese RUT:</label>
+                <input type="text" id="rutEmpresa" placeholder="Ingrese rut">
+                <button id="rut">Editar</button><br><br>
+
+                <label for="nombre">Numero Cuenta:</label>
+                <input type="text" id="numeroCuenta" placeholder="Ingrese numero cuenta">
+                <button id="nCuneta">Editar</button><br><br>
+
+                <label for="nombre">Ingrese correo:</label>
+                <input type="text" id="correoEmpresa" placeholder="Ingrese correo">
+                <button id="mail">Editar</button><br><br>
+
+                <label for="nombre">Ingrese telefono:</label>
+                <input type="text" id="telefonoEmpresa" placeholder="Ingrese telefono">
+                <button id="tel">Editar</button><br><br>
+
+                <button id="enviarEmpresa">Continuar</button><br><br>
+            </div>
+            <button id="cerrarCuadro">Cerrar</button>
         </div>
 
         <footer>

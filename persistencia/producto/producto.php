@@ -35,6 +35,13 @@ class ApiProducto
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerTodosProductos()
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM producto");
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function obtenerCategorias()
     {
         $stmt = $this->pdo->prepare("SELECT * FROM categorias");
@@ -107,6 +114,22 @@ class ApiProducto
             echo json_encode(['success' => false, 'error']);
         }
     }
+
+    public function actualizarEnBack($idProducto, $nombre, $precio, $descripcion, $stock)
+    {
+        // Consulta SQL para actualizar un registro
+        $stmt = $this->pdo->prepare("UPDATE producto SET nombre = ?, precio = ?, descripcion = ?, stock = ? WHERE id = ?");
+
+        // Ejecuta la consulta con los valores proporcionados
+        if ($stmt->execute([$nombre, $precio, $descripcion, $stock, $idProducto])) {
+        // Consulta exitosa
+            echo json_encode(['success' => true]);
+        } else {
+            // Error en la consulta
+            echo json_encode(['success' => false, 'error' => $stmt->errorInfo()]);
+        }
+    }
+
 
     public function actualizarImagen($imagen, $idProducto)
     {
@@ -441,11 +464,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 ////////////////////////////////////////////////////////////////////////////////////////
 if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
     $data = json_decode(file_get_contents('php://input'), true);
-    $idProducto = $data['id'];
-    $dato = $data['dato'];
-    $columna = $data['columna'];
-    $producto->actualizar($dato, $columna, $idProducto);
+
+    // Validar que $data es un array y contiene la clave 'accion'
+    if (is_array($data) && isset($data['accion'])) {
+        $accion = $data['accion'];
+        switch($accion) {
+            case 'modificar':
+                // Verificar que existen las claves necesarias en $data
+                if (isset($data['id'], $data['dato'], $data['columna'])) {
+                    $idProducto = $data['id'];
+                    $dato = $data['dato'];
+                    $columna = $data['columna'];
+                    $producto->actualizar($dato, $columna, $idProducto);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Datos incompletos para la acción modificar']);
+                }
+                break;
+
+            case 'modificarBackoffice':
+                // Verificar que existen las claves necesarias en $data
+                if (isset($data['id'], $data['nombre'], $data['precio'], $data['descripcion'], $data['stock'])) {
+                    $idProducto = $data['id'];
+                    $nombre = $data['nombre'];
+                    $precio = $data['precio'];
+                    $descripcion = $data['descripcion'];
+                    $stock = $data['stock'];
+                    $producto->actualizarEnBack($idProducto, $nombre, $precio, $descripcion, $stock);
+                } else {
+                    echo json_encode(['success' => false, 'error' => 'Datos incompletos para la acción modificarBackoffice']);
+                }
+                break;
+
+            default:
+                echo json_encode(['success' => false, 'error' => 'Acción no válida']);
+                break;
+        }
+    } else {
+        echo json_encode(['success' => false, 'error' => 'Solicitud PUT malformada o acción no especificada']);
+    }
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////
 
@@ -459,6 +517,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
     {
         case 'productos':
             $productos = $producto->obtenerProductos();
+            echo json_encode($productos);
+            break;
+        
+        case 'obtenerTodosProductos':
+            $productos = $producto->obtenerTodosProductos();
             echo json_encode($productos);
             break;
 
