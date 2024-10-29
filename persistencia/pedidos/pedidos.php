@@ -62,7 +62,9 @@ class ApiPedidos
 
     public function obtenerTodos()
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM carrito WHERE estadoCarrito = 'Confirmado'");
+        $stmt = $this->pdo->prepare("SELECT p.*, d.idDireccion
+                                    FROM paquete p
+                                    JOIN direcciones d ON d.idUsuario = p.idUsuario");
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -208,6 +210,52 @@ class ApiPedidos
         // Retornar la respuesta en formato JSON
         echo json_encode(['success' => true, 'productos' => $datos]);
     }
+
+    public function modificarPaqueteBack($columna, $dato, $idPaquete)
+    {
+        // Construir la consulta con la columna validada
+        $stmt = $this->pdo->prepare("UPDATE paquete SET $columna = :dato WHERE idPaquete = :idPaquete");
+    
+        // Bindear los parámetros
+        $stmt->bindParam(':dato', $dato);
+        $stmt->bindParam(':idPaquete', $idPaquete, PDO::PARAM_INT);
+    
+        if ($stmt->execute()) {
+            echo json_encode(['success' => true, 'message' => 'Estado modificado']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+        }
+    }
+
+    public function obtenerPorId($dato)
+    {
+        $stmt = $this->pdo->prepare("SELECT *
+                                    FROM paquete 
+                                    WHERE idPaquete = ?");
+        $stmt->execute([$dato]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    public function eliminar($idPaquete)
+{
+    $stmt = $this->pdo->prepare("DELETE FROM detalle_pedido WHERE idPaquete = ?");
+    $stmt->execute([$idPaquete]);
+
+    // Check how many rows were affected
+    if ($stmt->rowCount() > 0) {
+        $stmt = $this->pdo->prepare("DELETE FROM paquete WHERE idPaquete = ?");
+        $stmt->execute([$idPaquete]);
+
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(['success' => true, 'message' => 'Eliminado exitosamente']);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'Paquete no encontrado para eliminar']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Detalle de pedido no encontrado para eliminar']);
+    }
+}
+
 }
 
 
@@ -225,7 +273,6 @@ $pedido = new ApiPedidos($pdo);
 /////////////////////////////////////////////////////////////////////
 // Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
-    $data = json_decode(file_get_contents('php://input'), true);
     $accion = $_GET['accion'];
     switch($accion)
     {
@@ -236,7 +283,38 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
         case 'grafica':            
             $pedido->graficaDatos();
-            break;   
+            break;
+
+        case 'obtenerPorId':
+            $dato = $_GET['dato'];
+            $pedidos = $pedido->obtenerPorId($dato);
+            echo json_encode($pedidos);
+            break;
+    }
+}
+
+if($_SERVER['REQUEST_METHOD'] == 'DELETE'){
+    $inputData = file_get_contents("php://input");
+    $data = json_decode($inputData, true); // Decodificar si es JSON
+    $idPaquete = $data['id'];
+    $pedidos = $pedido->eliminar($idPaquete);
+}
+
+if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
+    // Leer la entrada cruda
+    $inputData = file_get_contents("php://input");
+    $data = json_decode($inputData, true); // Decodificar si es JSON
+
+    // Verificar si las claves existen antes de acceder a ellas
+    if (isset($data['id'], $data['dato'], $data['columna'])) {
+        $idPaquete = $data['id'];
+        $dato = $data['dato'];
+        $columna = $data['columna'];
+
+        $pedido->modificarPaqueteBack($columna, $dato, $idPaquete);
+    } else {
+        // Manejar el caso en que faltan claves en el array
+        echo "Error: Faltan datos en la solicitud.";
     }
 }
 
@@ -250,11 +328,6 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
         case 'buscarPedido':
             $dato = $data['dato'];
             $pedido->buscarPedido($dato);
-            break;
-
-        case 'obtenerTodos':
-            $pedidos = $pedido->obtenerTodos();
-            echo json_encode($pedidos);
             break;
         
         case 'obtenerPedidoFecha':

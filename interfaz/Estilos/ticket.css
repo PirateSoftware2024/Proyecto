@@ -1,6 +1,6 @@
 /* Estilo global */
 * {
-    box-sizing: border-box; /* Para incluir el padding y el borde en el tamaño total */
+    box-sizing: border-box;
 }
 
 body {
@@ -8,17 +8,17 @@ body {
     margin: 0;
     padding: 0;
     background-color: #f4f4f9;
-    overflow-x: hidden; /* Evitar scroll horizontal */
+    overflow-x: hidden;
     display: flex;
-    flex-direction: column; /* Permitir que los hijos se alineen en columna */
-    min-height: 100vh; /* Asegurarse de que el body ocupe al menos toda la altura de la ventana */
+    flex-direction: column;
+    min-height: 100vh;
 }
 
 header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 20px;
+    padding: 15px 30px;
     background-color: #333;
     color: white;
 }
@@ -27,50 +27,88 @@ header .logo img {
     margin-right: 20px;
 }
 
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav a:hover {
+    background-color: #4d4a4a;
+}
+
 header h1 {
-    flex-grow: 1; /* Permitir que el h1 ocupe el espacio disponible */
+    flex-grow: 1;
+    font-size: 1.8em;
+    font-weight: bold;
+    margin: 0;
 }
 
 main {
-    flex-grow: 1; /* Permitir que el main ocupe el espacio restante */
-    padding: 20px; /* Espaciado interno para el main */
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-#ticket-form, #responses {
+section {
+    width: 100%;
+    max-width: 800px; /* Limita el ancho del formulario */
     background-color: #fff;
     border: 1px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para un efecto elevado */
     padding: 20px;
     margin-bottom: 20px;
+    text-align: center;
+}
+
+#responses h2 {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 15px;
 }
 
 form {
     display: flex;
     flex-direction: column;
+    align-items: center;
 }
 
 label {
+    width: 100%;
+    text-align: left;
+    font-size: 1.1em;
     margin: 10px 0 5px;
+    color: #555;
 }
 
-input, textarea, button {
-    padding: 10px;
+input, textarea {
+    width: 100%;
+    padding: 12px;
     margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 1em;
 }
 
 button {
+    padding: 10px 20px;
     background-color: #007bff;
     color: #fff;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
 }
 
 button:hover {
     background-color: #0056b3;
-}
-
-#responseList {
-    margin-top: 10px;
 }
 
 footer {
@@ -79,4 +117,59 @@ footer {
     color: #fff;
     padding: 15px;
     width: 100%;
+    font-size: 0.9em;
+}
+
+#tablaTickets {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+#tablaTickets thead {
+    background-color: #004466;
+    color: white;
+}
+
+#tablaTickets th, #tablaTickets td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#tablaTickets tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#tablaTickets tr:hover {
+    background-color: #f1f1f1;
+}
+
+#tablaTickets th {
+    background-color: #4d4a4a;
+    color: white;
+    text-transform: uppercase;
+}
+
+#tablaTickets td {
+    color: #333;
+}
+
+.eliminarTicket {
+    margin: 5px;
+    background-color: rgb(167, 34, 34);
+}
+
+.eliminarTicket:hover{
+    background-color: #711512;
+}
+
+.ingresarRespuesta {
+    margin: 5px;
+    background-color: #1b981d;
+}
+
+.ingresarRespuesta:hover{
+    background-color: #0a4e22;
 }

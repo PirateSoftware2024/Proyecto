@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="Estilos/ofertas.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+    <title>Agregar Ofertas</title>
+</head>
+<body>
+    <header>
+        <div class="logo"><img src="images/logo.png" alt="Logo" width="105" height="100"></div>
+        <h1>Gestión de Envios - AXIS</h1>
+        <nav>
+            <a href="backoffice.html">Inicio</a>
+        </nav>
+    </header>
+    <div class="container">
+        <h1>Agregar Ofertas</h1>
+        <form id="ofertaForm">
+            <div class="form-group">
+                <label for="nombre">Nombre:</label>
+                <input type="text" id="nombre"required>
+            </div>
+            <div class="form-group">
+                <label for="descuento">Descuento (%):</label>
+                <input type="number" id="descuento" min="0" max="100" required>
+            </div>
+            <div class="form-group">
+                <label for="fechaExpiracion">Fecha de Expiración:</label>
+                <input type="date" id="fechaExpiracion" required>
+            </div>
+            <button type="submit">Agregar Oferta</button>
+        </form>
+        <button id="listar">Listar</button>
+        <h2>Ofertas Agregadas</h2>
+        <table id="ofertasTable">
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Descuento (%)</th>
+                    <th>Fecha de Expiración</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody id="ofertasList"></tbody>
+        </table>
+    </div>
+
+    <footer>
+        <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
+    </footer>
+    
+    <script src="../logica/jquery-3.7.1.min.js"></script>
+    <script src="../logica/ofertas.js"></script>
+</body>
+</html>

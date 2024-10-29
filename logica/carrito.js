@@ -6,6 +6,7 @@ lo mismo con orden.
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
 
 $(document).ready(function() {
+    obtenerOferta();
     nuevoCarrito();
     mostrarProductosEnCarrito();
     resumenPedido();
@@ -71,6 +72,31 @@ $(document).ready(function() {
         devolver();
     });
 });
+
+///////////////////////////////
+// Funcion para obtener y calcular ofertas
+let oferta;
+function obtenerOferta(){
+    fetch('../persistencia/ofertas/ofertas.php?accion=obtener')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la red');
+        }
+        return response.json();
+    })
+    .then(jsonData => {
+        if (jsonData.success) {
+            oferta = jsonData.result;
+            alert("Contamos con un %"+jsonData.result.descuento+"\nen productos seleccionados");
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+
+/////////////////////////////
+
 
     // Función para mostrar  los productos en el carrito
     function mostrarProductosEnCarrito() {

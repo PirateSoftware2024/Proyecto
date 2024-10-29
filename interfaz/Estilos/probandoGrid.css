@@ -327,13 +327,15 @@ body.modal-open::before {
     background-color: #45a049;
 }
 
-/* Estilos para el footer */
 .footer {
     text-align: center;
-    margin-top: 20px;
     background-color: #333;
     color: #fff;
-    padding: 20px 0; /* Cambia el padding horizontal a 0 para centrar mejor */
+    padding: 20px 0;
+    position: fixed; /* Fija el footer */
+    bottom: 0; /* Coloca el footer en la parte inferior */
+    width: 100%; /* Asegura que el footer ocupe todo el ancho de la pantalla */
+    z-index: 10; /* Asegura que el footer esté por encima de otros elementos */
 }
 
 .footer-container {
@@ -341,12 +343,13 @@ body.modal-open::before {
     flex-wrap: wrap;
     justify-content: space-between;
     max-width: 1200px;
-    margin: 0 auto; /* Centra el contenedor */
+    margin: 0 auto;
+    padding: 0 20px; /* Añade algo de padding lateral para mejor ajuste */
 }
 
 .footer-section {
-    flex: 1 1 200px; /* Mantiene la flexibilidad */
-    margin: 10px; /* Agrega margen a las secciones */
+    flex: 1 1 200px;
+    margin: 10px;
 }
 
 .footer-section h3 {
@@ -364,7 +367,6 @@ body.modal-open::before {
 }
 
 .footer-section ul {
-    text-align: left;
     list-style: none;
     padding: 0;
 }
@@ -385,8 +387,9 @@ body.modal-open::before {
 #copy {
     padding: 10px;
     border-top: 1px solid #555;
-    margin-top: 20px; /* Agrega margen superior para separación */
+    margin-top: 20px;
 }
+
 
 @media (max-width: 1237px) {
     .header-container {
@@ -679,5 +682,6 @@ body.modal-open::before {
     color: white;
 }
 
-
-
+.product-card .oferta-texto {
+    color: red;
+}

@@ -25,7 +25,18 @@ header .logo img {
 header h1 {
     flex-grow: 1;
 }
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
 
+nav a:hover {
+    background-color: #4d4a4a;
+}
 main {
     flex: 1;
     display: flex;

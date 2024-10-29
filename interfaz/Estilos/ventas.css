@@ -135,11 +135,12 @@ nav a:hover {
             border-radius: 5px;
             margin-right: 10px;
         }
-        
+        #idEnvioBack{
+            width: 100px;
+        }
         #oferta, #categoria, #condicion {
             width: 100%;
         }
-        
         button {
             background-color: #28a745;
             color: white;
@@ -154,3 +155,7 @@ nav a:hover {
         button:hover {
             background-color: #218838;
         }
+
+#obtenerEnvios{
+    margin-left: 5px;
+}

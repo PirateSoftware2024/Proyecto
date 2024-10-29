@@ -96,7 +96,7 @@ class ApiUsuarios
             $dato = password_hash($dato, PASSWORD_DEFAULT);
         }
 
-        if($tabla === "usuario"){
+        if($tabla === "usuario" || $tabla === "direcciones"){
             // Ejecutar la consulta
             if($columna == "telefono"){
                 $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idUsuario = $idUsuario");
@@ -282,7 +282,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // Obtener valores de POST
     // Datos Personales
     $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $_POST['accion'];
+    $accion = $data['accion'];
     
     switch($accion)
     {
@@ -310,7 +310,8 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     case 'verificarContra':
         session_start();
         $idUsuario = $_SESSION['usuario']['idUsuario'];
-        $contra = $_POST['contra'];
+        //$idUsuario = $data['idUsuario'];
+        $contra = $data['contra'];
         $usuario->verificarContra($contra, $idUsuario);
         break;
     }

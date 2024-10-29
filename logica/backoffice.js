@@ -2,7 +2,7 @@
 let productos = [];
 // Obtenemos productos de la BD
 function cargarDatos(){
-    fetch('../persistencia/producto/producto.php?accion=obtenerTodosProductos')
+    fetch('../persistencia/producto/producto.php?accion=productos')
     .then(response => response.text())
     .then(data => {
         //Pasamos datos a JSON
@@ -10,6 +10,203 @@ function cargarDatos(){
         productos = jsonData; // Guardamos productos
         actualizar();
     });
+}
+
+// Cambia el event listener para la clase
+$(document).on('change', '.cambioEstado', function() {
+    const valor = $(this).val();
+    const idPaquete = $(this).data('id'); //Este id sera necesario para modificar el dato en la tabla detalle_pedido
+    const columna = $(this).data('columna'); //Este id sera necesario para modificar el dato en la tabla detalle_pedido
+    console.log(valor);
+    modificarEstado(idPaquete, valor, columna)
+});
+
+function modificarEstado(idPaquete, valor, columna) {
+    fetch('../persistencia/pedidos/pedidos.php', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            id: idPaquete, 
+            dato: valor,
+            columna: columna
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert("Estado modificado!");  // Mostrar mensaje en caso de éxito
+            obtenerEnvios();
+        } else {
+            alert('Ocurrió un error al modificar el estado.'); // Mostrar alerta en caso de error
+            console.error('Error del servidor:', data.message); 
+        }
+    })
+    .catch(error => {
+        alert('Modificado con exito.'); // Alerta en caso de error de solicitud
+        console.error('Error al modificar el estado:', error);
+    });
+}
+function buscarPaquete() {
+    let dato = $("#idEnvioBack").val(); // Mantener 'dato'
+    if(dato.length < 1){
+        alert("Debe ingresar un id");
+    }else{
+    fetch(`../persistencia/pedidos/pedidos.php?dato=${dato}&accion=obtenerPorId`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text();
+        })
+        .then(data => {
+            const jsonData = JSON.parse(data);
+            console.log(jsonData);
+            // Check if the JSON data contains an error message
+            if (jsonData.error) {
+                console.error(jsonData.error);
+                return; // Exit if there's an error
+            }
+
+            envios = jsonData; // Guardamos productos
+            console.log(envios);
+            mostrarPedidoBuscado();
+        })
+        .catch(error => {
+            console.error('There was a problem with the fetch operation:', error);
+        });
+    }
+}
+
+///////////////////////////////////////////////////
+let envios = [];
+function obtenerEnvios(){
+    fetch('../persistencia/pedidos/pedidos.php?accion=pedidos')
+    .then(response => response.text())
+    .then(data => {
+        //Pasamos datos a JSON
+        const jsonData = JSON.parse(data);
+        envios = jsonData; // Guardamos productos
+        actualizarPedidos();
+    });
+}
+function mostrarPedidoBuscado(){
+    let estadoActual = envios.estadoEnvio;
+    let envioActual = envios.tipoEntrega;
+
+    let selectEnvios;
+    if(envioActual == "Domicilio"){
+        selectEnvios = `<option value="direccion" disabled selected>${envioActual}</option>
+                            <option value="centro de recogida">Centro de recogida</option>`;
+    }else{
+        selectEnvios = `<option value="centro de recogida" disabled selected>${envioActual}</option>
+        <option value="domicilio">Domicilio</option>`;
+    }
+    // Crear un nuevo objeto sin el estado actual (comparando el valor)
+    let estadosFiltrados = {};
+    for (let clave in estados) {
+        if (estados[clave] !== estadoActual) {
+            estadosFiltrados[clave] = estados[clave];
+        }
+    }
+
+
+    // Crear el string de opciones para el select
+    let selectEstados = `<option value="a" disabled selected>${estadoActual}</option>`;
+    for (let clave in estadosFiltrados) {
+        selectEstados += `<option value="${clave}">${estadosFiltrados[clave]}</option>`;
+    }
+
+        let fila = $(`
+            <tr>
+                <td>${envios.idCarrito}</td>
+                <td>${envios.idPaquete}</td>
+                <td>${envios.idUsuario}</td>
+                <td>${envios.idDireccion}</td>
+                <td>${envios.fecha}</td>
+                <td> 
+                    <select class="cambioEstado" data-columna="estadoEnvio" data-id="${envios.idPaquete}">
+                        ${selectEstados}
+                    </select>
+                </td>
+                <td> 
+                    <select class="cambioEstado" data-columna="tipoEntrega" data-id="${envios.idPaquete}">
+                        ${selectEnvios}
+                    </select>
+                </td>
+                <td>
+                    <button class="eliminarEnvio" data-id="${envios.idPaquete}"><i class="bi bi-trash-fill"></i></button>
+                </td>
+            </tr>
+        `);
+        $("#filasVentas").append(fila);
+    }
+
+    let estados = {
+        "pendiente": "Pendiente",
+        "esperando productos": "Esperando productos",
+        "en depósito": "En depósito",
+        "en camino": "En camino",
+        "cancelado": "Cancelado",
+        "entregado": "Entregado"
+    };
+
+function actualizarPedidos() {
+    $("#filasVentas").empty(); // Limpiar las filas anteriores
+// Generar filas para cada producto
+for (let i = 0; i < envios.length; i++) {
+    const envio = envios[i];
+    let estadoActual = envio.estadoEnvio;
+    let envioActual = envio.tipoEntrega;
+
+    let selectEnvios;
+    if(envioActual == "Domicilio"){
+        selectEnvios = `<option value="direccion" disabled selected>${envioActual}</option>
+                            <option value="centro de recogida">Centro de recogida</option>`;
+    }else{
+        selectEnvios = `<option value="centro de recogida" disabled selected>${envioActual}</option>
+        <option value="domicilio">Domicilio</option>`;
+    }
+    // Crear un nuevo objeto sin el estado actual (comparando el valor)
+    let estadosFiltrados = {};
+    for (let clave in estados) {
+        if (estados[clave] !== estadoActual) {
+            estadosFiltrados[clave] = estados[clave];
+        }
+    }
+
+
+    // Crear el string de opciones para el select
+    let selectEstados = `<option value="a" disabled selected>${estadoActual}</option>`;
+    for (let clave in estadosFiltrados) {
+        selectEstados += `<option value="${clave}">${estadosFiltrados[clave]}</option>`;
+    }
+
+        let fila = $(`
+            <tr>
+                <td>${envio.idCarrito}</td>
+                <td>${envio.idPaquete}</td>
+                <td>${envio.idUsuario}</td>
+                <td>${envio.idDireccion}</td>
+                <td>${envio.fecha}</td>
+                <td> 
+                    <select class="cambioEstado" data-columna="estadoEnvio" data-id="${envio.idPaquete}">
+                        ${selectEstados}
+                    </select>
+                </td>
+                <td> 
+                    <select class="cambioEstado" data-columna="tipoEntrega" data-id="${envio.idPaquete}">
+                        ${selectEnvios}
+                    </select>
+                </td>
+                <td>
+                    <button class="eliminarEnvio" data-id="${envio.idPaquete}"><i class="bi bi-trash-fill"></i></button>
+                </td>
+            </tr>
+        `);
+        $("#filasVentas").append(fila);
+    }
 }
 
 let empresas = [];
@@ -73,7 +270,33 @@ function eliminarEmpresa(){
         console.error('Error al obtener los datos:', error);
     });
 }
+function eliminarEnvio() {
+    let idPaquete = $(this).data("id");  // Ensure this function is called in the correct context
+    fetch('../persistencia/pedidos/pedidos.php', {  // Corrected the URL
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+            id: idPaquete
+        })
+    })
+    .then(response => response.json())  // Process the response as JSON
+    .then(data => {
+        if (data.success) {
+            alert('Envio eliminado exitosamente');
+            obtenerEnvios();  // Refresh the list of envios
+            // Here you can add code to update the UI, like removing the row from the table
+        } else {
+            alert(data.message);  // Optional: Show the error message in an alert
+        }
+    })
+    .catch(error => {
+        console.error('Error al eliminar el envio:', error);
+    });
+}
 
+////////////////////////////////////////////////////////////////
 function eliminarComprador(){
     let idUsuario = $(this).data("id");
     fetch('../persistencia/usuario/usuario.php', {
@@ -151,6 +374,8 @@ function buscarPorNombreEmpresa() {
    del documento esté completamente cargado
 */
 $(document).ready(function() {
+    $("#buscarPaquete").click(buscarPaquete);
+    $("#obtenerEnvios").click(obtenerEnvios);
     $("#botonBuscar").click(buscarPorNombre);
     $("#botonBuscarNombre").click(buscarProducto);
     $("#botonStock").click(buscarStock);
@@ -168,7 +393,7 @@ $(document).ready(function() {
     $("#cancelarUsuario").click(function () {
         $("#filas3").empty();
     })
-    
+    $("#filasVentas").on("click", ".eliminarEnvio", eliminarEnvio); // Controlador de eventos que 
     $("#filas").on("click", ".boton-eliminar", eliminarProducto); // Controlador de eventos que 
     $("#filas").on("click", ".boton-editar", mostrarDatos);   // responde a los clicks en cualquier elemento con la     
     $("#filas").on("click", ".boton-modificar", modificar);   // clase .boton-"accion" que esté dentro del elemento con id "filas".
@@ -271,6 +496,10 @@ $(document).ready(function() {
         let telefono = $("#telefonoEmpresa").val();
         modificarUsuario(telefono, "telefono","empresa");
     });
+
+
+    //////////////////////////////////////////////////////
+    
 });
 
 let idUsuario;
@@ -303,10 +532,6 @@ function modificarUsuario(dato, columna, tabla) {
             alert("Error al modificar el dato: " + (data.error || ''));
         }
     })
-    .catch(error => {
-        console.error('Error al obtener los datos:', error);
-        alert('Ocurrió un error: ' + error.message); // Muestra el error al usuario
-    });
 }
 
 function buscarStock() {
@@ -539,7 +764,7 @@ function modificar(){
     let nombre = $("#nombre").val(); 
     let descripcion = $("#descripcion").val();
     let precio = Number($("#precio").val());
-    let stock = Number($("#stock").val());
+    let stock = $("#stock").val();
 
     if(validacion(nombre, descripcion, precio)){
          // Modificamos los datos del producto
@@ -641,6 +866,7 @@ function modificarProducto(idProducto, nombre, descripcion, precio, stock) {
             productos[index].nombre = nombre;
             productos[index].descripcion = descripcion;
             productos[index].precio = precio;
+            productos[index].stock = stock;
             actualizar();
         } else {
             alert(data.error);

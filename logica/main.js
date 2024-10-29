@@ -99,6 +99,7 @@ function pantallaCarga() {
 /////////////////////////////////////////////////////////////
 
 $(document).ready(function() {
+    obtenerOferta();
     cargarCategorias(); //Obtenemos categorias de la BD
     cargarDatos(); // Obtenemos productos de la BD
     nuevoCarrito();// Verificamos si el usuario tiene un  carrito "Pendiente", si es asi obtenemos los productos
@@ -218,6 +219,28 @@ function verMas(idBoton){
     $("#infoProducto").html($productCard);
 }   
 
+///////////////////////////////
+// Funcion para obtener y calcular ofertas
+let oferta;
+function obtenerOferta(){
+    fetch('../persistencia/ofertas/ofertas.php?accion=obtener')
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error en la respuesta de la red');
+        }
+        return response.json();
+    })
+    .then(jsonData => {
+        if (jsonData.success) {
+            oferta = jsonData.result.descuento;
+        }
+    })
+    .catch(error => {
+        console.error('Error en la solicitud:', error);
+    });
+}
+/////////////////////////////
+
 function actualizar(){
     if(products.length < 1){
         alert("No hay productos...");
@@ -226,20 +249,36 @@ function actualizar(){
         $("#productContainer").html("");
         for (let i = 0; i < products.length; i++) {
             const product = products[i];
-            const $productCard = $(`
-                <div class="product-card">
-                    <div class="image-container">
-                        <img src="../persistencia/assets/${product.file_path}">
+            let productCard;
+            if(product.oferta == "Si" && oferta){
+                productCard = $(`
+                    <div class="product-card">
+                        <div class="image-container">
+                            <img src="../persistencia/assets/${product.file_path}">
+                        </div>
+                        <h3>${product.nombre}</h3>
+                        <p>${product.descripcion}</p>
+                        <p class="oferta-texto">Oferta %${oferta}</p>
+                        <div class="price">$${product.precio}</div>
+                        <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
+                        <button class="boton-reseña" data-id="${product.id}">Ver más</button>
                     </div>
-                    <h3>${product.nombre}</h3>
-                    <p>${product.descripcion}</p>
-                    <div class="price">$${product.precio}</div>
-                    <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
-                    <button class="boton-reseña" data-id="${product.id}">Ver más</button>
-                </div>
-            `);
-        
-            $("#productContainer").append($productCard);
+                `);
+            }else{
+                productCard = $(`
+                    <div class="product-card">
+                        <div class="image-container">
+                            <img src="../persistencia/assets/${product.file_path}">
+                        </div>
+                        <h3>${product.nombre}</h3>
+                        <p>${product.descripcion}</p>
+                        <div class="price">$${product.precio}</div>
+                        <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
+                        <button class="boton-reseña" data-id="${product.id}">Ver más</button>
+                    </div>
+                `);
+            }
+            $("#productContainer").append(productCard);
         }   
     }
 }
