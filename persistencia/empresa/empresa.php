@@ -24,11 +24,25 @@ class ApiEmpresa
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    public function obtenerDatosEmpresa($id)
+    {
+        $stmt = $this->pdo->prepare("SELECT * FROM empresa e
+                                    JOIN direcciones d ON d.idEmpresa = e.idEmpresa
+                                    WHERE e.idEmpresa = ?");
+        $stmt->execute([$id]);
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
     public function obtenerDatos($idEmpresa)
     {
         $stmt = $this->pdo->prepare("SELECT * FROM producto WHERE idEmpresa = $idEmpresa");
         $stmt->execute();
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        $productos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (empty($productos)) {
+            return ["error" => "No se encontraron productos para la empresa especificada."];
+        }
+        return $productos;
     }
     
     public function ventasEmpresa($idEmpresa)
@@ -341,6 +355,54 @@ class ApiEmpresa
         $stmt->execute([$dato, $dato]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    function graficaVentasEmpresa($idEmpresa)
+{
+    $stmt = $this->pdo->prepare("SELECT COUNT(*) AS ventas, MONTH(c.fecha) AS Mes
+                                    FROM empresa e
+                                    JOIN producto p ON p.idEmpresa = e.idEmpresa
+                                    JOIN almacena a ON a.id = p.id
+                                    JOIN carrito c ON c.idCarrito = a.idCarrito 
+                                    WHERE c.estadoCarrito = 'Confirmado' AND e.idEmpresa = ?
+                                    GROUP BY MONTH(c.fecha);
+                            ");
+    
+    if ($stmt->execute([$idEmpresa])) {
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($datos)) {
+            echo json_encode($datos);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No hay ventas']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+    }
+}
+
+function graficaTotalGenerado($idEmpresa)
+{
+    $stmt = $this->pdo->prepare("SELECT  e.idEmpresa, e.nombre, DATE_FORMAT(c.fecha, '%Y-%m') AS mes, SUM(a.precio * a.cantidad) AS ventas
+                                FROM empresa e
+                                JOIN  producto p ON p.idEmpresa = e.idEmpresa
+                                JOIN  almacena a ON a.id = p.id
+                                JOIN carrito c ON c.idCarrito = a.idCarrito 
+                                WHERE c.estadoCarrito = 'Confirmado' AND e.idEmpresa = ?
+                                GROUP BY mes
+                                ORDER BY mes;"
+    );
+
+    if ($stmt->execute([$idEmpresa])) {
+        $datos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        if (!empty($datos)) {
+            echo json_encode($datos);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No hay ventas']);
+        }
+    } else {
+        echo json_encode(['success' => false, 'message' => 'Error en la consulta']);
+    }
+    
+}
 }
 // Configuracion de la base de datos
 $host = 'localhost';
@@ -359,6 +421,13 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $accion = $_GET['accion'];
     switch($accion)
     {
+        case 'obtenerDatosEmpresa':
+            session_start();
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'];
+            $empresaDatos = $empresa->obtenerDatosEmpresa($idEmpresa);
+            echo json_encode($empresaDatos);
+            break;
+
         case 'obtenerDatos':
             session_start();
             $idEmpresa = $_SESSION['usuario']['idEmpresa'];
@@ -396,6 +465,18 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 echo json_encode(['success' => false, 'error' => 'Dato no proporcionado.']);
             }
             break; 
+        
+        case 'graficaVentasEmpresa':
+            session_start();
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'];
+            $empresa->graficaVentasEmpresa($idEmpresa);
+            break;
+        
+        case 'graficaTotalGenerado':
+            session_start();
+            $idEmpresa = $_SESSION['usuario']['idEmpresa'];
+            $empresa->graficaTotalGenerado($idEmpresa);
+            break;    
     }
 }
 

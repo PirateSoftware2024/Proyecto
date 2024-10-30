@@ -5,24 +5,23 @@
     font-family: Arial, sans-serif;
 }     
 
-        /* Estilos generales */
+
         html, body {
-            height: 100%; /* Asegúrate de que el cuerpo ocupa el 100% de la altura de la ventana */
-            margin: 0; /* Eliminar márgenes por defecto */
+            height: 100%; 
+            margin: 0;
         }
 
         body {
             display: flex;
-            flex-direction: column; /* Apila los elementos en columnas */
+            flex-direction: column; 
         }
 
-        /* Estilo del contenido principal */
+
         main {
-            flex: 1; /* Hace que el main ocupe todo el espacio disponible */
-            padding: 20px; /* Espaciado interno en el contenido */
+            flex: 1; 
+            padding: 20px;
         }
 
-       
 header {
     display: flex;
     align-items: center;
@@ -104,10 +103,10 @@ nav a:hover {
         .carta {
             background-color: #ffffff;
             border-radius: 12px;
-            border: 2px solid #333; /* Borde gris oscuro */
+            border: 2px solid #333;
             padding: 20px;
             margin: 25px 250px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
             z-index: 1;
         }

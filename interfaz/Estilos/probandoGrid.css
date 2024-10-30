@@ -5,7 +5,6 @@
     font-family: Arial, sans-serif;
 }
 
-/* Estilos para el header */
 header {
     background-color: white;
     color: #333;
@@ -66,7 +65,6 @@ header {
     background-color: #388e3c;
 }
 
-/* Estilos para la barra de navegación principal */
 nav{
 	flex: 1;
 	text-align: right;
@@ -102,10 +100,10 @@ a{
 }
 
 .menu-icon::before {
-    content: '\2630'; /* Símbolo de hamburguesa */
+    content: '\2630';
 }
 
-/* Estilos para la barra de navegación secundaria */
+
 #nav {
     display: flex;
     align-items: center;
@@ -119,15 +117,15 @@ a{
     white-space: nowrap;
     flex-grow: 1;
     background-color: #333;
-    scrollbar-width: none; /* Oculta el scrollbar en Firefox */
+    scrollbar-width: none;
 }
 
 .navbar::-webkit-scrollbar {
-    display: none; /* Oculta el scrollbar en Chrome, Safari y Opera */
+    display: none;
 }
 
 .nav-button {
-    flex: 0 0 auto; /* Evita que los botones crezcan o se encojan */
+    flex: 0 0 auto;
     padding: 14px 20px;
     background-color: #444;
     color: white;
@@ -135,7 +133,7 @@ a{
     cursor: pointer;
     margin: 5px;
     border: none;
-    white-space: nowrap; /* Evita que el texto se divida en varias líneas */
+    white-space: nowrap;
 }
 
 .nav-button:hover {
@@ -167,11 +165,8 @@ main{
 	border-radius: 10px;
 	background-color: grey;
 	margin: 50px 100px;
-	/*margin-top: 100px;
-	margin-left: 100px;
-	margin-right: 100px;*/
 }
-/* ///////////////////////////////////////// */
+
 
 .product-container {
     display: grid;
@@ -235,32 +230,32 @@ main{
 /* CUADRO INFO */
 /* ######################################################## */
 .cuadro {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 25px;
-    background-color: #f9f9f9; /* Color de fondo más suave */
-    border-radius: 10px; /* Bordes redondeados */
-    border: 2px solid #007bff; /* Borde azul elegante */
-    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    border: 2px solid #007bff;
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
 }
 
 #cuadroInformacion {
-    width: 600px; /* Un poco más ancho */
-    height: auto; /* Ajuste automático */
-    max-height: 80vh; /* Limita la altura máxima */
-    overflow-y: auto; /* Scroll si es necesario */
+    width: 600px;
+    height: auto;
+    max-height: 80vh;
+    overflow-y: auto;
 }
 
 #cuadroInformacion p {
     text-align: left;
-    color: #333; /* Color de texto más oscuro */
-    font-family: 'Arial', sans-serif; /* Fuente más estilizada */
+    color: #333;
+    font-family: 'Arial', sans-serif;
     margin-bottom: 10px;
-    font-size: 16px; /* Tamaño de letra más grande */
+    font-size: 16px;
 }
 
 #cuadroInformacion select, 
@@ -277,7 +272,7 @@ main{
 }
 
 #cuadroInformacion button {
-    background-color: #007bff; /* Botón azul */
+    background-color: #007bff; 
     color: white;
     border: none;
     cursor: pointer;
@@ -285,7 +280,7 @@ main{
 }
 
 #cuadroInformacion button:hover {
-    background-color: #0056b3; /* Color al pasar el mouse */
+    background-color: #0056b3;
 }
 
 body::before {
@@ -311,7 +306,6 @@ body.modal-open::before {
     margin-bottom: 10px;
 }
 
-/* ////////////////// */
 .product-card .boton-producto{
     display: block;
     margin: 20px auto;
@@ -332,10 +326,10 @@ body.modal-open::before {
     background-color: #333;
     color: #fff;
     padding: 20px 0;
-    position: fixed; /* Fija el footer */
-    bottom: 0; /* Coloca el footer en la parte inferior */
-    width: 100%; /* Asegura que el footer ocupe todo el ancho de la pantalla */
-    z-index: 10; /* Asegura que el footer esté por encima de otros elementos */
+    position: fixed;
+    bottom: 0; 
+    width: 100%; 
+    z-index: 10; 
 }
 
 .footer-container {
@@ -344,7 +338,7 @@ body.modal-open::before {
     justify-content: space-between;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px; /* Añade algo de padding lateral para mejor ajuste */
+    padding: 0 20px;
 }
 
 .footer-section {
@@ -445,7 +439,7 @@ body.modal-open::before {
     }
 
     nav ul li {
-        margin: 10px 10px; /* Reducir espacio entre elementos en pantallas pequeñas */
+        margin: 10px 10px;
     }
 
 
@@ -465,7 +459,7 @@ body.modal-open::before {
     }    
 }
 
-/* Media Query para pantallas medianas (tablets) */
+
 @media (max-width: 768px) {
     .header-container {
         flex-direction: column;
@@ -505,7 +499,7 @@ body.modal-open::before {
     }
 
     nav ul li {
-        margin: 10px 10px; /* Reducir espacio entre elementos en pantallas pequeñas */
+        margin: 10px 10px;
     }
 
 
@@ -537,7 +531,6 @@ body.modal-open::before {
 	}
 }
 
-/* Media Query para pantallas pequeñas (móviles) */
 @media (max-width: 480px) {
     
     main{
@@ -656,13 +649,13 @@ body.modal-open::before {
 .loader {
     font-size: 24px;
     color: #fff;
-    display: none; /* Lo ocultamos */
-    position: absolute; /* Posicionamos sobre otros elementos */
-    top: 50%; /* Centro vertical */
-    left: 50%; /* Centro horizontal */
+    display: none;
+    position: absolute; 
+    top: 50%; 
+    left: 50%;
     transform: translate(-50%, -50%);
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente opcional */
-    padding: 20px; /* Espaciado */
+    background-color: rgba(0, 0, 0, 0.7); 
+    padding: 20px; 
     border-radius: 10px;
 }
 
@@ -672,13 +665,13 @@ body.modal-open::before {
     padding: 8px 13px;
     border: none; 
     border-radius: 5px;
-    font-size: 16px; /* Tamaño de fuente */
-    cursor: pointer; /* Cambia el cursor cuando se pasa sobre el botón */
-    transition: background-color 0.5s ; /* Transición suave al hacer hover */
+    font-size: 16px; 
+    cursor: pointer;
+    transition: background-color 0.5s ;
 }
 
 #salir:hover {
-    background-color: rgb(223, 65, 65);; /* Color de fondo más oscuro al hacer hover */
+    background-color: rgb(223, 65, 65);
     color: white;
 }
 

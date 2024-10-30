@@ -4,6 +4,7 @@ lo convierte en JSON y lo almacena, de lo contrario crea un array productos
 lo mismo con orden.
 */
 let carrito = JSON.parse(localStorage.getItem('carrito')) || [];
+let oferta = JSON.parse(localStorage.getItem('oferta'));
 
 $(document).ready(function() {
     obtenerOferta();
@@ -44,12 +45,12 @@ $(document).ready(function() {
     
     let pago = () => {
         let datos = $(`
-             <div class="radio-group">
+            <div class="radio-group">
                 <label>
                     Pick-up - Ciudad Vieja, Sarandí 508, 11000 Montevideo 
                     <input type="radio" name="opciones" class="radio" value="Centro de recogida">
                 </label><br>
-               
+
                 <label>
                     Envío a domicilio - ${usuario.localidad}, ${usuario.calle} ${usuario.numeroPuerta}, ${usuario.cPostal} ${usuario.departamento}
                     <input type="radio" name="opciones" class="radio" value="Domicilio"> Opción 2
@@ -75,7 +76,7 @@ $(document).ready(function() {
 
 ///////////////////////////////
 // Funcion para obtener y calcular ofertas
-let oferta;
+
 function obtenerOferta(){
     fetch('../persistencia/ofertas/ofertas.php?accion=obtener')
     .then(response => {
@@ -86,8 +87,10 @@ function obtenerOferta(){
     })
     .then(jsonData => {
         if (jsonData.success) {
-            oferta = jsonData.result;
-            alert("Contamos con un %"+jsonData.result.descuento+"\nen productos seleccionados");
+            let oferta = jsonData.result.descuento;
+            localStorage.setItem('oferta', oferta);
+        }else{
+            localStorage.removeItem('oferta');
         }
     })
     .catch(error => {
@@ -213,18 +216,28 @@ function resumenPedido() {
         // Recorrer cada producto en la orden actual
         for (let j = 0; j < carrito.length; j++) {
             const item = carrito[j];
-
-            const subtotal = item.precio * item.cantidad;
-            const ivaPorProducto = subtotal * 0.22; // Calcular IVA por producto
-            iva += ivaPorProducto; // Acumular IVA
-            total += subtotal; // Sumar subtotal al total
-
-            // Agregar el producto a la lista de elementos 
-            elementoHtml += `
+            let subtotal;
+            console.log(oferta);
+            if(item.oferta == "Si" && oferta){
+                const descuentoIngresado = oferta / 100;
+                subtotal = (item.precio - (item.precio * descuentoIngresado)) * item.cantidad;
+                elementoHtml += ` 
+                <li class="order-item">
+                    <span>${item.nombre} (x${item.cantidad}) <span class="oferta-texto">    Oferta (%${oferta})</span></span>
+                    <span>$${subtotal.toFixed(2)}</span>
+                </li>`;
+            }else{
+                subtotal = item.precio * item.cantidad;
+                elementoHtml += `
                 <li class="order-item">
                     <span>${item.nombre} (x${item.cantidad})</span>
                     <span>$${subtotal.toFixed(2)}</span>
                 </li>`;
+            }
+            
+            const ivaPorProducto = subtotal * 0.22; // Calcular IVA por producto
+            iva += ivaPorProducto; // Acumular IVA
+            total += subtotal; // Sumar subtotal al total
         }
 
         // Agregar empaque, tarifa y IVA a la lista
@@ -281,9 +294,14 @@ function modificarCarrito(){
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
-            
+        let subtotal;
+        if(item.oferta == "Si" && oferta){
+            const descuentoIngresado = oferta / 100;
+            subtotal = (item.precio - (item.precio * descuentoIngresado)) * item.cantidad;
         // Calcula el subtotal del producto y agregarlo al total del carrito
-        const subtotal = item.precio * item.cantidad;
+        }else{
+            subtotal = item.precio * item.cantidad;
+        }
         total += subtotal;
         cantidad += item.cantidad;
         iva += subtotal*0.22;
@@ -295,7 +313,7 @@ function modificarCarrito(){
         },
         body: JSON.stringify({
             cantidadProductos: cantidad,
-            precioTotal: (total+iva),
+            precioTotal: total+iva,
             accion: "actualizarCarrito"
         })
     })
@@ -350,11 +368,17 @@ let totalCarrito = () => {
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
-            
-        // Calcula el subtotal del producto y agregarlo al total del carrito
-        const subtotal = item.precio * item.cantidad;
-        total += subtotal;
-        iva += subtotal*0.22;
+        let subtotal;
+        
+        if(item.oferta == "Si" && oferta){
+            const descuentoIngresado = oferta / 100;
+            subtotal = (item.precio - (item.precio * descuentoIngresado)) * item.cantidad;
+        }else{
+            subtotal = item.precio * item.cantidad;
+        }    
+        const ivaPorProducto = subtotal * 0.22; // Calcular IVA por producto
+        iva += ivaPorProducto; // Acumular IVA
+        total += subtotal; // Sumar subtotal al total
     }
     total += iva;
     // Convertir el total a dólares

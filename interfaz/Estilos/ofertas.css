@@ -5,24 +5,22 @@
     font-family: Arial, sans-serif;
 }     
 
-        /* Estilos generales */
         html, body {
-            height: 100%; /* Asegúrate de que el cuerpo ocupa el 100% de la altura de la ventana */
-            margin: 0; /* Eliminar márgenes por defecto */
+            height: 100%; 
+            margin: 0; 
         }
 
         body {
             display: flex;
-            flex-direction: column; /* Apila los elementos en columnas */
+            flex-direction: column; 
         }
 
-        /* Estilo del contenido principal */
+
         main {
-            flex: 1; /* Hace que el main ocupe todo el espacio disponible */
-            padding: 20px; /* Espaciado interno en el contenido */
+            flex: 1; 
+            padding: 20px;
         }
 
-       
 header {
     display: flex;
     align-items: center;

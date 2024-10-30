@@ -233,10 +233,11 @@ function obtenerOferta(){
     .then(jsonData => {
         if (jsonData.success) {
             oferta = jsonData.result.descuento;
+            localStorage.setItem('oferta', oferta);
         }
     })
     .catch(error => {
-        console.error('Error en la solicitud:', error);
+        localStorage.removeItem('oferta');
     });
 }
 /////////////////////////////
@@ -385,9 +386,14 @@ function modificarCarrito(){
     // Recorrer cada producto en el carrito
     for (let j = 0; j < carrito.length; j++) {
         const item = carrito[j];
-            
+        let subtotal;
+        if(item.oferta == "Si" && oferta){
+            const descuentoIngresado = oferta / 100;
+            subtotal = (item.precio - (item.precio * descuentoIngresado)) * item.cantidad;
         // Calcula el subtotal del producto y agregarlo al total del carrito
-        const subtotal = item.precio * item.cantidad;
+        }else{
+            subtotal = item.precio * item.cantidad;
+        }
         total += subtotal;
         cantidad += item.cantidad;
         iva += subtotal*0.22;

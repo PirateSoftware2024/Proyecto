@@ -1,6 +1,6 @@
 $(document).ready(function() {
-    obtenerTicketsBack();
-    obtenerTicketsUser();
+    $("#obtenerUsuario").click( obtenerTicketsUser);
+    $("#obtenerBack").click(obtenerTicketsBack);
     $(document).on("click", ".ingresarRespuesta", function() {
         const idTicket = $(this).data("id"); // Obtiene el ID del ticket
         const texto = $(this).closest("tr").find("textarea").val(); // Obtiene el valor del textarea en la misma fila
@@ -25,12 +25,19 @@ $(document).ready(function() {
             url: '../persistencia/tickets/ingresarTicket.php',
             type: 'POST',
             data: formData,
+            dataType: 'json', // Especificar que esperas un JSON
             success: function(response) {
-                alert("Ticket enviado!");
-                $("#ingresoTicket").val("");
+                if (response.success) {
+                    alert("Ticket enviado!");
+                    $("#ingresoTicket").val(""); // Limpia el campo
+                } else {
+                    alert(response.message); // Mostrar mensaje de error
+                }
             },
             error: function(xhr, status, error) {
-                console.error('Error en la solicitud AJAX:', error);
+                // Manejo de errores en la solicitud
+                console.error("Error en la solicitud AJAX:", xhr.responseText);
+                alert("Ocurrió un error al enviar el ticket. Por favor, intenta nuevamente.");
             }
         });
     });
@@ -67,7 +74,8 @@ function obtenerTicketsUser() {
                 console.log(ticketsUser);
                 actualizarUser();
             } else {
-                alert(jsonData.message); // Cambia data.message a jsonData.message
+                alert(jsonData.message);
+                $("#filaTicketsUsuario").empty();
             }
         })
 }
@@ -82,9 +90,10 @@ function actualizarBack(){
             <tr>
                 <td>${ticket.id}</td>
                 <td>${ticket.idUsuario}</td>
+                <td>${ticket.tipo}</td>
                 <td>${ticket.fecha}</td>
                 <td>${ticket.envio}</td>
-                <td><textarea rows="5" cols="33" data-id="${ticket.id}"></textarea></td>
+                <td><textarea id="textArea" data-id="${ticket.id}"></textarea></td>
                 <td>
                 <button class="eliminarTicket" data-id="${ticket.id}"><i class="bi bi-trash-fill"></i></button>
                 <button class="ingresarRespuesta" data-id="${ticket.id}"><i class="bi bi-file-earmark-check"></i></button>

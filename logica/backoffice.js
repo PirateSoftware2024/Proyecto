@@ -12,11 +12,11 @@ function cargarDatos(){
     });
 }
 
-// Cambia el event listener para la clase
+
 $(document).on('change', '.cambioEstado', function() {
     const valor = $(this).val();
     const idPaquete = $(this).data('id'); //Este id sera necesario para modificar el dato en la tabla detalle_pedido
-    const columna = $(this).data('columna'); //Este id sera necesario para modificar el dato en la tabla detalle_pedido
+    const columna = $(this).data('columna');
     console.log(valor);
     modificarEstado(idPaquete, valor, columna)
 });
@@ -44,12 +44,12 @@ function modificarEstado(idPaquete, valor, columna) {
         }
     })
     .catch(error => {
-        alert('Modificado con exito.'); // Alerta en caso de error de solicitud
+        alert('Modificado con exito.'); 
         console.error('Error al modificar el estado:', error);
     });
 }
 function buscarPaquete() {
-    let dato = $("#idEnvioBack").val(); // Mantener 'dato'
+    let dato = $("#idEnvioBack").val(); 
     if(dato.length < 1){
         alert("Debe ingresar un id");
     }else{
@@ -63,13 +63,12 @@ function buscarPaquete() {
         .then(data => {
             const jsonData = JSON.parse(data);
             console.log(jsonData);
-            // Check if the JSON data contains an error message
             if (jsonData.error) {
                 console.error(jsonData.error);
-                return; // Exit if there's an error
+                return;
             }
 
-            envios = jsonData; // Guardamos productos
+            envios = jsonData;
             console.log(envios);
             mostrarPedidoBuscado();
         })

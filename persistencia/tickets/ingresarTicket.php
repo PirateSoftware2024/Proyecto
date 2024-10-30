@@ -12,17 +12,34 @@ $conexionDB = new ConexionDB($host, $dbname, $username, $password);
 $pdo = $conexionDB->getPdo();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
 
-    $texto = $_POST['ingresoTicket'];
-    $idUsuario = $_SESSION['usuario']['idUsuario'];
-    
-    $stmt = $pdo->prepare("INSERT INTO ticket (idUsuario, envio) VALUES (?, ?);");
-    if($stmt->execute([$idUsuario, $texto])){
-        echo json_encode(['success' => true]);
-    }else{
-        echo json_encode(['success' => false]);
+    if (isset($_SESSION['usuario']['idEmpresa']) || isset($_SESSION['usuario']['idUsuario'])) {
+        $texto = $_POST['ingresoTicket'];
+        $id = null; 
+
+        // Verifica si el usuario es un comprador o una empresa
+        if (isset($_SESSION['usuario']['idUsuario'])) {
+            $id = $_SESSION['usuario']['idUsuario'];
+            $stmt = $pdo->prepare("INSERT INTO ticket (idUsuario, envio, tipo) VALUES (?, ?, 'Comprador');");
+        } else {
+            $id = $_SESSION['usuario']['idEmpresa'];
+            $stmt = $pdo->prepare("INSERT INTO ticket (idUsuario, envio, tipo) VALUES (?, ?, 'Empresa');");
+        }
+
+        // Ejecutar la consulta
+        if ($stmt->execute([$id, $texto])) {
+                echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => "Error al insertar el ticket."]);
+        }
+    } else {
+        echo json_encode(['error' => false, 'message' => "Inicie sesión."]);
     }
 }
+
 
 if ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     $inputData = file_get_contents("php://input");

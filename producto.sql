@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-10-2024 a las 21:19:03
+-- Tiempo de generación: 30-10-2024 a las 03:15:55
 -- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.0.30
+-- Versión de PHP: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -26,8 +26,6 @@ SET time_zone = "+00:00";
 --
 -- Estructura de tabla para la tabla `almacena`
 --
-CREATE DATABASE producto;
-USE producto;
 
 CREATE TABLE `almacena` (
   `idCarrito` int(10) NOT NULL,
@@ -77,8 +75,9 @@ INSERT INTO `almacena` (`idCarrito`, `id`, `cantidad`, `precio`, `idUsuario`) VA
 (1013, 57, 3, 1200, 0),
 (1015, 57, 3, 1200, 0),
 (1016, 58, 1, 1200, 0),
-(1325, 58, 1, 1200, 0),
-(1325, 62, 1, 1301, 50);
+(1325, 57, 3, 1200, 0),
+(1356, 57, 1, 1200, 0),
+(1356, 59, 1, 666, 0);
 
 -- --------------------------------------------------------
 
@@ -100,7 +99,7 @@ CREATE TABLE `carrito` (
 --
 
 INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cantidadProductos`, `precioTotal`) VALUES
-(816, '2024-10-14', 'Confirmado', 34, 3, 3630),
+(816, '2024-06-13', 'Confirmado', 34, 3, 3630),
 (817, '2024-10-14', 'Confirmado', 34, 1, 1230),
 (827, '2024-10-14', 'Confirmado', 50, 2, 2430),
 (828, '2024-10-14', 'Confirmado', 50, 3, 3630),
@@ -133,8 +132,8 @@ INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cant
 (1019, '2024-10-25', 'Confirmado', 50, 0, 30),
 (1030, '2024-10-26', 'Confirmado', 50, 0, 30),
 (1278, '2024-10-26', 'Pendiente', 1, 0, 0),
-(1325, '2024-10-27', 'Pendiente', 50, 2, 3081),
-(1356, '2024-10-28', 'Pendiente', 0, 0, 0);
+(1325, '2024-10-27', 'Pendiente', 50, 3, 2226),
+(1356, '2024-10-28', 'Pendiente', 0, 2, 804);
 
 -- --------------------------------------------------------
 
@@ -203,14 +202,9 @@ CREATE TABLE `detalle_pedido` (
 --
 
 INSERT INTO `detalle_pedido` (`id`, `idEmpresa`, `idPaquete`, `idProducto`, `cantidad`, `estado_preparacion`) VALUES
-(2, 11, 14, 57, 1, 'Enviado a depósito'),
-(3, 11, 14, 62, 2, 'Enviado a depósito'),
-(4, 13, 15, 59, 12, 'Pendiente'),
-(5, 13, 16, 57, 3, 'Pendiente'),
-(6, 13, 17, 57, 3, 'Pendiente'),
-(7, 13, 18, 57, 3, 'En preparación'),
-(8, 11, 19, 57, 3, 'Enviado a depósito'),
-(9, 13, 20, 58, 1, 'Pendiente'),
+(5, 50, 16, 57, 3, 'Enviado a depósito'),
+(7, 50, 18, 57, 3, 'Enviado a depósito'),
+(9, 50, 20, 58, 1, 'Enviado a depósito'),
 (10, 13, 21, 58, 1, 'Pendiente');
 
 -- --------------------------------------------------------
@@ -241,8 +235,8 @@ INSERT INTO `direcciones` (`idDireccion`, `departamento`, `localidad`, `calle`, 
 (9, 'soriano', 'sdfsd', 'asd', 'asd', '12', '12', 11700, 'asd', 48, NULL),
 (10, 'san-jose', 'Campeon', 'asd', 'asd', '12', '12', 11700, 'asdasd', 49, NULL),
 (11, 'Montevideo', 'Jacinto Vera', 'Lafinur', 'Rqeuena', '3', '', 11700, '', NULL, 12),
-(12, 'paysandu', 'asd', 'asd', 'asd', '123', '', 11700, '', NULL, 13),
-(13, 'durazno', 'Jacinto Viera', 'Lafinurasdsad', 'aaa', '111', '123', 11803, 'Casa Azul Y verde', 50, NULL);
+(12, 'montevideo', 'Jacinto Vera', 'asd', 'hola', '123', '', 11700, '', NULL, 50),
+(13, 'cerro-largo', 'Jacinto Vera', 'La finur', 'Requena', '3626', '123', 11803, 'Casa Azul Y verde', 50, NULL);
 
 -- --------------------------------------------------------
 
@@ -266,8 +260,28 @@ CREATE TABLE `empresa` (
 --
 
 INSERT INTO `empresa` (`idEmpresa`, `nombre`, `rut`, `numeroCuenta`, `telefono`, `correo`, `password`, `fecha`) VALUES
-(11, 'Razer', '123486791', '12345678910', '099756123', 'razer@gmail.com', '$2y$10$lFu7x6PvFG/Qqo9NXCA.AeBJrRy6XY9ITGyzerAYjYOFnEkDlCbg2', '2024-10-14'),
-(13, 'Razer', '123123', '123456144', '099756444', 'raze12r@gmail.com', '$2y$10$7MFks9rh8UFYxcghAkCmEeXFelgr2CnSnZB5tTJIHySD.6lWTIzEG', '2024-10-14');
+(13, 'Razer', '123123', '123456144', '099756444', 'raze12r@gmail.com', '$2y$10$7MFks9rh8UFYxcghAkCmEeXFelgr2CnSnZB5tTJIHySD.6lWTIzEG', '2024-10-14'),
+(50, 'Puma', '555555555', '12345678910', '97123456', 'razer@gmail.com', '$2y$10$ehbWk51geHhQj6Y7ZBlZuepnqtda.0BrYVgoQfMLU1pb6HUQ5NA6i', '2024-10-14');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ofertas`
+--
+
+CREATE TABLE `ofertas` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(50) NOT NULL,
+  `descuento` decimal(5,2) NOT NULL,
+  `fecha_expiracion` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ofertas`
+--
+
+INSERT INTO `ofertas` (`id`, `nombre`, `descuento`, `fecha_expiracion`) VALUES
+(21, 'JOACO', 50.00, '2024-11-11');
 
 -- --------------------------------------------------------
 
@@ -314,12 +328,9 @@ CREATE TABLE `paquete` (
 --
 
 INSERT INTO `paquete` (`idPaquete`, `idDireccion`, `idUsuario`, `idCarrito`, `fecha`, `estadoEnvio`, `tipoEntrega`) VALUES
-(14, 13, 50, 959, '2024-10-22 22:03:16', 'Entregado', 'Domicilio'),
-(15, 13, 50, 961, '2024-10-25 22:01:44', 'Entregado', 'Domicilio'),
-(16, 13, 50, 1009, '2024-10-25 22:05:24', 'Pendiente', 'Domicilio'),
-(17, 13, 49, 1011, '2024-10-25 22:09:02', 'Pendiente', 'Domicilio'),
+(16, 13, 50, 1009, '2024-06-18 22:05:24', 'Cancelado', 'Domicilio'),
+(17, 10, 49, 1011, '2024-10-25 22:09:02', 'En camino', 'Domicilio'),
 (18, 13, 50, 1013, '2024-10-25 22:11:17', 'Pendiente', 'Domicilio'),
-(19, 13, 50, 1015, '2024-10-25 22:13:23', 'En depósito', 'Domicilio'),
 (20, 13, 50, 1016, '2024-10-25 22:36:38', 'Pendiente', 'Domicilio'),
 (21, 13, 50, 1019, '2024-10-26 18:18:11', 'Pendiente', 'Domicilio');
 
@@ -368,10 +379,10 @@ CREATE TABLE `producto` (
 --
 
 INSERT INTO `producto` (`id`, `nombre`, `descripcion`, `precio`, `stock`, `oferta`, `condicion`, `file_path`, `categoria`, `idEmpresa`) VALUES
-(57, 'Remera', 'Beigeasdasd', 1200, 0, 'Si', 'Usado', '670d87877a2a3.png', 'Instrumentos Musicales', 13),
-(58, 'Pantalonnnn', 'Beige muy lindo', 1200, 0, 'Si', 'Usado', '670d8792d9a1a.png', 'Instrumentos Musicales', 13),
-(59, 'Pantalon', 'Pantalon Nike', 15900, 15, 'Si', 'Usado', 'asdadw', 'Instrumentos Musicales', 11),
-(62, 'Juegardo', 'Fifa 16', 666, 6, 'Si', 'Usado', '671eebfe5228e.png', 'Videojuegos', 11);
+(57, 'Remeron', 'Beigeasdasd', 1200, 3, 'Si', 'Usado', '670d87877a2a3.png', 'Instrumentos Musicales', 50),
+(58, 'Pantalonnnn', 'Beige muy lindo', 1200, 0, 'Si', 'Usado', '670d8792d9a1a.png', 'Instrumentos Musicales', 50),
+(59, 'PantalonLon', 'Pantalon Adidas', 666, 15, 'Si', 'Usado', 'asdadw', 'Instrumentos Musicales', 13),
+(62, 'Juegardo', 'Fifa 16', 666, 6, 'No', 'Usado', '671eebfe5228e.png', 'Videojuegos', 50);
 
 -- --------------------------------------------------------
 
@@ -390,7 +401,9 @@ CREATE TABLE `productos_vistos` (
 --
 
 INSERT INTO `productos_vistos` (`id`, `idUsuario`, `idProducto`) VALUES
-(14, 50, 62);
+(19, 50, 57),
+(15, 50, 59),
+(16, 50, 62);
 
 -- --------------------------------------------------------
 
@@ -405,6 +418,13 @@ CREATE TABLE `reseñas` (
   `reseña` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `reseñas`
+--
+
+INSERT INTO `reseñas` (`idReseña`, `idProducto`, `idUsuario`, `reseña`) VALUES
+(27, 58, 50, 'Facu putooo');
+
 -- --------------------------------------------------------
 
 --
@@ -414,6 +434,7 @@ CREATE TABLE `reseñas` (
 CREATE TABLE `ticket` (
   `id` int(11) NOT NULL,
   `idUsuario` int(11) DEFAULT NULL,
+  `tipo` enum('Comprador','Empresa') NOT NULL,
   `fecha` datetime DEFAULT current_timestamp(),
   `envio` varchar(255) DEFAULT NULL,
   `respuesta` varchar(255) DEFAULT NULL
@@ -423,16 +444,8 @@ CREATE TABLE `ticket` (
 -- Volcado de datos para la tabla `ticket`
 --
 
-INSERT INTO `ticket` (`id`, `idUsuario`, `fecha`, `envio`, `respuesta`) VALUES
-(10, 50, '2024-10-26 19:12:59', 'asdasd', NULL),
-(11, 50, '2024-10-26 19:14:17', NULL, NULL),
-(12, 50, '2024-10-26 19:14:19', NULL, NULL),
-(13, 50, '2024-10-26 19:14:52', NULL, NULL),
-(14, 50, '2024-10-26 19:14:54', 'asdad', NULL),
-(15, 50, '2024-10-26 19:18:59', 'eqwe', NULL),
-(16, 50, '2024-10-26 19:19:46', 'No anda esto che', NULL),
-(17, 50, '2024-10-26 19:20:27', 'dasd', NULL),
-(18, 50, '2024-10-27 22:29:00', 'El soppi tiene cancer', NULL);
+INSERT INTO `ticket` (`id`, `idUsuario`, `tipo`, `fecha`, `envio`, `respuesta`) VALUES
+(48, 50, 'Empresa', '2024-10-29 22:51:32', 'ty', NULL);
 
 -- --------------------------------------------------------
 
@@ -455,7 +468,7 @@ CREATE TABLE `usuario` (
 --
 
 INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `telefono`, `correo`, `password`, `fechaNac`) VALUES
-(50, 'Ricardo', 'Perez', '99189189', 'pipeta2177@gmail.com', '$2y$10$vuWBNgGsI/3kMTXsUhfaH.XA.UYgewlddfaVvuJuw1IKGKAgzYLBa', '2000-11-10');
+(50, 'Felipe', 'Nass', '91111111', 'pipeta217@gmail.com', '$2y$10$WD4ZDuIsQDWg66COc4.W4.G0qWmz9VWCKLD6CD.EQAzzMxKF.55Xa', '2000-06-11');
 
 -- --------------------------------------------------------
 
@@ -527,6 +540,12 @@ ALTER TABLE `empresa`
   ADD UNIQUE KEY `rut` (`rut`),
   ADD UNIQUE KEY `correo` (`correo`),
   ADD UNIQUE KEY `telefono` (`telefono`);
+
+--
+-- Indices de la tabla `ofertas`
+--
+ALTER TABLE `ofertas`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `pagos`
@@ -613,7 +632,13 @@ ALTER TABLE `direcciones`
 -- AUTO_INCREMENT de la tabla `empresa`
 --
 ALTER TABLE `empresa`
-  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+
+--
+-- AUTO_INCREMENT de la tabla `ofertas`
+--
+ALTER TABLE `ofertas`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
@@ -643,19 +668,19 @@ ALTER TABLE `producto`
 -- AUTO_INCREMENT de la tabla `productos_vistos`
 --
 ALTER TABLE `productos_vistos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `reseñas`
 --
 ALTER TABLE `reseñas`
-  MODIFY `idReseña` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `idReseña` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `ticket`
 --
 ALTER TABLE `ticket`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT de la tabla `usuario`
@@ -720,6 +745,14 @@ ALTER TABLE `reseñas`
 --
 ALTER TABLE `ticket`
   ADD CONSTRAINT `ticket_ibfk_1` FOREIGN KEY (`idUsuario`) REFERENCES `usuario` (`idUsuario`);
+
+DELIMITER $$
+--
+-- Eventos
+--
+CREATE DEFINER=`root`@`localhost` EVENT `eliminar_ofertas_vencidas` ON SCHEDULE EVERY 1 DAY STARTS '2024-10-29 01:34:58' ON COMPLETION NOT PRESERVE ENABLE DO DELETE FROM ofertas WHERE fecha_expiracion < CURDATE()$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -1,4 +1,4 @@
-/* Estilo global */
+
 * {
     box-sizing: border-box;
 }
@@ -57,11 +57,11 @@ main {
 
 section {
     width: 100%;
-    max-width: 800px; /* Limita el ancho del formulario */
+    max-width: 800px; 
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para un efecto elevado */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
     padding: 20px;
     margin-bottom: 20px;
     text-align: center;
@@ -172,4 +172,48 @@ footer {
 
 .ingresarRespuesta:hover{
     background-color: #0a4e22;
+}
+
+/*################### TABLA TICKETS ####################*/
+
+#tablaTicketsBack {
+    width: 50%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+#tablaTicketsBack thead {
+    background-color: #004466;
+    color: white;
+}
+
+#tablaTicketsBack th, #tablaTicketsBack td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#tablaTicketsBack tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+#tablaTicketsBack tr:hover {
+    background-color: #f1f1f1;
+}
+
+#tablaTicketsBack th {
+    background-color: #4d4a4a;
+    color: white;
+    text-transform: uppercase;
+}
+
+#tablaTicketsBack td {
+    color: #333;
+}
+
+#textArea {
+    width: 125px; 
+    height: 150px; 
+    resize: none; 
 }

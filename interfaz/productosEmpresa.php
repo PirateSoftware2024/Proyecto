@@ -10,11 +10,10 @@
 <body>
     <header>
         <div class="logo"><img src="images/logo.png" alt="Logo" width="105" height="100"></div>
-        <h1><?php session_start();
-        echo $_SESSION['usuario']['nombre'];
-        ?>
-        - Mis productos
-        </h1>
+        <h1>Mis productos</h1>
+        <nav>
+            <a href="empresa.php">Inicio</a>
+        </nav>
     </header>
 <main>
      <!-- ######################################## -->
@@ -26,7 +25,6 @@
         <button id="cerrarCuadro" class="cerrar">Cerrar</button>
 
 
-        <!-- Div para reseñas -->
         <div id="infoProducto" style="display: none;"></div>
 
         <!-- Div para modificar -->

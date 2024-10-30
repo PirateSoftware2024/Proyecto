@@ -30,7 +30,7 @@ class ApiCarrito
             $_SESSION['usuario']['idCarrito'] = $idCarrito;
 
             // Obtener los productos del carrito
-            $stmt = $this->pdo->prepare("SELECT a.id, a.cantidad, a.precio, p.nombre, p.file_path, p.stock
+            $stmt = $this->pdo->prepare("SELECT a.id, a.cantidad, a.precio, p.nombre, p.file_path, p.stock, p.oferta
                                         FROM almacena a
                                         JOIN producto p ON a.id = p.id
                                         WHERE a.idCarrito = ?");

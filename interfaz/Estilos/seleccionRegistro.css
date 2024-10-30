@@ -31,8 +31,8 @@ header{
 #carpeta {
     width: 150px;
     height: 150px;
-    display: block; /* Asegúrate de que sea un bloque */
-    margin: 0 auto; /* Centra la imagen horizontalmente */
+    display: block;
+    margin: 0 auto; 
 }
 
 .register-container button {

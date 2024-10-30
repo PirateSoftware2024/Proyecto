@@ -57,7 +57,7 @@
             font-size: 0.9em;
             color: #666;
         }
-        /* Estilos para la pantalla de carga */
+
         .loading-screen {
             position: fixed;
             top: 0;
@@ -71,8 +71,8 @@
             z-index: 2;
         }
         .spinner {
-            border: 8px solid #f3f3f3; /* Color del fondo */
-            border-top: 8px solid #3498db; /* Color de la parte superior */
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #3498db;
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -92,18 +92,17 @@
         <div class="footer">¡Gracias por tu compra!</div>
     </div>
 
-    <!-- Pantalla de carga -->
     <div class="loading-screen" id="loading-screen">
         <div class="spinner"></div>
     </div>
 
     <script>
         document.getElementById('return-link').addEventListener('click', function(event) {
-            event.preventDefault(); // Evitar el comportamiento por defecto del enlace
-            document.getElementById('loading-screen').style.display = 'flex'; // Mostrar la pantalla de carga
+            event.preventDefault();
+            document.getElementById('loading-screen').style.display = 'flex';
             setTimeout(function() {
-                window.location.href = "../interfaz/carrito.php"; // Redirigir después de un breve retraso
-            }, 1000); // Ajusta el tiempo de retraso según sea necesario
+                window.location.href = "../interfaz/carrito.php"; 
+            }, 1000); 
         });
     </script>
 </body>

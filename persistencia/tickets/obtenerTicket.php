@@ -22,20 +22,28 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                 echo json_encode(['success' => true, 'result' => $result]);
                 break;
 
-            case 'obtenerRespuestas':  
-                if (isset($_SESSION['usuario'])) {          
-                    $idUsuario = $_SESSION['usuario']['idUsuario'];   
-                    $stmt = $pdo->prepare("SELECT * FROM ticket WHERE idUsuario = ? AND respuesta IS NOT NULL;");
-                    $stmt->execute([$idUsuario]);
-                    if($result = $stmt->fetchAll(PDO::FETCH_ASSOC)){
-                        echo json_encode(['success' => true, 'result' => $result]);
-                    }else{
-                        echo json_encode(['success' => false, 'message' => "No tiene tickets"]);
-                    } 
-                }else{
-                    echo json_encode(['success' => false, 'message' => "Inicie sesion para utilizar esta sección"]);
-                }
+                case 'obtenerRespuestas':  
+                    if (isset($_SESSION['usuario'])) {   
+                        if (isset($_SESSION['usuario']['idUsuario'])) {       
+                            $id = $_SESSION['usuario']['idUsuario'];   
+                            $stmt = $pdo->prepare("SELECT * FROM ticket WHERE idUsuario = ? AND respuesta IS NOT NULL AND tipo = 'Comprador';");
+                        } else { // Cambié 'esle' por 'else'
+                            $id = $_SESSION['usuario']['idEmpresa'];  
+                            $stmt = $pdo->prepare("SELECT * FROM ticket WHERE idUsuario = ? AND respuesta IS NOT NULL AND tipo = 'Empresa';"); 
+                        }
+                
+                        // Cambié $idUsuario a $id ya que es el ID correcto que estamos utilizando
+                        $stmt->execute([$id]); 
+                        if($result = $stmt->fetchAll(PDO::FETCH_ASSOC)){
+                            echo json_encode(['success' => true, 'result' => $result]);
+                        } else {
+                            echo json_encode(['success' => false, 'message' => "No tiene tickets"]);
+                        } 
+                    } else {
+                        echo json_encode(['success' => false, 'message' => "Inicie sesión para utilizar esta sección"]);
+                    }
                     break;
+                
         }
     }
 ?>

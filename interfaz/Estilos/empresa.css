@@ -1,5 +1,5 @@
 html, body {
-    height: 100%; /* Hace que el cuerpo ocupe al menos toda la pantalla */
+    height: 100%; 
     margin: 0;
     padding: 0;
     display: flex;
@@ -44,7 +44,7 @@ nav a:hover {
 }
 
 main {
-    flex-grow: 1; /* Hace que el main ocupe el espacio disponible */
+    flex-grow: 1;
     border-radius: 10px;
     background-color: grey;
     margin: 50px 170px;
@@ -162,47 +162,35 @@ footer {
 /* CUADRO INFO */
 /* ######################################################## */
 .cuadro {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     padding: 25px;
-    background-color: #f9f9f9; /* Color de fondo más suave */
-    border-radius: 10px; /* Bordes redondeados */
+    background-color: #f9f9f9; 
+    border-radius: 10px; 
     border: none;
-    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2); /* Sombra más pronunciada */
-    z-index: 1000; /* Asegura que esté por encima de otros elementos */
-    overflow: hidden; /* Evita todo tipo de scroll dentro del contenedor */
+    box-shadow: 0px 15px 25px rgba(0, 0, 0, 0.2);
+    z-index: 1000; 
+    overflow: hidden;
 }
 
 #cuadroInformacion {
-    width: 600px; /* Un poco más ancho */
-    height: auto; /* Ajuste automático */
-    max-height: 80vh; /* Limita la altura máxima */
-    overflow-y: auto; /* Scroll si es necesario */
+    width: 600px; 
+    height: auto; 
+    max-height: 80vh; 
+    overflow-y: auto; 
 }
 
 #cuadroInformacion p {
     text-align: left;
-    color: #333; /* Color de texto más oscuro */
-    font-family: 'Arial', sans-serif; /* Fuente más estilizada */
-    margin-bottom: 10px;
-    font-size: 16px; /* Tamaño de letra más grande */
-}
-/*
-#cuadroInformacion select, 
-#cuadroInformacion input, 
-#cuadroInformacion button {
-    width: 10%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 14px;
+    color: #333;
     font-family: 'Arial', sans-serif;
-    text-align: left;
-}*/
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
 
 #cuadroInformacion select{
     width: 79%;
@@ -227,7 +215,7 @@ footer {
 }
 
 #cuadroInformacion button {
-    background-color: #4CAF50;; /* Botón azul */
+    background-color: #4CAF50;
     color: white;
     border: none;
     cursor: pointer;
@@ -243,7 +231,7 @@ footer {
 }
 
 #cuadroInformacion button:hover {
-    background-color: #45a049; /* Color al pasar el mouse */
+    background-color: #45a049;
 }
 
 body::before {
@@ -345,4 +333,8 @@ main{
     border: none;
     font-size: 16px;
     cursor: pointer;
+}
+
+.product-card .oferta-texto {
+    color: red;
 }

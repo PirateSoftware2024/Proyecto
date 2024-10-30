@@ -138,39 +138,77 @@ function modificarProducto(dato, columna) {
 }
 
 let products = [];
-function obtenerProductos(){
-
+function obtenerProductos() {
     fetch('../persistencia/empresa/empresa.php?accion=obtenerDatos')
-    .then(response => response.text())
-    .then(data => {
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-        products = jsonData;
-        actualizar();
-    });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Error al obtener los productos del servidor');
+            }
+            return response.text();
+        })
+        .then(data => {
+            // Convertimos los datos a JSON
+            const jsonData = JSON.parse(data);
+
+            // Verificar si jsonData contiene un error
+            if (jsonData.error) {
+                alert(jsonData.error); // Mostrar el mensaje de error en un alert
+                return; // Detenemos la ejecución
+            }
+
+            // Si no hay error, asignamos los productos y actualizamos
+            products = jsonData;
+            actualizar();
+        })
+        .catch(error => {
+            console.error('Error de red o de servidor:', error.message);
+        });
 }
+
 
 function actualizar(){
         // Generamos las tarjetas de productos
         $("#productContainer").html("");
+        let pocoStock = false;
         for (let i = 0; i < products.length; i++) {
             const product = products[i];
-            const $productCard = $(`
+            let productCard;
+            if(product.stock <= 5){
+                pocoStock = true;
+                productCard = $(`
                 <div class="product-card">
                     <div class="image-container">
                         <img src="../persistencia/assets/${product.file_path}">
                     </div>
                     <h3>${product.nombre}</h3>
                     <p>${product.descripcion}</p>
+                    <p class="oferta-texto">Stock: ${product.stock}</p>
                     <div class="price">$${product.precio}</div>
                     <button class="boton-modificar" data-id="${product.id}"><i class="bi bi-check-circle"></i></button>
                     <button class="boton-reseña" data-id="${product.id}"><i class="bi bi-three-dots-vertical"></i></button>
                     <button class="boton-eliminar" data-id="${product.id}"><i class="bi bi-trash-fill"></i></button>
                 </div>
-            `);
-        
-            $("#productContainer").append($productCard);
+                `);
+            }else{
+                productCard = $(`
+                    <div class="product-card">
+                        <div class="image-container">
+                            <img src="../persistencia/assets/${product.file_path}">
+                        </div>
+                        <h3>${product.nombre}</h3>
+                        <p>${product.descripcion}</p>
+                        <div class="price">$${product.precio}</div>
+                        <button class="boton-modificar" data-id="${product.id}"><i class="bi bi-check-circle"></i></button>
+                        <button class="boton-reseña" data-id="${product.id}"><i class="bi bi-three-dots-vertical"></i></button>
+                        <button class="boton-eliminar" data-id="${product.id}"><i class="bi bi-trash-fill"></i></button>
+                    </div>
+                    `);
+            }
+            $("#productContainer").append(productCard);
         }   
+        if(pocoStock){
+            alert('Algunos productos tienen un stock bajo (menor o igual a 5).\nSi su producto tiene stock 0 no será visible en el catálogo.');
+        }
     }
 
 let categorias = [];

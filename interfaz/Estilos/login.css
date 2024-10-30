@@ -117,12 +117,12 @@ footer {
 .loader {
     font-size: 24px;
     color: #fff;
-    display: none; /* Lo ocultamos */
-    position: absolute; /* Posicionamos sobre otros elementos */
-    top: 50%; /* Centro vertical */
-    left: 50%; /* Centro horizontal */
-    transform: translate(-50%, -50%); /* Ajusta el centro */
-    background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente opcional */
-    padding: 20px; /* Espaciado */
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    padding: 20px; 
     border-radius: 10px;
 }

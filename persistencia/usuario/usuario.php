@@ -96,30 +96,37 @@ class ApiUsuarios
             $dato = password_hash($dato, PASSWORD_DEFAULT);
         }
 
-        if($tabla === "usuario" || $tabla === "direcciones"){
-            // Ejecutar la consulta
-            if($columna == "telefono"){
-                $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idUsuario = $idUsuario");
-            }else{
-                // Consulta SQL para eliminar un registro
-                $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idUsuario = $idUsuario");
-            }
+        // Construir la consulta SQL
+        if ($tabla === "empresa") {
+            $idColumn = 'idEmpresa';
+        } else if($tabla === "usuario"){
+            $idColumn = 'idUsuario';
         }else{
-            if($columna == "telefono"){
-                $stmt = $this->pdo->prepare("UPDATE $tabla SET telefono = $dato WHERE idEmpresa = $idUsuario");
+            if (isset($_SESSION['usuario']['idUsuario'])) { 
+                $idColumn = 'idUsuario';
             }else{
-                // Consulta SQL para eliminar un registro
-                $stmt = $this->pdo->prepare("UPDATE $tabla SET $columna = '$dato' WHERE idEmpresa = $idUsuario");
-            } 
+                $idColumn = 'idEmpresa';
+            }
         }
+
+
+        // Preparar y ejecutar la consulta
+        $sql = "UPDATE $tabla SET $columna = :dato WHERE $idColumn = :id";
+        $stmt = $this->pdo->prepare($sql);
+    
+        // Asignar los valores a los parámetros
+        $stmt->bindParam(':dato', $dato);
+        $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
+
+        // Ejecutar y manejar el resultado
         if ($stmt->execute()) {
-            // Consulta exitosa
             echo json_encode(['success' => true]);
         } else {
-            // Error en la consulta
-            echo json_encode(['success' => false, 'error']);
-        }
+            $errorInfo = $stmt->errorInfo();
+            echo json_encode(['success' => false, 'error' => $errorInfo[2]]);
     }
+}
+    
 
     public function graficaDatos()
     {
@@ -145,9 +152,9 @@ class ApiUsuarios
         }
     }
 
-    public function verificarContra($contra, $idUsuario)
+    public function verificarContra($contra, $idUsuario, $tabla, $col)
     {
-        $stmt = $this->pdo->prepare("SELECT password FROM usuario WHERE idUsuario = ?");
+        $stmt = $this->pdo->prepare("SELECT password FROM $tabla WHERE $col = ?");
         $stmt->execute([$idUsuario]);
         // Obtener el resultado
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -309,10 +316,17 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
 
     case 'verificarContra':
         session_start();
-        $idUsuario = $_SESSION['usuario']['idUsuario'];
+        if (isset($_SESSION['usuario']['idUsuario'])) {
+            $tabla = "usuario";
+            $col = "idUsuario";
+        }else{
+            $tabla = "empresa";
+            $col = "idEmpresa";
+        }
+        $idUsuario = $_SESSION['usuario']['idUsuario'] ?? $_SESSION['usuario']['idEmpresa'] ?? $data['idUsuario'];
         //$idUsuario = $data['idUsuario'];
         $contra = $data['contra'];
-        $usuario->verificarContra($contra, $idUsuario);
+        $usuario->verificarContra($contra, $idUsuario, $tabla, $col);
         break;
     }
 }
