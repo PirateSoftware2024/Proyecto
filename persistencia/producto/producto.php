@@ -368,8 +368,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $stock = $_POST['stock'];
             $oferta = $_POST['oferta'];
             $condicion = $_POST['condicion'];
-            $categoria = $_POST['categoria'];; // Modificar según sea necesario 
-            // Agregar el producto a la base de datos
+            $categoria = $_POST['categoria'];
+            
             $producto->agregar($nombre, $descripcion, $precio, $stock, $oferta, $condicion, $categoria, $urlImagen, $idEmpresa);
             break;
 
@@ -427,9 +427,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
             case 'productoVisto':
                 session_start();
-                $idUsuario = $_SESSION['usuario']['idUsuario'];
-                $idProducto = $data['id'];
-                $producto->nuevoProductoVisto($idUsuario, $idProducto);
+                if (isset($_SESSION['usuario']['idUsuario'])) {
+                    $idUsuario = $_SESSION['usuario']['idUsuario'];
+                    $idProducto = $data['id'];
+                    $producto->nuevoProductoVisto($idUsuario, $idProducto);
+                } else {
+                    echo json_encode(['error' => 'ID de usuario no encontrado en la sesión']);
+                }
                 break;
             
         default:

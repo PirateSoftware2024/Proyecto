@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-   $("#boton").click( function(){
+    $("#boton").click( function(){
         const email = $('#email').val();
 
         if (!validateEmail(email)) {
@@ -19,9 +19,9 @@ $(document).ready(function () {
 
                 if (jsonResponse.success) {
                     $('#loader').hide();
-                    idUsuario = jsonResponse.idUsuario; // Obtiene el idUsuario            
+                    idUsuario = jsonResponse.idUsuario;         
                     $('#envio-token').hide();
-                    $('#ingreso-token').show(); // Muestra el contenedor para ingresar el token
+                    $('#ingreso-token').show();
                 } else {
                     alert(jsonResponse.message);
                     $('#loader').hide();
@@ -34,7 +34,6 @@ $(document).ready(function () {
         }); 
     });
 
-    // Delegación de eventos
     $(document).on('click', '#btnToken', function () {
         let token = $("#token").val();
         verificarToken(token);
@@ -59,14 +58,14 @@ function verificarToken(token) {
         },
         body: new URLSearchParams({ token: token })
     })
-    .then(response => response.json())  // Cambia a response.json()
+    .then(response => response.json())
     .then(data => {
         if (data.success) {
             alert("Token correcto!");
             $('#nueva-pass').show();
             $('#ingreso-token').hide();
         } else {
-            alert(data.message);  // Muestra el mensaje de error
+            alert(data.message);
         }
     })
     .catch(error => {
@@ -111,8 +110,7 @@ function redirigir() {
     // Mostrar el loader
     $('#loader').show();
 
-    // Establecer un retraso antes de redirigir
     setTimeout(function() {
-        window.location.href = "../interfaz/login.html"; // Cambia a la URL deseada
-    }, 2000); // Cambia 2000 a la cantidad de milisegundos que desees (2000 ms = 2 segundos)
+        window.location.href = "../interfaz/login.html";
+    }, 2000);
 }

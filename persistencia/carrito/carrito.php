@@ -89,7 +89,7 @@ class ApiCarrito
     }
 
     // Metodo para actualizar los datos de los productos dentro del carrito
-    public function actualizarProductosCarrito($id, $cantidad, $precio, $idCarrito)
+    public function actualizarProductosCarrito($id, $cantidad, $precio, $idCarrito, $oferta)
     {
         // Consultar si el producto ya está en el carrito
         $stmt = $this->pdo->prepare("SELECT cantidad FROM almacena WHERE idCarrito = ? AND id = ?");
@@ -98,16 +98,16 @@ class ApiCarrito
 
         if ($result) {
             // El producto ya está en el carrito, actualizar la cantidad y el precio
-            $stmt = $this->pdo->prepare("UPDATE almacena SET cantidad = ?, precio = ? WHERE idCarrito = ? AND id = ?");
-            if ($stmt->execute([$cantidad, $precio, $idCarrito, $id])) {
+            $stmt = $this->pdo->prepare("UPDATE almacena SET cantidad = ?, precio = ?, descuento = ? WHERE idCarrito = ? AND id = ?");
+            if ($stmt->execute([$cantidad, $precio, $oferta, $idCarrito, $id])) {
                 echo json_encode(['success' => true, 'message' => 'Producto actualizado en el carrito']);
             } else {
                 echo json_encode(['success' => false, 'error' => 'Error al actualizar el producto']);
             }
         } else {
             // El producto no está en el carrito, insertar una nueva entrada
-            $stmt = $this->pdo->prepare("INSERT INTO almacena (idCarrito, id, cantidad, precio) VALUES (?, ?, ?, ?)");
-            if ($stmt->execute([$idCarrito, $id, $cantidad, $precio])) {
+            $stmt = $this->pdo->prepare("INSERT INTO almacena (idCarrito, id, cantidad, precio, descuento) VALUES (?, ?, ?, ?, ?)");
+            if ($stmt->execute([$idCarrito, $id, $cantidad, $precio, $oferta])) {
                 echo json_encode(['success' => true, 'message' => 'Producto agregado al carrito']);
             } else {
                 echo json_encode(['success' => false, 'error' => 'Error al agregar el producto']);
@@ -188,7 +188,7 @@ class ApiCarrito
             if ($idCarrito) {
                 // Si existe un carrito confirmado, obtener los detalles del carrito
                 $stmt = $this->pdo->prepare(
-                    "SELECT p.nombre, a.precio, a.cantidad, a.idCarrito, c.fecha, p.id
+                    "SELECT p.nombre, ((a.cantidad * a.precio) - a.descuento) AS total, a.idCarrito, c.fecha, p.id, a.cantidad
                     FROM almacena a
                     JOIN carrito c ON a.idCarrito = c.idCarrito
                     JOIN producto p ON a.id = p.id
@@ -322,9 +322,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
                 $cantidad = $data['cantidad'];
                 $precio = $data['precio'];
                 $id = $data['id'];
+                $oferta = $data['oferta'];
         
                 // Actualizar el carrito
-                $carrito->actualizarProductosCarrito($id, $cantidad, $precio, $idCarrito);
+                $carrito->actualizarProductosCarrito($id, $cantidad, $precio, $idCarrito, $oferta);
             } else {
                 echo json_encode(['success' => false, 'error' => 'Datos incompletos en la solicitud']);
             }

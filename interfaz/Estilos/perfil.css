@@ -81,15 +81,7 @@
             background-color: #557a55;
         }
 
-        footer {
-            text-align: center;
-            background-color: #333;
-            color: #fff;
-            padding: 15px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
+
 
         /* CUADRO INFO */
         .cuadro {
@@ -125,3 +117,14 @@
         main {
             flex: 1;
         }
+
+/* Ajustes del footer para que quede en el fondo de la página */
+footer {
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    padding: 10px;
+    width: 100%;
+    margin-top: auto; /* Esto permite que el footer se desplace al fondo */
+}
+        

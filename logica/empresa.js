@@ -22,13 +22,95 @@ $(document).ready(function() {
         $('body').removeClass('modal-open');
     });
     
+    /////////////////////////////////////////////
+function validacion(nombre, descripcion, precio, stock, oferta, categoria, condicion) {
+    let valido = true;
+
+    // Validación de nombre (no debe estar vacío)
+    if (!nombre) {
+        $("#nombre").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#nombre").css("border-color", "#ccc");
+    }
+
+    // Validación de descripción (debe estar entre 10 y 20 caracteres si tiene contenido)
+    if (descripcion && (descripcion.length < 10 || descripcion.length > 20)) {
+        $("#descripcion").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#descripcion").css("border-color", "#ccc");
+    }
+
+    // Validación de precio (debe ser un número positivo)
+    if (isNaN(precio) || precio < 1 || precio > 999999) {
+        $("#precio").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#precio").css("border-color", "#ccc");
+    }
+
+    // Validación de stock (debe ser un número positivo)
+    if (isNaN(stock) || stock < 1 || stock > 999) {
+        $("#stock").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#stock").css("border-color", "#ccc");
+    }
+
+    // Validación de oferta (debe ser un número entre 0 y 100 si está presente)
+    if (oferta !== "Si" && oferta !== "No") {
+        $("#oferta").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#oferta").css("border-color", "#ccc");
+    }
+
+    // Validación de categoría (no debe estar vacía)
+    if (!categoria) {
+        $("#categoria").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#categoria").css("border-color", "#ccc");
+    }
+
+    // Validación de condición (debe ser "Nuevo" o "Usado")
+    if (condicion !== "Nuevo" && condicion !== "Usado") {
+        $("#condicion").css("border-color", "red");
+        valido = false;
+    } else {
+        $("#condicion").css("border-color", "#ccc");
+    }
+
+    // Verificación de imagen
+    const imagen = document.getElementById("imagen").files[0];
+    if (!imagen) {
+        $("#imagen").css("border-color", "red");
+        alert("Por favor, sube una imagen.");
+        valido = false;
+    } else {
+        $("#imagen").css("border-color", "#ccc");
+    }
+    
+    return valido;
+}
+
     $('#uploadForm').on('submit', function(event) {
-        event.preventDefault(); // Evitar el envío del formulario por defecto
+        event.preventDefault(); // Evitar el envío del formulario por defect
+
+        let nombre = $("#nombre").val();
+        let descripcion = $("#descripcion").val();
+        let precio = Number($("#precio").val());
+        let stock = $("#stock").val();
+        let oferta = $("#oferta").val();
+        let categoria = $("#categoria").val();
+        let condicion = $("#condicion").val();
+
+    if (validacion(nombre, descripcion, precio, stock, oferta, categoria, condicion)) {
 
         var formData = new FormData(this); // Crear un nuevo FormData con el formulario
         formData.append('accion', 'agregar'); // Agregar el parámetro 'accion' para que entre en el switch
-        //let nom = $("#nom").val();
-        //let desc = $("#desc").val();
+        formData.append('idEmpresa', 1); // Agregar el parámetro 'accion' para que entre en el switch
         $.ajax({
             url: '../persistencia/producto/producto.php',
             type: 'POST',
@@ -37,7 +119,15 @@ $(document).ready(function() {
             processData: false, // No procesar los datos (FormData se encarga)
             success: function(data) {
                 if (data.success) {
-                    alert("Producto publicado!")
+                    alert("Producto publicado!");
+                    $('#nombre').val('');
+                    $('#descripcion').val('');
+                    $('#precio').val('');
+                    $('#stock').val('');
+                    $('#oferta').val('');
+                    $('#categoria').val('');
+                    $('#condicion').val('');
+                    $('#imagen').val(''); // Limpia el campo de la imagen si es necesario
                 } else {
                     alert("Error: "+data.error);
                 }
@@ -47,6 +137,7 @@ $(document).ready(function() {
                 $('#result').html('<p>Error al subir la imagen.</p>');
             }
         });
+    }
     });
 
 
@@ -149,6 +240,7 @@ function productos(){
     }
     $(".boton-modificar").attr("disabled", "disabled"); // Deshabilitamos los botones "modificar".
 }
+
 function ventas(ventas) {
     let estados = {
         "enviado": "Enviado a depósito",
@@ -163,7 +255,9 @@ function ventas(ventas) {
 
         // Obtener el estado actual de la venta
         let estadoActual = venta.estado_preparacion;
-        
+        let iva = venta.total * 0.22;
+        let totalMasIva = venta.total + iva;
+
         if (estadoActual == "Enviado a depósito") {
             // Crear la fila y añadirla a la tabla
             let fila = $(`
@@ -174,7 +268,7 @@ function ventas(ventas) {
                     <td>${venta.idProducto}</td>
                     <td>${venta.fecha}</td>
                     <td>${venta.cantidad}</td>
-                    <td>${venta.total}</td>
+                    <td>$${totalMasIva}</td>
                     <td>
                         <select class="cambioEstado" data-id="${venta.id}">
                             <option value="enviado">Enviado a depósito</option>
@@ -207,7 +301,7 @@ function ventas(ventas) {
                     <td>${venta.idProducto}</td>
                     <td>${venta.fecha}</td>
                     <td>${venta.cantidad}</td>
-                    <td>${venta.total}</td>
+                    <td>$${totalMasIva}</td>
                     <td>
                         <select class="cambioEstado" data-id="${venta.id}">
                             ${selectEstados}

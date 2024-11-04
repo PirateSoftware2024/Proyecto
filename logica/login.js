@@ -1,17 +1,15 @@
 $(document).ready(function() {
     $('#uploadForm').on('submit', function(event) {
-        event.preventDefault(); // Evitar el envío del formulario por defecto
-
-        // Crear un nuevo FormData con el formulario
+        event.preventDefault()
         var formData = new FormData(this); 
 
         $.ajax({
             url: '../persistencia/login.php',
             type: 'POST',
             data: formData,
-            contentType: false, // No establecer el tipo de contenido
-            processData: false, // No procesar los datos (FormData se encarga)
-            dataType: 'json', // Asegurarse de que la respuesta sea interpretada como JSON
+            contentType: false,
+            processData: false,
+            dataType: 'json',
             success: function(data) {
                 if (data.success) {
                     $("#mensaje").css("color", "green").html("Inicio de sesión exitoso");
@@ -33,7 +31,7 @@ function redirigir(tipoUser) {
     const loader = document.getElementById('loader'); // Obtenemos el elemento
     loader.style.display = 'flex'; // Mostramos
     
-    if(tipoUser === "Comprador"){
+    if(tipoUser === "Usuario"){
         setTimeout(function() {
             window.location.href = "../interfaz/";
         }, 2000);

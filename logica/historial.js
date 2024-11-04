@@ -39,10 +39,9 @@ function generarHistorial() {
 .then(data => {
     if (data.success) {
         ordenes = data.data;  // Una vez leido los datos actualizamos
-        console.log("aca estan las ordenes:" +ordenes);
         mostrar();
     } else {
-        console.error('Error:', data.error);
+       alert(data.error);
     }
 })
 .catch(error => {
@@ -50,38 +49,40 @@ function generarHistorial() {
 });
 }
 
-
 let ordenesListas = [];
 function mostrar() {
     let elementoHtml = '';
-    let total = 30;
+    let total = 0; // Inicializar total en 0
     // Recorrer cada orden en el array de órdenes
     for (let i = 0; i < ordenes.length; i++) {
         const order = ordenes[i];
         const proximoProducto = ordenes[i + 1];
 
-        let subtotal = order.precio * order.cantidad;
+        let subtotal = order.total; // Total del producto (sin IVA)
+        subtotal += subtotal * 0.22; // Agregar IVA al subtotal
+
         // !proximoProducto retorna true si proximoProducto es undefined o null
         if (!proximoProducto || Number(order.idCarrito) !== Number(proximoProducto.idCarrito)) {
-            total += subtotal;
+            total += subtotal; // Sumar al total acumulado
             elementoHtml += `
             <li class="order-item">
-                <button class="reseña" data-id=${order.id} >Reseña</button> <span>${order.nombre} (x${order.cantidad})</span>
+                <button class="reseña" data-id=${order.id}>Reseña</button> <span>${order.nombre} (x${order.cantidad})</span>
                 <span>$${subtotal.toFixed(2)}</span>
             </li>`;
-            elementoHtml += '</ul>';
+
             let html = `
             <div class="order">
                 <h2>Pedido #${order.idCarrito}</h2>
                 <p>Fecha: ${order.fecha}</p>
-                ${elementoHtml}
+                <ul>${elementoHtml}</ul>
                 <div class="total">Total: $${total.toFixed(2)}</div>
             </div>`;
+            
             ordenesListas.push(html);
-            elementoHtml ="";
-            total=30;
+            elementoHtml = ""; // Reiniciar el HTML de la lista de artículos
+            total = 30; // Reiniciar total para el próximo pedido
         } else {
-            total += subtotal;
+            total += subtotal; // Sumar al total acumulado
             elementoHtml += `
             <li class="order-item">
                 <button class="reseña" data-id=${order.id}>Reseña</button> <span>${order.nombre} (x${order.cantidad})</span>
@@ -89,8 +90,13 @@ function mostrar() {
             </li>`;
         }
     }
-    mostrarHistorial();
+    mostrarHistorial(); // Llamar a la función para mostrar el historial al final
 }
+
+
+
+
+
 
 function reseña(){
     const $productCard = $(`

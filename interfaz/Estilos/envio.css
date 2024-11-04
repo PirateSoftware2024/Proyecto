@@ -34,11 +34,14 @@ footer {
     text-align: center;
     background-color: #333;
     color: #fff;
-    padding: 15px;
-    position: relative;
+    padding: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
     width: 100%;
-    margin-top: 20px;
+    z-index: 100; /* Asegura que esté al frente si hay otros elementos */
 }
+
 
 .contenedor {
     padding: 20px;

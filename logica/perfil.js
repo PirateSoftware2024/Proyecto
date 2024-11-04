@@ -97,10 +97,87 @@ $(document).ready(function() {
 let tabla = "usuario";
 
 function modificar(input, boton) {
-    if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
-        $(`#${input}`).attr("disabled", false);// Habilita el boton
-        $(`#${boton}`).text("Aceptar");// Cambia el texto del boton por "Aceptar"
-    }else{
+    if($(`#${input}`).attr("disabled")) { // Evalúa el estado del botón
+        $(`#${input}`).attr("disabled", false); // Habilita el botón
+        $(`#${boton}`).text("Aceptar"); // Cambia el texto del botón por "Aceptar"
+    } else {
+        // ACA: Validaciones para cada campo antes de llamar a tomarDato
+        let valor = $(`#${input}`).val().trim(); // Eliminar espacios en blanco al inicio y al final
+
+        switch (input) {
+            case "nombre":
+                if (valor.length < 2) {
+                    alert("El nombre debe tener al menos 2 caracteres.");
+                    return; // Salir si no es válido
+                } else if (/\d/.test(valor)) {
+                    alert("El nombre no debe contener números.");
+                    return; // Salir si no es válido
+                } else if (valor.length === 0) { // Comprobar si está vacío o solo espacios
+                    alert("El nombre no puede estar vacío.");
+                    return; // Salir si no es válido
+                }
+                break;
+            case "apellido":
+                if (valor.length < 2) {
+                    alert("El apellido debe tener al menos 2 caracteres.");
+                    return; // Salir si no es válido
+                } else if (/\d/.test(valor)) {
+                    alert("El apellido no debe contener números.");
+                    return; // Salir si no es válido
+                } else if (valor.length === 0) { // Comprobar si está vacío o solo espacios
+                    alert("El apellido no puede estar vacío.");
+                    return; // Salir si no es válido
+                }
+                break;
+            case "telefono":
+                if (!/^\d{8}$/.test(valor)) {
+                    alert("El teléfono debe tener 8 dígitos.");
+                    return; // Salir si no es válido
+                }
+                break;
+            case "fechaNac":
+                if (!valor) {
+                    alert("La fecha de nacimiento no puede estar vacía.");
+                    return; // Salir si no es válido
+                }
+                break;
+            case "correo":
+                if (!/\S+@\S+\.\S+/.test(valor)) {
+                    alert("Por favor, ingrese un correo electrónico válido.");
+                    return; // Salir si no es válido
+                }
+                break;
+            case "departamento":
+            case "localidad":
+                    case "calle":
+                    case "esquina":
+                        if (!valor.trim()) { // Verifica que no esté vacío o solo espacios
+                            alert(`${input.charAt(0).toUpperCase() + input.slice(1)} no puede estar vacío.`);
+                            return; // Salir si no es válido
+                        }
+                    break;
+                case "numeroPuerta":
+                    if (valor.length < 1 || /^\s*$/.test(valor)) {
+                        alert("El número de puerta no puede estar vacío.");
+                        return;
+                    }
+                    break;
+                case "numeroApto":
+                    if (valor && (isNaN(valor) || valor <= 0)) {
+                        alert("El número de apartamento debe ser un número positivo o puede estar vacío.");
+                        return;
+                    }
+                    break;
+            case "cPostal":
+                if (!/^\d{5}$/.test(valor)) {
+                    alert("El código postal debe tener 5 dígitos.");
+                    return; // Salir si no es válido
+                }
+                break;
+            default:
+                break;
+        }
+
         $(`#${input}`).attr("disabled", true);
         $(`#${boton}`).text("Editar");
         tomarDato(input);

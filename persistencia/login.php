@@ -39,7 +39,7 @@ if ($result) {
         $tipoUsuario = $result['tipo'];
         $idUsuario = $result['id'];
         
-        if ($tipoUsuario === 'Comprador') {
+        if ($tipoUsuario === 'Usuario') {
             $stmt = $pdo->prepare("SELECT * FROM usuario WHERE idUsuario = ?");
             $stmt->execute([$idUsuario]); // Corregido aquí
             $datosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);

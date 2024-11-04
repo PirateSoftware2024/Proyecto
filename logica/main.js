@@ -37,6 +37,10 @@ document.querySelector('.menu-toggle').addEventListener('click', function() {
 
 function buscar() {
     const nombre = $("#buscarProducto").val();
+    if (!nombre.trim()) { // .trim() elimina espacios al principio y al final
+        alert("Debe ingresar texto!");
+        return; 
+    }
     fetch(`../persistencia/producto/producto.php?accion=buscar&dato=${nombre}`, {
         headers: {
             'Content-Type': 'application/json',
@@ -207,13 +211,16 @@ function verMas(idBoton){
     }
 
     const $productCard = $(`
-            <div class="image-container">
-                <img src="../persistencia/assets/${producto.file_path}" width=150 heigth=150>
+            <div class="image-ver-mas">
+                <img src="../persistencia/assets/${producto.file_path}" width="150" height="150">
             </div>
-            <div class="reseñas">${reseñasProducto}</div>
-            <h3>${producto.nombre}</h3>
-            <p>${producto.descripcion}</p>
-            <div class="price">$${producto.precio}</div>
+            <h3 class="h3-ver-mas">${producto.nombre}</h3>
+            <div class="price-ver-mas">$${producto.precio}</div>
+            <div class="p-ver-mas"> 
+                <span>Descripción: ${producto.descripcion}</span>
+                <span>Condición: ${producto.condicion}</span>
+            </div>
+            <div class="reseñas-ver-mas">Reseñas <br>${reseñasProducto}</div>
             <button class="boton-producto" data-id="${producto.id}">Añadir al carrito</button>
     `);
     $("#infoProducto").html($productCard);
@@ -258,7 +265,7 @@ function actualizar(){
                             <img src="../persistencia/assets/${product.file_path}">
                         </div>
                         <h3>${product.nombre}</h3>
-                        <p>${product.descripcion}</p>
+                        <p>${product.condicion}</p>
                         <p class="oferta-texto">Oferta %${oferta}</p>
                         <div class="price">$${product.precio}</div>
                         <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
@@ -272,7 +279,7 @@ function actualizar(){
                             <img src="../persistencia/assets/${product.file_path}">
                         </div>
                         <h3>${product.nombre}</h3>
-                        <p>${product.descripcion}</p>
+                        <p>${product.condicion}</p>
                         <div class="price">$${product.precio}</div>
                         <button class="boton-producto" data-id="${product.id}">Añadir al carrito</button>
                         <button class="boton-reseña" data-id="${product.id}">Ver más</button>
@@ -321,7 +328,12 @@ let carrito = [];
     });
 }*/
 
-function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
+function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio, aplicaAOferta) {
+    let descuento = 0;
+    if(aplicaAOferta == "Si" && oferta){
+        let desc = oferta / 100; // Conversión de porcentaje
+        descuento = (precio - (precio * desc)) * cantidad;
+    }
     fetch('../persistencia/carrito/carrito.php', {
         method: 'PUT',
         headers: {
@@ -331,7 +343,8 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
             id: idProducto,
             cantidad: cantidad,
             precio: precio,
-            accion: "actualizarProductosCarrito"
+            accion: "actualizarProductosCarrito",
+            oferta: descuento
         })
     })
     .then(response => response.json())
@@ -361,7 +374,11 @@ function añadir(){
 
     if(index !== -1){
         // Si el producto ya está en el carrito, incrementamos su cantidad
-        carrito[index].cantidad++;
+        if (carrito[index].cantidad + 1 > producto.stock) {
+            alert("La cantidad que desea ingresar supera el stock!");
+            return;
+        }
+        carrito[index].cantidad++; // Increase quantity
     } else {
         // Si el producto no está en el carrito, lo agregamos
         producto.cantidad = 1; 
@@ -373,7 +390,7 @@ function añadir(){
     const productosJSON = JSON.stringify(carrito);
     localStorage.setItem('carrito', productosJSON);
 
-    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio, carrito[index].oferta);
     modificarCarrito();
 }
 

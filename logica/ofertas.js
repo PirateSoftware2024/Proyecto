@@ -6,18 +6,37 @@ $(document).ready(function () {
         eliminar(idOferta);
     });
 
-    // Función para manejar el envío del formulario
     $('#ofertaForm').on('submit', function (event) {
-        event.preventDefault(); // Prevenir el envío del formulario por defecto
+        event.preventDefault();
 
-        // Obtener los valores del formulario
         const descuento = $('#descuento').val();
         const fechaExpiracion = $('#fechaExpiracion').val();
         const nombre = $('#nombre').val();
 
-        // Enviar una solicitud AJAX al servidor
+// Verificar que descuento sea un número
+if (isNaN(descuento) || descuento <= 0) {
+    if(descuento > 100){
+        alert("El descuento debe ser menor a 100.");
+    }else{
+        alert("El descuento debe ser un número positivo.");
+    }
+    return; // Salir si no es válido
+}
+
+// Verificar que la fecha de expiración no esté vacía
+if (!fechaExpiracion) {
+    alert("La fecha de expiración no puede estar vacía.");
+    return; // Salir si no es válido
+}
+
+// Verificar que el nombre no esté vacío
+if (!nombre.trim()) {
+    alert("El nombre no puede estar vacío.");
+    return; // Salir si no es válido
+}
+
         $.ajax({
-            url: '../persistencia/ofertas/ofertas.php', // Cambia esta URL a la que necesites
+            url: '../persistencia/ofertas/ofertas.php',
             method: 'POST',
             data: {
                 nombre: nombre,
@@ -52,11 +71,10 @@ $(document).ready(function () {
                 idOferta: idOferta
             })
         })
-        .then(response => response.json()) // Parsear la respuesta a JSON
+        .then(response => response.json())
         .then(data => {
             if (data.success) {
                 alert("Oferta eliminada con éxito!");
-                // Opcional: Actualiza la tabla o UI según sea necesario
                 obtenerOferta();
             } else {
                 alert("Hubo un error al eliminar la oferta.");
@@ -76,7 +94,7 @@ function obtenerOferta() {
             if (!response.ok) {
                 throw new Error('Error en la respuesta de la red');
             }
-            return response.json(); // Cambiado a .json() para analizar directamente
+            return response.json();
         })
         .then(jsonData => {
             if (jsonData.success) {

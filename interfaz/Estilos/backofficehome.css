@@ -23,6 +23,9 @@ header h1 {
     margin: 15px;
 }
 
+#backTitulo {
+    text-align: center;
+}
 nav ul {
     list-style-type: none;
     padding: 0;

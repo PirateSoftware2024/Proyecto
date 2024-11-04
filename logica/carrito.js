@@ -15,12 +15,16 @@ $(document).ready(function() {
     $("#cartContainer").on("click", ".boton-eliminar", eliminar);     // Controlador de eventos que
     $("#cartContainer").on("click", ".boton-mas", sumarCantidad);     // responde a los clicks en cualquier elemento con la     
     $("#cartContainer").on("click", ".boton-menos", restarCantidad);  // clase .boton-"accion" que esté dentro del elemento con id "cartContainer".
-    //$("#comprar").click();
-    ////////////////////////////////////////
+    // Ejecuta mostrarBotonPaypal cuando cambia la selección de entrega
+    $(document).on('change', 'input[name="opciones"]', function() {
+        mostrarBotonPaypal();
+    });
+    
     // -Codigo cuadrado boton "comprar"
     $('#comprar').click(function() {
         $('#cuadroInformacion').fadeIn();
         $('body').addClass('modal-open');
+        pago();
     });
 
     $('#cerrarCuadro').click(function() {
@@ -29,23 +33,9 @@ $(document).ready(function() {
         agregamosPedido();
     });
 
-    $('#entrega').change(function() {
-        var seleccion = $(this).val();
-        var resultadoDiv = $('#resultado');
-    
-        if (seleccion === "1") {
-            pago();
-        } else if (seleccion === "2") {
-            entregaPedido(1);
-        }else{
-            alert("Debe seleccionar un metodo de envio");
-        }
-    
-    });
     
     let pago = () => {
         let datos = $(`
-            <div class="radio-group">
                 <label>
                     Pick-up - Ciudad Vieja, Sarandí 508, 11000 Montevideo 
                     <input type="radio" name="opciones" class="radio" value="Centro de recogida">
@@ -53,9 +43,8 @@ $(document).ready(function() {
 
                 <label>
                     Envío a domicilio - ${usuario.localidad}, ${usuario.calle} ${usuario.numeroPuerta}, ${usuario.cPostal} ${usuario.departamento}
-                    <input type="radio" name="opciones" class="radio" value="Domicilio"> Opción 2
+                    <input type="radio" name="opciones" class="radio" value="Domicilio">
                 </label><br>
-            </div>
         `);
         $("#direccionUsuario").html(datos);
     }
@@ -108,9 +97,6 @@ function obtenerOferta(){
     // Recorrer el array carrito y creamos un div
     for (let i = 0; i < carrito.length; i++) {
         const producto = carrito[i];
-        
-        //producto.precio.replaceAll('.', '')
-        //let precio = producto.precio * producto.cantidad; <div class="price">$${new Intl.NumberFormat().format(precio)}</div>
         const $productCard = $(`
         <div class="product-card">
             <img src="../persistencia/assets/${producto.file_path}" width="125" height="125">
@@ -121,7 +107,6 @@ function obtenerOferta(){
             <button class="boton-mas" data-id="${producto.id}">+</button>
             <button class="boton-menos" data-id="${producto.id}">-</button>
         </div>`);
-        // Agregar el producto al contenedor del carrito
         $("#cartContainer").append($productCard);
     }
     resumenPedido();
@@ -175,7 +160,7 @@ function sumarCantidad() {
         localStorage.setItem('carrito', JSON.stringify(carrito));
         mostrarProductosEnCarrito();
     
-        agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+        agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio, carrito[index].oferta);
         modificarCarrito();
     }else{
         alert("La cantidad que desea ingresar supera el stock!");
@@ -195,15 +180,15 @@ function restarCantidad() {
         alert("La cantidad no puede ser menor a 1");
     }
 
-    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio);
+    agregarOActualizarProductoEnCarrito(carrito[index].id, carrito[index].cantidad, carrito[index].precio, carrito[index].oferta);
     modificarCarrito();
 }
 
 
 function resumenPedido() {
     let html = '';
-    let total = 30; // Incluye el empaque y la tarifa de Axie
-    let iva = 0;    // Inicializa el IVA
+    let total = 30;
+    let iva = 0;
     let elementoHtml = '<ul class="order-items">';
 
     if (carrito.length < 1) {
@@ -336,7 +321,12 @@ function modificarCarrito(){
     });    
 }
 
-function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
+function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio, aplicaAOferta) {
+    let descuento = 0;
+    if(aplicaAOferta == "Si" && oferta){
+        let desc = oferta / 100; // Conversión de porcentaje
+        descuento = (precio - (precio * desc)) * cantidad;
+    }
     fetch('../persistencia/carrito/carrito.php', {
         method: 'PUT',
         headers: {
@@ -346,6 +336,7 @@ function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio) {
             id: idProducto,
             cantidad: cantidad,
             precio: precio,
+            oferta: descuento,
             accion: "actualizarProductosCarrito"
         })
     })
@@ -376,55 +367,66 @@ let totalCarrito = () => {
         }else{
             subtotal = item.precio * item.cantidad;
         }    
-        const ivaPorProducto = subtotal * 0.22; // Calcular IVA por producto
-        iva += ivaPorProducto; // Acumular IVA
-        total += subtotal; // Sumar subtotal al total
+        const ivaPorProducto = subtotal * 0.22;
+        iva += ivaPorProducto;
+        total += subtotal;
     }
     total += iva;
-    // Convertir el total a dólares
-    let aDolar = total / 40.26; // Redondear a dos decimales
-    return aDolar; // Convertir a número flotante
+    let aDolar = total / 40.26;
+    return aDolar;
 }
 
-paypal.Buttons({
-    // Configuración del botón
-    createOrder: function(data, actions) {
-        return actions.order.create({
-            purchase_units: [{
-                amount: {
-                    currency_code: 'USD', // Asegúrate de que la moneda sea USD
-                    value: totalCarrito().toFixed(2) // Total en dólares
-                }
-            }]
-        }).catch(function(err) {
-            console.log('Error al crear la orden', err);
-            alert('Hubo un problema al crear la orden. Por favor, intenta de nuevo.');
-        });
-    },
-    
-    // Esta función se ejecuta cuando el pago fue exitoso
-    onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-            const idTransaccion = details.id;
-            const metodoPago = details.payer.payment_method || "PayPal"; // 'credit_card' o 'PayPal'
-            const mailPaypal = details.payer.email_address;
 
-            generarOrden(metodoPago, idTransaccion, mailPaypal);
-            nuevoEnvio();
-            actualizarPage();
-            // Redirigir a una página específica
-            window.location.href = '../interfaz/pagoExitoso.html'; // Reemplaza con tu URL deseada
-        });
-    },
-    
-    // Manejar errores en el pago
-    onError: function(err) {
-        console.log('Ocurrió un error con el pago', err);
-        alert('Hubo un problema con el pago. Por favor, intenta de nuevo.');
-    }
-}).render('#paypal-button-container'); // ID del contenedor donde se mostrará el botón de PayPal
+        function mostrarBotonPaypal() {
+            let tipoEntrega = $('input[name="opciones"]:checked').val();
+            // Limpiar el contenedor del botón de PayPal
+            $("#paypal-button-container").empty();
+            if(tipoEntrega == "Domicilio" || tipoEntrega == "Centro de recogida"){
+        
+                paypal.Buttons({
+                    // Configuración del botón
+                    createOrder: function(data, actions) {
+                        return actions.order.create({
+                            purchase_units: [{
+                                amount: {
+                                    currency_code: 'USD',
+                                    value: totalCarrito().toFixed(2)
+                                }
+                            }]
+                        }).catch(function(err) {
+                            console.log('Error al crear la orden', err);
+                            alert('Hubo un problema al crear la orden. Por favor, intenta de nuevo.');
+                        });
+                    },
+                    
+                    // Esta función se ejecuta cuando el pago fue exitoso
+                    onApprove: function(data, actions) {
+                        return actions.order.capture().then(function(details) {
+                            const idTransaccion = details.id;
+                            const metodoPago = details.payer.payment_method || "PayPal"; // 'credit_card' o 'PayPal'
+                            const mailPaypal = details.payer.email_address;
+                
+                            generarOrden(metodoPago, idTransaccion, mailPaypal);
+                            nuevoEnvio(tipoEntrega);
+                            actualizarPage();
+                            
+                            window.location.href = '../interfaz/pagoExitoso.html';
+                        });
+                    },
+                    
+                    // Manejar errores en el pago
+                    onError: function(err) {
+                        console.log('Ocurrió un error con el pago', err);
+                        alert('Hubo un problema con el pago. Por favor, intenta de nuevo.');
+                    }
+                }).render('#paypal-button-container'); // ID del contenedor donde se mostrará el botón de PayPal
+            }else{
+                alert('Seleccione una opcion de envío');
+            }
+        }
 
-  
+
+
 
 function generarOrden(metodoPago, idTransaccion, mailPaypal){
     fetch('../persistencia/carrito/carrito.php', {
@@ -481,26 +483,31 @@ function nuevoCarrito() {
     });
 }
 
-function nuevoEnvio(){
-    let tipoEntrega = $('input[name="opciones"]:checked').val();
-    let idDireccion = usuario.idDireccion;
+function nuevoEnvio(tipoEntrega){
+    let idDireccion;
+
+    if(tipoEntrega == "Centro de recogida"){
+        idDireccion = 17;
+    }else{
+        idDireccion = usuario.idDireccion;
+    }
 
     fetch('../persistencia/pedidos/pedidos.php', {
-        method: 'POST', // Método de la petición
+        method: 'POST',
         headers: {
-            'Content-Type': 'application/json' // Establece el tipo de contenido
+            'Content-Type': 'application/json' 
         },
-        body: JSON.stringify({ // Convierte los datos a JSON
-            accion: 'nuevoPedido', // La acción que quieres ejecutar en PHP
+        body: JSON.stringify({ 
+            accion: 'nuevoPedido',
             idDireccion: idDireccion,
             entrega: tipoEntrega
         })
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Error en la red'); // Si hay un error en la red
+            throw new Error('Error en la red');
         }
-        return response.json(); // Parsear la respuesta JSON
+        return response.json();
     })
     .then(data => {
         if (data.success) {

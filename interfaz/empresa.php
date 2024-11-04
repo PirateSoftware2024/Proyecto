@@ -22,8 +22,8 @@
 </div>
 <nav>
     <ul>
-        <li><a href="publicarEmpresa.php">Publicar producto</a></li>
-        <li><a href="productosEmpresa.php">Mis productos</a></li>
+        <li><a href="publicarEmpresa.html">Publicar producto</a></li>
+        <li><a href="productosEmpresa.html">Mis productos</a></li>
         <li><a href="ventasEmpresa.html">Ventas</a></li>
         <li><a href="gestionTickets.html">Reportes</a></li>
         <?php if (isset($_SESSION['loggedin']) && $_SESSION['loggedin'] === true): ?>

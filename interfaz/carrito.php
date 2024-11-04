@@ -1,3 +1,6 @@
+<?php 
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="es">
     <head>
@@ -10,16 +13,13 @@
         <header>
             <div class="logo"><img src="images/logo.png" alt="" width="105" height="100"></div>
             <h1>AXIS</h1>
+            <a href="index.php"><button id="salir">Inicio</button></a>
         </header>
-        
         <div id="cuadroInformacion" class="cuadro">
             <p>Información Envío</p>
-            <select name="entrega" id="entrega">
-                <option value="opcion" disabled selected>Opciones</option>
-                <option value="1">Seleccione envío</option>
             </select>
             <br><br>
-            <div id="direccionUsuario"></div>
+            <div class="radio-group" id="direccionUsuario"> </div>
             <div id="paypal-button-container"></div>
             <br>
             <button id="cerrarCuadro">Cerrar</button>
@@ -27,11 +27,9 @@
 
         <!-- Div para los productos -->
         <div class="cart-container" id="cartContainer"></div>
-
         <?php 
-            session_start();
             if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true): ?>
-                <!-- Si el usuario esta logueado, mostramos el enlace de "Salir" -->
+                <!-- Si el usuario no está logueado, mostramos el enlace de "Iniciar Sesión" -->
                 <div class="login-container">
                     <a id="login" href="login.html">Iniciar Sesión</a>
                 </div>
@@ -41,8 +39,7 @@
                 <div id="pedido"></div>
                 <button id="comprar">Comprar</button>
             </div>
-        <?php endif; ?>
-
+        <?php endif;?>
         <footer>
             <p>© 2024 Pirate Software. Todos los derechos reservados.</p>
         </footer>

@@ -47,12 +47,14 @@ class ApiEmpresa
     
     public function ventasEmpresa($idEmpresa)
     {
-        $stmt = $this->pdo->prepare("SELECT d.id, p.idCarrito, d.idPaquete, u.nombre, d.idProducto, p.fecha, d.cantidad, (d.cantidad * p2.precio) AS total, d.estado_preparacion
+        $stmt = $this->pdo->prepare("SELECT d.id, p.idCarrito, d.idPaquete, u.nombre, d.idProducto, p.fecha, d.cantidad, ((d.cantidad * p2.precio) - a.descuento) AS total, d.estado_preparacion
                                     FROM detalle_pedido d
                                     JOIN paquete p ON p.idPaquete = d.idPaquete
                                     JOIN usuario u ON u.idUsuario = p.idUsuario
                                     JOIN producto p2 ON p2.id = d.idProducto
-                                    WHERE d.idEmpresa = ?;");
+                                    JOIN almacena a ON a.idCarrito = p.idCarrito AND p2.id = a.id
+                                    WHERE d.idEmpresa = ?
+                                    ORDER BY d.idPaquete;");
         
         $stmt->execute([$idEmpresa]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -381,7 +383,7 @@ class ApiEmpresa
 
 function graficaTotalGenerado($idEmpresa)
 {
-    $stmt = $this->pdo->prepare("SELECT  e.idEmpresa, e.nombre, DATE_FORMAT(c.fecha, '%Y-%m') AS mes, SUM(a.precio * a.cantidad) AS ventas
+    $stmt = $this->pdo->prepare("SELECT  e.idEmpresa, e.nombre, DATE_FORMAT(c.fecha, '%Y-%m') AS mes, SUM((a.cantidad * p.precio) - a.descuento) AS ventas
                                 FROM empresa e
                                 JOIN  producto p ON p.idEmpresa = e.idEmpresa
                                 JOIN  almacena a ON a.id = p.id

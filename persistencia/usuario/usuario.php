@@ -91,41 +91,57 @@ class ApiUsuarios
 
     public function modificarUsuario($idUsuario, $dato, $columna, $tabla)
     {   
-        // Hash de la contraseña antes de insertarla
+        // Primero, verificar si la columna es 'telefono' o 'correo'
+        if ($columna === 'telefono' || $columna === 'correo') {
+            // Obtener todos los datos de la vista
+            $stmt = $this->pdo->prepare("SELECT * FROM vista_usuarios_empresas");
+            $stmt->execute();
+            $resultados = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    
+            // Verificar si el dato ya existe
+            foreach ($resultados as $fila) {
+                if ($fila[$columna] === $dato) {
+                    echo json_encode(['success' => false, 'error' => 'El dato ya se encuentra registrado.']);
+                    return; // Salir de la función si se encuentra un duplicado
+                }
+            }
+        }
+    
+        // Hash de la contraseña antes de insertarla si es necesario
         if ($columna == "password") {
             $dato = password_hash($dato, PASSWORD_DEFAULT);
         }
-
+    
         // Construir la consulta SQL
         if ($tabla === "empresa") {
             $idColumn = 'idEmpresa';
-        } else if($tabla === "usuario"){
+        } else if ($tabla === "usuario") {
             $idColumn = 'idUsuario';
-        }else{
+        } else {
             if (isset($_SESSION['usuario']['idUsuario'])) { 
                 $idColumn = 'idUsuario';
-            }else{
+            } else {
                 $idColumn = 'idEmpresa';
             }
         }
-
-
-        // Preparar y ejecutar la consulta
+    
+        // Preparar y ejecutar la consulta de actualización
         $sql = "UPDATE $tabla SET $columna = :dato WHERE $idColumn = :id";
         $stmt = $this->pdo->prepare($sql);
-    
+        
         // Asignar los valores a los parámetros
         $stmt->bindParam(':dato', $dato);
         $stmt->bindParam(':id', $idUsuario, PDO::PARAM_INT);
-
+    
         // Ejecutar y manejar el resultado
         if ($stmt->execute()) {
             echo json_encode(['success' => true]);
         } else {
             $errorInfo = $stmt->errorInfo();
             echo json_encode(['success' => false, 'error' => $errorInfo[2]]);
+        }
     }
-}
+    
     
 
     public function graficaDatos()
@@ -206,7 +222,7 @@ class ApiUsuarios
         $stmt = $this->pdo->prepare("SELECT COUNT(*) as conteo 
                                     FROM paquete p
                                     JOIN usuario u ON u.idUsuario = p.idUsuario
-                                    WHERE p.idUsuario = ? AND p.estadoEnvio= 'Entregado';");
+                                    WHERE p.idUsuario = ? AND p.estadoEnvio != 'Entregado'");
         $stmt->execute([$id]);
         $result = $stmt->fetch();
 
@@ -289,7 +305,7 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
     // Obtener valores de POST
     // Datos Personales
     $data = json_decode(file_get_contents('php://input'), true);
-    $accion = $data['accion'];
+    $accion = $_POST['accion'] ?? $data['accion'];
     
     switch($accion)
     {
@@ -348,7 +364,7 @@ if($_SERVER['REQUEST_METHOD'] == 'PUT'){
 
         case 'modificar':
             session_start();
-            $idUsuario = $_SESSION['usuario']['idUsuario'] ?? $_SESSION['usuario']['idEmpresa'] ?? $data['idUsuario'];
+            $idUsuario = $_SESSION['usuario']['idUsuario'] ?? $_SESSION['usuario']['idEmpresa'] ?? $data['idUsuario'] ?? $data['idEmpresa'];
             $dato = $data['dato'];
             $columna = $data['columna'];
             $tabla = $data['tabla'];

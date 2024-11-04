@@ -26,11 +26,11 @@ $("#productContainer").on("click", ".boton-eliminar", function() {
 });
 
 $('#cerrarCuadro').click(function() {
+        $("#modificar").hide();
+        $("#infoProducto").hide();
         $('#cuadroInformacion').fadeOut();
         $('body').removeClass('modal-open');
         obtenerProductos();
-        $("#modificar").hide();
-        $("#infoProducto").hide();
 });
 
 //////////////////////////////////////////
@@ -87,17 +87,60 @@ $("#formulario").submit(function(event) {
 });
 
 function modificar(input, boton) {
-    if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
-        $(`#${input}`).attr("disabled", false);// Habilita el boton
-        $(`#${boton}`).text("Aceptar");// Cambia el texto del boton por "Aceptar"
-    }else{
+    if($(`#${input}`).attr("disabled")) { // Evalúa el estado del botón
+        $(`#${input}`).attr("disabled", false); // Habilita el botón
+        $(`#${boton}`).text("Aceptar"); // Cambia el texto del botón por "Aceptar"
+    } else {
+        // ACA: Validaciones para cada campo antes de llamar a tomarDato
+        let valor = $(`#${input}`).val().trim(); // Eliminar espacios en blanco al inicio y al final
+
+        switch (input) {
+            case "nombre":
+                if (valor.length < 2 || valor.length === 0) {
+                    alert("El nombre debe tener al menos 2 caracteres y no debe estar vacío.");
+                    return;
+                }
+                break;
+            case "precio":
+                if (isNaN(valor) || valor < 1 || valor > 999999) {
+                    alert("El precio debe ser un número positivo entre 1 y 999999.");
+                    return;
+                }
+                break;
+            case "stock":
+                if (isNaN(valor) || valor < 1 || valor > 999) {
+                    alert("El stock debe ser un número positivo entre 1 y 999.");
+                    return;
+                }
+                break;
+            case "oferta":
+                if (valor !== "Si" && valor !== "No") {
+                    alert("La oferta debe ser 'Si' o 'No'.");
+                    return;
+                }
+                break;
+            case "categoria":
+                if (!valor) {
+                    alert("La categoría no puede estar vacía.");
+                    return;
+                }
+                break;
+            case "condicion":
+                if (valor !== "Nuevo" && valor !== "Usado") {
+                    alert("La condición debe ser 'Nuevo' o 'Usado'.");
+                    return;
+                }
+                break;
+            default:
+                break;
+        }
         $(`#${input}`).attr("disabled", true);
         $(`#${boton}`).text("Editar");
         tomarDato(input);
     }
 }
 
-// Función para tomar los datos del formulario
+// Futnción para tomar los daos del formulario
 function tomarDato(input) {
 
     let dato = $(`#${input}`).val();
@@ -147,16 +190,13 @@ function obtenerProductos() {
             return response.text();
         })
         .then(data => {
-            // Convertimos los datos a JSON
             const jsonData = JSON.parse(data);
 
-            // Verificar si jsonData contiene un error
             if (jsonData.error) {
-                alert(jsonData.error); // Mostrar el mensaje de error en un alert
-                return; // Detenemos la ejecución
+                alert(jsonData.error);
+                return;
             }
 
-            // Si no hay error, asignamos los productos y actualizamos
             products = jsonData;
             actualizar();
         })
@@ -167,7 +207,6 @@ function obtenerProductos() {
 
 
 function actualizar(){
-        // Generamos las tarjetas de productos
         $("#productContainer").html("");
         let pocoStock = false;
         for (let i = 0; i < products.length; i++) {
@@ -301,14 +340,14 @@ function eliminarProducto(idProducto) {
         },
         body: JSON.stringify({ 
             id: idProducto,
-            accion: "producto"  // Asegúrate de incluir la clave 'accion'
+            accion: "producto"
         })
     })
-    .then(response => response.text())  // Cambia a .text() temporalmente para ver la respuesta cruda
+    .then(response => response.text())
     .then(data => {
-        console.log(data);  // Verificar la respuesta sin procesar
+        console.log(data);
         try {
-            const jsonData = JSON.parse(data);  // Convertir a JSON si es válido
+            const jsonData = JSON.parse(data);
             if (jsonData.success) {
                 alert('Producto eliminado exitosamente');
             } else {

@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 require("../ConexionDB.php");
 header('Content-Type: application/json');
 
@@ -181,12 +183,13 @@ class ApiPedidos
     function obtenerEnvios($idUsuario)
     {
         // Prepara la primera consulta
-        $stmt1 = $this->pdo->prepare("SELECT p.idPaquete, d.localidad, d.calle, d.esquina, d.numeroPuerta, d.numeroApto, d.cPostal, p.fecha, p.estadoEnvio, SUM(d2.cantidad * p2.precio) AS total
+        $stmt1 = $this->pdo->prepare("SELECT p.idPaquete, d.localidad, d.calle, d.esquina, d.numeroPuerta, d.numeroApto, d.cPostal, p.fecha, p.estadoEnvio, SUM((d2.cantidad * p2.precio) - a.descuento)AS total
             FROM paquete p
             JOIN usuario u ON u.idUsuario = p.idUsuario
             JOIN direcciones d ON d.idUsuario = u.idUsuario
             JOIN detalle_pedido d2 ON d2.idPaquete = p.idPaquete
             JOIN producto p2 ON p2.id = d2.idProducto
+            JOIN almacena a ON a.idCarrito = p.idCarrito AND p2.id = a.id
             WHERE u.idUsuario = ?
             GROUP BY p.idPaquete;"); // No olvides agregar GROUP BY para las funciones de agregación
         $stmt1->execute([$idUsuario]);
@@ -227,17 +230,21 @@ class ApiPedidos
         }
     }
 
-    public function obtenerPorId($dato)
+        public function obtenerPorId($dato)
     {
-        $stmt = $this->pdo->prepare("SELECT *
-                                    FROM paquete 
-                                    WHERE idPaquete = ?");
+        $stmt = $this->pdo->prepare("SELECT * FROM paquete WHERE idPaquete = ?");
         $stmt->execute([$dato]);
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        header('Content-Type: application/json');
+    
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(['success' => true, 'data' => $stmt->fetch(PDO::FETCH_ASSOC)]);
+        } else {
+            echo json_encode(['success' => false, 'message' => 'No se encontro un paquete con ese id.']);
+        }
     }
 
     public function eliminar($idPaquete)
-{
+	{
     $stmt = $this->pdo->prepare("DELETE FROM detalle_pedido WHERE idPaquete = ?");
     $stmt->execute([$idPaquete]);
 
@@ -287,8 +294,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
 
         case 'obtenerPorId':
             $dato = $_GET['dato'];
-            $pedidos = $pedido->obtenerPorId($dato);
-            echo json_encode($pedidos);
+            $pedido->obtenerPorId($dato);
             break;
     }
 }
@@ -336,20 +342,19 @@ if($_SERVER['REQUEST_METHOD'] == 'POST'){
             break;  
 
         case 'nuevoPedido':
-            session_start();
-            $idUsuario = $_SESSION['usuario']['idUsuario'];
-            $idCarrito = $_SESSION['usuario']['idCarrito'];
-            //$idUsuario =$data['idUsuario'];
-            //$idCarrito = $data['idCarrito'];
+            
+            //$idUsuario = $_SESSION['usuario']['idUsuario'];
+            //$idCarrito = $_SESSION['usuario']['idCarrito'];
+            $idUsuario =$data['idUsuario'];
+            $idCarrito = $data['idCarrito'];
             $idDireccion = $data['idDireccion'];
             $tipoEntrega = $data['entrega'];
             $pedido->nuevoEnvio($idDireccion, $idUsuario, $idCarrito, $tipoEntrega);
             break;
         
         case 'obtenerEnvios':
-            session_start();
             $idUsuario = $_SESSION['usuario']['idUsuario'];
-            //$idUsuario = $data['id'];
+            $idUsuario = $data['id'];
             $pedido->obtenerEnvios($idUsuario);
             break;
     }

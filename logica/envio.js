@@ -3,30 +3,32 @@ $(document).ready(function() {
 });
 
 let envios;
-function obtenerEnvios() {
-    fetch('../persistencia/pedidos/pedidos.php', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            accion: "obtenerEnvios"
-        })
+fetch('../persistencia/pedidos/pedidos.php', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+        accion: "obtenerEnvios"
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            datos = data.productos; // Asegúrate que aquí estás guardando la propiedad correcta
-            console.log(datos);
-            mostrarEnvios();
-        } else {
-            console.error('Error:', data.error);
-        }
-    })
-    .catch(error => {
-        console.error("Error de red:", error);
-    });    
-}
+})
+.then(response => {
+    // Imprimir el contenido de la respuesta
+    return response.text(); // Cambiar a text() para ver el contenido
+})
+.then(text => {
+    console.log("Respuesta del servidor:", text); // Muestra la respuesta en la consola
+    const data = JSON.parse(text); // Intenta convertir a JSON
+    if (data.success) {
+        datos = data.productos;
+        mostrarEnvios();
+    } else {
+        console.error('Error:', data.error);
+    }
+})
+.catch(error => {
+    console.error("Error de red:", error);
+});
 
 function mostrarEnvios() {
 
@@ -48,13 +50,21 @@ function mostrarEnvios() {
         let estadoActual = Object.keys(tipoEnvio).find(
             key => tipoEnvio[key] === envio.estadoEnvio
         );
+
+        let total = Number(envio.total); // Asegúrate de que sea un número
+        let iva = total * 0.22; // Calcula el IVA
+        let totalIva = total + iva + 30; // Total con IVA
+
+        // Formatea totalIva a dos decimales
+        let totalIvaFormateado = totalIva.toFixed(2); // Esto debería funcionar sin problemas
+
         const $productCard = $(`
             <div class="product-container">
                 <ul>
                     <li>Envío #: ${envio.idPaquete}</li>
                     <li>Dirección: ${envio.localidad} ${envio.calle} ${envio.esquina} ${envio.numeroPuerta} ${envio.numeroApto} ${envio.cPostal}</li>
                     <li>Fecha: ${envio.fecha}</li>
-                    <li>Total: $${parseFloat(envio.total).toFixed(2)}</li>
+                    <li>Total: $${totalIvaFormateado}</li>
                     <li ${estadoActual}>Estado Envío: ${envio.estadoEnvio}</li>
                 </ul>
         `);
@@ -68,6 +78,7 @@ function mostrarEnvios() {
             // Agregar detalles de productos relacionados a este envío usando un bucle for
             for (let j = 0; j < detalles.length; j++) {
                 const detalle = detalles[j];
+            
                 if(detalle.idPaquete === envio.idPaquete){
                     let estadoActual = Object.keys(tiposEstado).find(
                         key => tiposEstado[key] === detalle.estado_preparacion
@@ -81,7 +92,7 @@ function mostrarEnvios() {
                             <h3>${detalle.nombre}</h3>
                             <div class="precio">
                                 <p>${detalle.descripcion}</p>
-                                <p>Precio: $${parseFloat(detalle.precio).toFixed(2)}</p>
+                                <p>Precio: $${detalle.precio}</p>
                                 <p>Cantidad: ${detalle.cantidad}</p>
                             </div>
                             <div class="envio" ${estadoActual}>${detalle.estado_preparacion}</div>

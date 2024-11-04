@@ -77,6 +77,7 @@
                 </ul>
             </div>
         </div>
+        
         <p id="copy" style="font-size: 10px;">© 2024 Pirate Software. Todos los derechos reservados.</p>
     </footer>
     <script src="../logica/jquery-3.7.1.min.js"></script>

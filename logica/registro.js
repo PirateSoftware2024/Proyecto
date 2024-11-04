@@ -1,7 +1,7 @@
+//Hola
 $(document).ready(function() {
     $('#uploadForm').on('submit', function(event) {
-        event.preventDefault(); // Evita el envío del formulario por defecto
-        // Crear un nuevo FormData con el formulario
+        event.preventDefault();
         let nombre = $("#nombre").val();
         let apellido = $("#apellido").val();
         let telefono = Number($("#telefono").val());
@@ -17,9 +17,9 @@ $(document).ready(function() {
         let cPostal = $("#cPostal").val();
         let indicaciones = $("#indicaciones").val();
         if(validacion(nombre, apellido, telefono, correo, password, fecha, localidad, departamento, calle, nPuerta, nApartamento, cPostal, esquina)){
-        var formData = new FormData(this); 
-        formData.append('accion', 'registrar');
-        registrar(formData);
+            var formData = new FormData(this); 
+            formData.append('accion', 'registrar');
+            registrar(formData);
         }
     });
 });
@@ -32,24 +32,23 @@ function registrar(formData) {
         url: '../persistencia/usuario/usuario.php',
         type: 'POST',
         data: formData,
-        contentType: false, // No establecer el tipo de contenido
-        processData: false, // No procesar los datos (FormData se encarga)
-        dataType: 'json', // Asegurarse de que la respuesta sea interpretada como JSON
+        contentType: false,
+        processData: false,
+        dataType: 'json',
         success: function(data) {
             if (data.success) {
                 $("#result").html("Usuario registrado con éxito!");
                 limpiarCampos();
             } else {
-                $("#result").html(data.error); // Mostrar el error del PHP si no tuvo éxito
+                $("#result").html(data.error);
             }
         },
         error: function(jqXHR) {
-            // Intentar obtener el mensaje de error devuelto por el PHP
             let errorMsg = "Ocurrió un error en la solicitud.";
             if (jqXHR.responseJSON && jqXHR.responseJSON.error) {
-                errorMsg = jqXHR.responseJSON.error; // Mensaje de error desde PHP
+                errorMsg = jqXHR.responseJSON.error;
             }
-            $("#result").html(errorMsg); // Mostrar el error en la interfaz
+            $("#result").html(errorMsg);
         }
     });
 }
@@ -68,7 +67,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
     $("#apellido").css("border-color", "#ddd");
 
     if(telefono > 99999999 || telefono < 90000000){
-        $("#result").html("El telefono ingresado no existe"); //Verificar luego
+        $("#result").html("El telefono ingresado no existe");
         $("#telefono").css("border-color", "red");
         return false;
     }
@@ -95,7 +94,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
     }
     $("#email").css("border-color", "#ddd");
 
-    if(password.length > 20 || password.length < 10){//Hacer esto con todas las variables de texto
+    if(password.length > 20 || password.length < 10){
         $("#result").html("La contraseña debe contener de 10 a 20 caracteres");
         $("#password").css("border-color", "red");
         return false;
@@ -132,7 +131,7 @@ function validacion(nombre, apellido, telefono, correo, password, fecha, localid
     }
     $("#nPuerta").css("border-color", "#ddd");
 
-    if(nApartamento < 1){
+    if(nApartamento < 1 && nApartamento){
         $("#nApartamento").css("border-color", "red");
         return false;
     }
@@ -167,7 +166,6 @@ function obtenerEdad(fechaNacimiento) {
     const fechaNac = new Date(fechaNacimiento);
     // Calcular la diferencia en años
     let edad = hoy.getFullYear() - fechaNac.getFullYear(); //Restamos año actual (2024) y año ingresado
-    // Ajustar la edad si el cumpleaños no ha ocurrido este año
     const mesActual = hoy.getMonth(); // Mes actual
     const diaActual = hoy.getDate(); // Dia actual
     const mesNac = fechaNac.getMonth(); // Mes ingresado
@@ -189,7 +187,7 @@ function esMayorDe18(fechaNacimiento) {
 
 function limpiarCampos(){
     let campos = ["nombre", "apellido", "telefono", "fecha", "email", "password", "localidad", "departamento", "calle", "nPuerta", "nApartamento", "cPostal", "esquina", "indicaciones"];
-    for(let i=0;i<6;i++){
+    for(let i=0;i<campos.length;i++){
         $("#"+campos[i]).val("");
     }
 }

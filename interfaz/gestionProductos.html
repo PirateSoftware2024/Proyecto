@@ -20,31 +20,31 @@
             <form id="uploadForm" enctype="multipart/form-data">
                 <h2>Agregar Productos</h2>
                 <label for="nombreProducto">Nombre del Producto:</label><br>
-                <input type="text" id="nombre" name="nombre"><br><br>
+                <input type="text" id="nombre" name="nombre" required><br><br>
                 
                 <label for="descripcionProducto">Descripción:</label><br>
                 <input type="text" id="descripcion" name="descripcion"><br><br>
                 
                 <label for="precioProducto">Precio:</label><br>
-                <input type="number" id="precio" name="precio" min="1" step="1"><br><br>
+                <input type="number" id="precio" name="precio" min="1" step="1" required><br><br>
                 
                 <label for="stock">Stock disponible:</label><br>
                 <input type="number" id="stock" name="stock" min="1" required><br><br>
                     
                 <label for="oferta">Aplica a oferta:</label><br>
-                <select id="oferta" name="oferta">
+                <select id="oferta" name="oferta" required>
                     <option value="" disabled selected>Opciones</option>
                     <option value="Si">Sí</option>
                     <option value="No">No</option>
                 </select><br><br>
 
                 <label for="categoria">Seleccione categoría:</label><br>
-                <select id="categoria" name="categoria">
+                <select id="categoria" name="categoria" required>
                     <option value="" disabled selected>Opciones</option>
                 </select><br><br>
 
                 <label for="condicion">Condición:</label><br>
-                <select id="condicion" name="condicion">
+                <select id="condicion" name="condicion" required>
                     <option value="" disabled selected>Opciones</option>
                     <option value="Nuevo">Nuevo</option>
                     <option value="Usado">Usado</option>

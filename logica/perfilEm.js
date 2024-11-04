@@ -8,6 +8,9 @@ $(document).ready(function() {
     $("#ru").click(function (){
         modificar("rut", "ru");
     });
+    $("#nCuenta").click(function (){
+        modificar("numeroCuenta", "nCuenta");
+    });
     $("#tel").click(function (){
         modificar("telefono", "tel");
     });
@@ -94,16 +97,97 @@ $(document).ready(function() {
 let tabla = "empresa";
 
 function modificar(input, boton) {
-    console.log(tabla);
-    if($(`#${input}`).attr("disabled")){// Evalua el estado del boton
-        $(`#${input}`).attr("disabled", false);// Habilita el boton
-        $(`#${boton}`).text("Aceptar");// Cambia el texto del boton por "Aceptar"
-    }else{
+    if($(`#${input}`).attr("disabled")) { // Evalúa el estado del botón
+        $(`#${input}`).attr("disabled", false); // Habilita el botón
+        $(`#${boton}`).text("Aceptar"); // Cambia el texto del botón por "Aceptar"
+    } else {
+        // ACA: Validaciones para cada campo antes de llamar a tomarDato
+        let valor = $(`#${input}`).val().trim(); // Eliminar espacios en blanco al inicio y al final
+
+        switch (input) {
+            case "nombre":
+                if (valor.length < 2) {
+                    alert("El nombre debe tener al menos 2 caracteres.");
+                    return;
+                } else if (/\d/.test(valor)) {
+                    alert("El nombre no debe contener números.");
+                    return;
+                } else if (valor.length === 0) {
+                    alert("El nombre no puede estar vacío.");
+                    return;
+                }
+                modificarUsuario(valor, "nombre", "empresa");
+                break;
+    
+            case "rut":
+                if (!valor || isNaN(valor) || valor.length !== 9) {
+                    alert("Por favor, ingrese un RUT válido de 9 dígitos.");
+                    return;
+                }
+                modificarUsuario(valor, "rut", "empresa");
+                break;
+    
+            case "numeroCuenta":
+                if (!valor || isNaN(valor) || valor.length < 10 || valor.length > 12) {
+                    alert("Por favor, ingrese un número de cuenta válido entre 10 y 12 dígitos.");
+                    return;
+                }
+                modificarUsuario(valor, "numeroCuenta", "empresa");
+                break;
+    
+            case "correo":
+                if (!/\S+@\S+\.\S+/.test(valor)) {
+                    alert("Por favor, ingrese un correo electrónico válido.");
+                    return;
+                }
+                modificarUsuario(valor, "correo", "empresa");
+                break;
+    
+            case "telefono":
+                if (!/^\d{8}$/.test(valor)) {
+                    alert("El teléfono debe tener 8 dígitos.");
+                    return;
+                }
+                modificarUsuario(valor, "telefono", "empresa");
+                break;
+                case "departamento":
+                    case "localidad":
+                            case "calle":
+                            case "esquina":
+                                if (!valor.trim()) { // Verifica que no esté vacío o solo espacios
+                                    alert(`${input.charAt(0).toUpperCase() + input.slice(1)} no puede estar vacío.`);
+                                    return; // Salir si no es válido
+                                }
+                            break;
+                        case "numeroPuerta":
+                            if (valor.length < 1 || /^\s*$/.test(valor)) {
+                                alert("El número de puerta no puede estar vacío.");
+                                return;
+                            }
+                            break;
+                        case "numeroApto":
+                            if (valor && (isNaN(valor) || valor <= 0)) {
+                                alert("El número de apartamento debe ser un número positivo o puede estar vacío.");
+                                return;
+                            }
+                            break;
+                    case "cPostal":
+                        if (!/^\d{5}$/.test(valor)) {
+                            alert("El código postal debe tener 5 dígitos.");
+                            return; // Salir si no es válido
+                        }
+                        break;
+            default:
+                alert("Campo no reconocido.");
+                break;
+        }
+
         $(`#${input}`).attr("disabled", true);
         $(`#${boton}`).text("Editar");
         tomarDato(input);
     }
 }
+
 
 function cargarDatos(){
     fetch('../persistencia/empresa/empresa.php?accion=obtenerDatosEmpresa')
@@ -122,6 +206,7 @@ function actualizar() {
     $("#nombre").val(usuario.nombre);
     $("#rut").val(usuario.rut);
     $("#telefono").val(usuario.telefono);
+    $("#numeroCuenta").val(usuario.numeroCuenta);
     $("#correo").val(usuario.correo);
 
     //Datos direccion
@@ -166,20 +251,23 @@ function modificarUsuario(dato, columna) {
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor'); // Lanza un error si la respuesta no es ok
         }
-        return response.json(); // Asegúrate de parsear como JSON
+        return response.json();
     })
     .then(data => {
         if (data.success) {
             alert("Dato modificado correctamente!");
             actualizarPage();
+        } else if (data.error === "El dato ya se encuentra registrado.") {
+            alert("El dato ya se encuentra registrado");
         } else {
-            alert("Error al modificar el dato: " + (data.error || ''));
+            alert(data.error || "Ocurrió un error inesperado");
         }
     })
     .catch(error => {
-        console.error('Error al obtener los datos:', error);
-        alert('Ocurrió un error: ' + error.message); // Muestra el error al usuario
+        console.error('Error de red o de conexión:', error);
+        alert("Ocurrió un problema con la solicitud. Por favor, inténtalo de nuevo.");
     });
+    
 }
 
 
@@ -198,15 +286,14 @@ function validareContra(contra) {
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor');
         }
-        return response.json(); // Parsear la respuesta como JSON
+        return response.json();
     })
     .then(data => {
         if (data.success) {
             alert("Contraseña correcta!");
             nuevaContra();
         } else {
-            console.error(data.message); // Contraseña incorrecta o error
-            // Mostrar el mensaje de error al usuario
+            console.error(data.message);
             alert(data.message);
         }
     })
