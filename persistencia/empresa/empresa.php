@@ -63,14 +63,26 @@ class ApiEmpresa
     public function registro($nombre, $rut, $numeroCuenta, $telefono, $correo, $password,  $departamento, $localidad, $calle, $esquina, $nPuerta, $nApartamento, $cPostal, $indicaciones)
     {
         // Verificar si el correo, teléfono, rut o número de cuenta ya están registrados
-        $stmt = $this->pdo->prepare("SELECT idEmpresa FROM empresa WHERE correo = ? OR telefono = ? OR rut = ? OR numeroCuenta = ?");
-        $stmt->execute([$correo, $telefono, $rut, $numeroCuenta]);
+        $stmt = $this->pdo->prepare("SELECT id FROM vista_usuarios_empresas WHERE correo = ? OR telefono = ?");
+        $stmt->execute([$correo, $telefono]);
     
         // Verificar si ya existe un registro con esos datos
         if ($stmt->rowCount() > 0) {
-            echo json_encode(['success' => false, 'error' => 'El correo, teléfono, RUT o número de cuenta ya está registrado.']);
+            echo json_encode(['success' => false, 'error' => 'El correo, teléfono ya está registrado.']);
             return;
         }
+        
+        
+        // Verificar si el correo, teléfono, rut o número de cuenta ya están registrados
+        $stmt = $this->pdo->prepare("SELECT idEmpresa FROM empresa WHERE rut = ? OR numeroCuenta = ?");
+        $stmt->execute([$rut, $numeroCuenta]);
+    
+        // Verificar si ya existe un registro con esos datos
+        if ($stmt->rowCount() > 0) {
+            echo json_encode(['success' => false, 'error' => 'RUT o número de cuenta ya está registrado.']);
+            return;
+        }
+
 
         // Hash de la contraseña antes de insertarla en la base de datos
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -294,7 +306,7 @@ class ApiEmpresa
                 $mail->Host = 'smtp.gmail.com';
                 $mail->SMTPAuth = true;
                 $mail->Username = 'noreplyaxiemarket@gmail.com';
-                $mail->Password = 'munxlimofkyyfskn'; // Asegúrate de usar la contraseña de aplicación aquí
+                $mail->Password = 'munxlimofkyyfskn'; 
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
                 $mail->Port = 587;
 

@@ -16,8 +16,8 @@ $pdo = $conexionDB->getPdo();
 session_start();
 
 // Obtener valores del formulario
-$correo = $_POST['correo'] ?? null; // Usar null coalescing para evitar Undefined Index
-$contraseña = $_POST['contraseña'] ?? null; // Lo mismo aquí
+$correo = $_POST['correo'] ?? null;
+$contraseña = $_POST['contraseña'] ?? null;
 
 // Preparar la consulta
 $stmt = $pdo->prepare("SELECT * FROM vista_usuarios_empresas WHERE correo = ?");
@@ -41,7 +41,7 @@ if ($result) {
         
         if ($tipoUsuario === 'Usuario') {
             $stmt = $pdo->prepare("SELECT * FROM usuario WHERE idUsuario = ?");
-            $stmt->execute([$idUsuario]); // Corregido aquí
+            $stmt->execute([$idUsuario]); 
             $datosUsuario = $stmt->fetch(PDO::FETCH_ASSOC);
             $_SESSION['usuario'] = $datosUsuario; // Guardamos en la sesión
         } else {
@@ -54,12 +54,9 @@ if ($result) {
         $_SESSION['usuario']['tipo'] = $tipoUsuario;
         $_SESSION['loggedin'] = true;
 
-        // Enviar la respuesta JSON final
-        if($idUsuario === "1"){
-            echo json_encode(['success' => true, 'tipo' => "admin"]);
-        } else {
-            echo json_encode(['success' => true, 'tipo' => $result['tipo']]);
-        }
+
+        echo json_encode(['success' => true, 'tipo' => $result['tipo']]);
+        
 
     } else {
         echo json_encode(['success' => false, 'message' => 'Contraseña incorrecta.']);

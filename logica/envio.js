@@ -14,11 +14,11 @@ fetch('../persistencia/pedidos/pedidos.php', {
 })
 .then(response => {
     // Imprimir el contenido de la respuesta
-    return response.text(); // Cambiar a text() para ver el contenido
+    return response.text();
 })
 .then(text => {
     console.log("Respuesta del servidor:", text); // Muestra la respuesta en la consola
-    const data = JSON.parse(text); // Intenta convertir a JSON
+    const data = JSON.parse(text);
     if (data.success) {
         datos = data.productos;
         mostrarEnvios();
@@ -37,8 +37,8 @@ function mostrarEnvios() {
     $(".contenedor").html(""); // Limpia el contenedor antes de mostrar los envíos
 
 
-     // Asociamos valores a claves para poder darle la clase y que el "Estado envio" tome los colores del mismo"
-     const tipoEnvio = {"style='color: rgb(225, 117, 8);'": "Pendiente",
+     // Asociamos valores a claves para poder darle la clase y que el "Estado envio" tome los colores del mismo
+    const tipoEnvio = {"style='color: rgb(225, 117, 8);'": "Pendiente",
         "style='color: rgb(12, 65, 157);'":"Esperando productos", 
         "style='color: rgb(223, 40, 40);'":"Cancelado",
         "style='color: rgb(8, 87, 67);'":"En depósito",
@@ -51,12 +51,12 @@ function mostrarEnvios() {
             key => tipoEnvio[key] === envio.estadoEnvio
         );
 
-        let total = Number(envio.total); // Asegúrate de que sea un número
+        let total = Number(envio.total); 
         let iva = total * 0.22; // Calcula el IVA
         let totalIva = total + iva + 30; // Total con IVA
 
         // Formatea totalIva a dos decimales
-        let totalIvaFormateado = totalIva.toFixed(2); // Esto debería funcionar sin problemas
+        let totalIvaFormateado = totalIva.toFixed(2);
 
         const $productCard = $(`
             <div class="product-container">
@@ -70,12 +70,12 @@ function mostrarEnvios() {
         `);
 
 
-        // Asociamos valores a claves para poder darle la clase y que el "Estado envio" tome los colores del mismo"
+        // Asociamos valores a claves para poder darle la clase y que el "Estado envio" tome los colores del mismo
         const tiposEstado = {"style='color: rgb(225, 117, 8);'": "Pendiente",
                             "style='color: rgb(223, 40, 40);'":"Cancelado", 
                             "style='color: rgb(26, 141, 16);'":"Enviado a depósito",
                             "style='color: rgb(12, 65, 157);'":"En preparación"};
-            // Agregar detalles de productos relacionados a este envío usando un bucle for
+        
             for (let j = 0; j < detalles.length; j++) {
                 const detalle = detalles[j];
             
@@ -99,7 +99,7 @@ function mostrarEnvios() {
                         </div>
                     `);
                     $productCard.append(detalleCard); // Agrega el detalle al contenedor de envío
-             }
+                }
             }
         $(".contenedor").append($productCard); // Agrega el envío al contenedor principal
     }

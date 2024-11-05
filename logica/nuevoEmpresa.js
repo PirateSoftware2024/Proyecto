@@ -165,7 +165,7 @@ function modificarProducto(dato, columna) {
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor'); // Lanza un error si la respuesta no es ok
         }
-        return response.json(); // Asegúrate de parsear como JSON
+        return response.json(); 
     })
     .then(data => {
         if (data.success) {
@@ -281,7 +281,6 @@ function datosEnInput(idBoton){
     $("#oferta").val(producto.oferta);
     $("#categoria").val(producto.categoria);
     $("#condicion").val(producto.condicion);
-    //$("#boton").val(producto.nombre);
 }
 
 function obtenerReseñas(idProducto){

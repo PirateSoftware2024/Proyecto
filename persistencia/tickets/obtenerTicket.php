@@ -27,12 +27,12 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
                         if (isset($_SESSION['usuario']['idUsuario'])) {       
                             $id = $_SESSION['usuario']['idUsuario'];   
                             $stmt = $pdo->prepare("SELECT * FROM ticket WHERE idUsuario = ? AND respuesta IS NOT NULL AND tipo = 'Comprador';");
-                        } else { // Cambié 'esle' por 'else'
+                        } else { 
                             $id = $_SESSION['usuario']['idEmpresa'];  
                             $stmt = $pdo->prepare("SELECT * FROM ticket WHERE idUsuario = ? AND respuesta IS NOT NULL AND tipo = 'Empresa';"); 
                         }
                 
-                        // Cambié $idUsuario a $id ya que es el ID correcto que estamos utilizando
+                        
                         $stmt->execute([$id]); 
                         if($result = $stmt->fetchAll(PDO::FETCH_ASSOC)){
                             echo json_encode(['success' => true, 'result' => $result]);

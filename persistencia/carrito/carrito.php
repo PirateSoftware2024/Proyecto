@@ -23,7 +23,7 @@ class ApiCarrito
         // Consultar si el producto ya está en el carrito
         $stmt = $this->pdo->prepare("SELECT idCarrito FROM carrito WHERE idUsuario = ? AND estadoCarrito = 'Pendiente'");
         $stmt->execute([$idUsuario]);
-        $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
+        $result = $stmt->fetch();
 
         if ($result) {
             $idCarrito = $result['idCarrito']; 
@@ -46,7 +46,7 @@ class ApiCarrito
             // Ejecutar la consulta
             if ($stmt->execute([$idUsuario])) {
                 echo json_encode(['success' => true]);
-                $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
+                $result = $stmt->fetch();
                 $idCarrito = $result['idCarrito']; 
                 $_SESSION['usuario']['idCarrito'] = $idCarrito;
             } else {
@@ -94,7 +94,7 @@ class ApiCarrito
         // Consultar si el producto ya está en el carrito
         $stmt = $this->pdo->prepare("SELECT cantidad FROM almacena WHERE idCarrito = ? AND id = ?");
         $stmt->execute([$idCarrito, $id]);
-        $result = $stmt->fetch();  // Cambiamos get_result() a fetch() para obtener una fila
+        $result = $stmt->fetch();  
 
         if ($result) {
             // El producto ya está en el carrito, actualizar la cantidad y el precio
@@ -182,7 +182,7 @@ class ApiCarrito
         $stmt = $this->pdo->prepare("SELECT idCarrito FROM carrito WHERE idUsuario = ? AND estadoCarrito = 'Confirmado'");
     
         if ($stmt) {
-            // Ejecutar la consulta usando el placeholder
+        
             $stmt->execute([$idUsuario]);
             $idCarrito = $stmt->fetch(PDO::FETCH_ASSOC); // Si hay al menos 1 carrito ejecutamos la siguiente sentencia
             if ($idCarrito) {

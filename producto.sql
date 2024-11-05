@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-11-2024 a las 09:04:19
+-- Tiempo de generación: 05-11-2024 a las 06:24:33
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.1.25
 
@@ -35,23 +35,6 @@ CREATE TABLE `almacena` (
   `descuento` int(3) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
---
--- Volcado de datos para la tabla `almacena`
---
-
-INSERT INTO `almacena` (`idCarrito`, `id`, `cantidad`, `precio`, `descuento`) VALUES
-(2, 1, 4, 700, 2800),
-(2, 4, 3, 800, 2400),
-(2, 2, 1, 1500, NULL),
-(3, 9, 1, 1700, NULL),
-(3, 1, 1, 700, NULL),
-(1, 4, 1, 800, NULL),
-(1, 5, 1, 1200, NULL),
-(4, 4, 1, 800, NULL),
-(6, 3, 1, 2000, NULL),
-(7, 3, 1, 2000, 0),
-(9, 1, 1, 700, 0);
-
 -- --------------------------------------------------------
 
 --
@@ -72,15 +55,10 @@ CREATE TABLE `carrito` (
 --
 
 INSERT INTO `carrito` (`idCarrito`, `fecha`, `estadoCarrito`, `idUsuario`, `cantidadProductos`, `precioTotal`) VALUES
-(1, '2024-11-03 17:19:22', 'Pendiente', 0, 2, 2470),
-(2, '2024-11-03 18:19:20', 'Confirmado', 4, 8, 8204),
-(3, '2024-11-03 18:27:06', 'Confirmado', 3, 2, 2958),
-(4, '2024-11-03 18:36:06', 'Confirmado', 4, 1, 1006),
-(5, '2024-11-03 18:53:18', 'Pendiente', 3, NULL, NULL),
-(6, '2024-11-03 22:13:53', 'Confirmado', 4, 1, 2470),
-(7, '2024-11-03 22:18:43', 'Confirmado', 4, 1, 2470),
-(8, '2024-11-03 22:24:20', 'Pendiente', 4, NULL, NULL),
-(9, '2024-11-04 01:58:27', 'Pendiente', 1, 1, 884);
+(11, '2024-11-05 05:04:27', 'Pendiente', 1, NULL, NULL),
+(12, '2024-11-05 05:07:32', 'Pendiente', 0, NULL, NULL),
+(13, '2024-11-05 05:08:18', 'Pendiente', 3, NULL, NULL),
+(14, '2024-11-05 05:08:53', 'Pendiente', 5, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -144,19 +122,6 @@ CREATE TABLE `detalle_pedido` (
   `estado_preparacion` enum('Pendiente','Cancelado','En preparación','Enviado a depósito') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
---
--- Volcado de datos para la tabla `detalle_pedido`
---
-
-INSERT INTO `detalle_pedido` (`id`, `idEmpresa`, `idPaquete`, `idProducto`, `cantidad`, `estado_preparacion`) VALUES
-(6, 1, 3, 4, 1, 'Pendiente'),
-(9, 1, 7, 1, 4, 'Pendiente'),
-(10, 1, 7, 4, 3, 'Pendiente'),
-(11, 1, 7, 2, 1, 'Pendiente'),
-(12, 1, 8, 1, 4, 'Pendiente'),
-(13, 1, 8, 4, 3, 'Pendiente'),
-(14, 1, 8, 2, 1, 'Pendiente');
-
 -- --------------------------------------------------------
 
 --
@@ -182,13 +147,14 @@ CREATE TABLE `direcciones` (
 --
 
 INSERT INTO `direcciones` (`idDireccion`, `departamento`, `localidad`, `calle`, `esquina`, `numeroPuerta`, `numeroApto`, `cPostal`, `indicaciones`, `idUsuario`, `idEmpresa`) VALUES
-(2, 'montevideo', 'Pocitos', 'Calle', 'Esquina', '12', '', 11700, '', 2, NULL),
+(1, 'montevideo', 'Ciudad Vieja', 'Sarandí', '', '508', '', 11000, '', 1, NULL),
 (3, 'san-jose', 'Plata', 'Calle', 'Esquina', '123', '', 11700, '', 3, NULL),
 (4, 'montevideo', 'Brazo', 'Calle', 'Esquina', '132', '', 11700, '', 4, NULL),
 (5, 'montevideo', 'Peñarol', 'Calle', 'Calle', '123', '', 11700, '', 5, NULL),
 (6, 'montevideo', 'Localidad', 'Calle', 'Esquina', '123', '', 11700, '', NULL, 1),
 (7, 'montevideo', 'Localidad', 'Calle', 'Esquina', '123', '', 11700, '', NULL, 2),
-(8, 'montevideo', 'Localidad', 'Calle', 'Esquina', '123', '', 11700, '', NULL, 3);
+(8, 'montevideo', 'Localidad', 'Calle', 'Esquina', '123', '', 11700, '', NULL, 3),
+(9, 'soriano', 'asd', 'asd', 'asd1', '12', '1', 11700, 'a', NULL, 4);
 
 -- --------------------------------------------------------
 
@@ -214,7 +180,8 @@ CREATE TABLE `empresa` (
 INSERT INTO `empresa` (`idEmpresa`, `nombre`, `rut`, `numeroCuenta`, `telefono`, `correo`, `password`, `fecha`) VALUES
 (1, 'Puma', '123123123', '123123123', '098123123', 'ropa.@gmail.com', '$2y$10$jmoYxy7Um4IH68pQG8NomOMIAr..x5m2SDD9tSKGlQ8xdQ.U4oTGi', '2024-11-03 17:30:01'),
 (2, 'Nike', '123456789', '123123123789', '098132465', 'muebles.@gmail.com', '$2y$10$2gtfH3F.X2Tw5u8wMggyFO3WfVFhgjzpJv3FxbneBrlpP0LQhytTm', '2024-11-03 17:30:45'),
-(3, 'Adidas', '789799123', '123789074562', '097465982', 'informatica.@gmail.com', '$2y$10$fzDxCu/8lpUQqgxX/iY5MOtlqx1A0D7LkySpySJ45xqx7eRLh.it.', '2024-11-03 17:31:27');
+(3, 'Adidas', '789799123', '123789074562', '097465982', 'informatica.@gmail.com', '$2y$10$fzDxCu/8lpUQqgxX/iY5MOtlqx1A0D7LkySpySJ45xqx7eRLh.it.', '2024-11-03 17:31:27'),
+(4, 'asd', '789799144', '123123123733', '097456444', 'manolo@gmail.com', '$2y$10$KYtcR8h8yVjWvMLGpvNtGO6Mf7yb9IC6kQHhwnKzUXHDsk5YdO5PG', '2024-11-05 00:52:11');
 
 -- --------------------------------------------------------
 
@@ -244,17 +211,6 @@ CREATE TABLE `pagos` (
   `transaccion_id` varchar(20) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
---
--- Volcado de datos para la tabla `pagos`
---
-
-INSERT INTO `pagos` (`id`, `idUsuario`, `idOrden`, `mail`, `metodo_pago`, `transaccion_id`) VALUES
-(1, 4, 2, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '33R80607TL2711506'),
-(2, 3, 3, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '91N48351XA8265618'),
-(3, 4, 4, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '7D5750323P4882457'),
-(4, 4, 6, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '6W6841630H1979059'),
-(5, 4, 7, 'sb-vb2gm32241456@personal.example.com', 'PayPal', '4GE17050HG334813B');
-
 -- --------------------------------------------------------
 
 --
@@ -270,15 +226,6 @@ CREATE TABLE `paquete` (
   `estadoEnvio` enum('Pendiente','Esperando productos','Cancelado','En depósito','En camino','Entregado') NOT NULL,
   `tipoEntrega` enum('Domicilio','Centro de recogida') NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
-
---
--- Volcado de datos para la tabla `paquete`
---
-
-INSERT INTO `paquete` (`idPaquete`, `idDireccion`, `idUsuario`, `idCarrito`, `fecha`, `estadoEnvio`, `tipoEntrega`) VALUES
-(3, 4, 4, 4, '2024-11-03 22:13:49', 'Pendiente', 'Domicilio'),
-(7, 2, 1, 2, '2024-11-04 03:53:52', 'Pendiente', 'Domicilio'),
-(8, 2, 1, 2, '2024-11-04 03:54:39', 'Pendiente', 'Domicilio');
 
 -- --------------------------------------------------------
 
@@ -352,16 +299,6 @@ CREATE TABLE `productos_vistos` (
   `visto_en` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish_ci;
 
---
--- Volcado de datos para la tabla `productos_vistos`
---
-
-INSERT INTO `productos_vistos` (`id`, `idProducto`, `idUsuario`, `visto_en`) VALUES
-(1, 3, 3, '2024-11-03 18:53:21'),
-(2, 1, 3, '2024-11-03 18:53:25'),
-(4, 5, 4, '2024-11-03 18:58:26'),
-(5, 3, 4, '2024-11-03 18:58:32');
-
 -- --------------------------------------------------------
 
 --
@@ -414,7 +351,7 @@ INSERT INTO `usuario` (`idUsuario`, `nombre`, `apellido`, `telefono`, `correo`, 
 (1, 'admin', '', '', 'admin', '$2y$10$8K8MIqevjjeo6OtgGq55U.zW1OlyDm7U8UhgNU2oQ5UsfjNSpML0u', '2001-06-11'),
 (2, 'Facundo', 'Perez', '097456456', 'facundo.@gmail.com', '$2y$10$WY04yB3DHwYMGuSOQ.13UOPyexXUPWRAiTqu5rk7tDx8NZ/pLa8mK', '2001-05-05'),
 (3, 'Luca', 'Cristaldo', '098789789', 'luca.@gmail.com', '$2y$10$5HekNARswx7pMDSLgVTwGeONm2/rlhKn0R8hjnD2imfaOiZfBrfV.', '2002-08-08'),
-(4, 'Felipe', 'Cuiñas', '095555555', 'facu.@GMAIL.COM', '$2y$10$WN.V2NHzR.u6wsHT75aAquiCfeHZ05ZO5TfiV.iyMKarVcdGfXHCW', '2003-06-11'),
+(4, 'Felipe', 'Cuiñas', '095555555', 'facu.@gmail.com', '$2y$10$WN.V2NHzR.u6wsHT75aAquiCfeHZ05ZO5TfiV.iyMKarVcdGfXHCW', '2003-06-11'),
 (5, 'Alexander', 'Marquez', '096123123', 'alexander.@gmail.com', '$2y$10$F1KHA3SAKUfLRUqsudX.5ehIIUVMyuB89P1efQtviyBORp1rnc.dq', '2002-08-08');
 
 -- --------------------------------------------------------
@@ -439,7 +376,7 @@ CREATE TABLE `vista_usuarios_empresas` (
 --
 DROP TABLE IF EXISTS `vista_usuarios_empresas`;
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_usuarios_empresas`  AS SELECT `usuario`.`idUsuario` AS `id`, `usuario`.`nombre` AS `nombre`, `usuario`.`correo` AS `correo`, `usuario`.`password` AS `password`, `usuario`.`telefono` AS `telefono`, 'Usuario' AS `tipo` FROM `usuario`union all select `empresa`.`idEmpresa` AS `id`,`empresa`.`nombre` AS `nombre`,`empresa`.`correo` AS `correo`,`empresa`.`password` AS `password`,`empresa`.`telefono` AS `telefono`,'Empresa' AS `tipo` from `empresa`  ;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `vista_usuarios_empresas`  AS SELECT `usuario`.`idUsuario` AS `id`, `usuario`.`nombre` AS `nombre`, `usuario`.`correo` AS `correo`, `usuario`.`password` AS `password`, `usuario`.`telefono` AS `telefono`, CASE WHEN `usuario`.`correo` = 'admin' THEN 'Admin' ELSE 'Usuario' END AS `tipo` FROM `usuario`union all select `empresa`.`idEmpresa` AS `id`,`empresa`.`nombre` AS `nombre`,`empresa`.`correo` AS `correo`,`empresa`.`password` AS `password`,`empresa`.`telefono` AS `telefono`,'Empresa' AS `tipo` from `empresa`  ;
 
 --
 -- Índices para tablas volcadas
@@ -561,7 +498,7 @@ ALTER TABLE `usuario`
 -- AUTO_INCREMENT de la tabla `carrito`
 --
 ALTER TABLE `carrito`
-  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `idCarrito` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT de la tabla `detalle_pedido`
@@ -573,13 +510,13 @@ ALTER TABLE `detalle_pedido`
 -- AUTO_INCREMENT de la tabla `direcciones`
 --
 ALTER TABLE `direcciones`
-  MODIFY `idDireccion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `idDireccion` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT de la tabla `empresa`
 --
 ALTER TABLE `empresa`
-  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `idEmpresa` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `ofertas`

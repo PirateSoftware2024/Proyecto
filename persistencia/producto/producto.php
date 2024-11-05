@@ -337,7 +337,7 @@ $producto = new ApiProducto($pdo);
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
 
-    // Si usas JSON, toma los datos de $data, si es multipart form-data, usa $_POST.
+
     $accion = isset($_POST['accion']) ? $_POST['accion'] : $data['accion'];
 
     switch ($accion) 
@@ -450,12 +450,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'DELETE') {
 
     switch($accion) {
         case 'producto':
-            $idProducto = $data['id'];  // Asignar correctamente el idProducto
+            $idProducto = $data['id'];
             $producto->eliminar($idProducto);  
             break;
 
         case 'reseña':
-            $idReseña = $data['id'];  // Asignar correctamente el idReseña
+            $idReseña = $data['id'];
             $producto->eliminarReseña($idReseña);
             break;
 
@@ -474,7 +474,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
         $accion = $data['accion'];
         switch($accion) {
             case 'modificar':
-                // Verificar que existen las claves necesarias en $data
                 if (isset($data['id'], $data['dato'], $data['columna'])) {
                     $idProducto = $data['id'];
                     $dato = $data['dato'];
@@ -486,7 +485,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'PUT') {
                 break;
 
             case 'modificarBackoffice':
-                // Verificar que existen las claves necesarias en $data
                 if (isset($data['id'], $data['nombre'], $data['precio'], $data['descripcion'], $data['stock'])) {
                     $idProducto = $data['id'];
                     $nombre = $data['nombre'];

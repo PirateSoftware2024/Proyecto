@@ -31,7 +31,7 @@ $.ajax({
         
         // Recorrer los datos y llenar el array de ventas
         data.forEach(item => {
-            const mes = item.Mes; // Asegúrate de que esto corresponde al mes que regresaste en el SQL
+            const mes = item.Mes;
             const ventasCount = item.ventas;
 
             if (mes >= 1 && mes <= 12) {
@@ -41,7 +41,7 @@ $.ajax({
 
         const ctx = document.getElementById('ventas').getContext('2d');
         const myChart = new Chart(ctx, {
-            type: 'line', // Cambia a 'line'
+            type: 'line',
             data: {
                 labels: meses, // Usar el array de meses
                 datasets: [{
@@ -50,7 +50,7 @@ $.ajax({
                     backgroundColor: 'rgba(75, 192, 192, 0.2)',
                     borderColor: 'rgba(75, 192, 192, 1)',
                     borderWidth: 2,
-                    fill: true, // Para rellenar el área bajo la línea
+                    fill: true, 
                 }]
             },
             options: {
@@ -59,7 +59,7 @@ $.ajax({
                     y: {
                         beginAtZero: true,
                         ticks: {
-                            stepSize: 1 // Cambiar el tamaño del paso a 1
+                            stepSize: 1
                         }
                     }
                 },
@@ -93,10 +93,10 @@ $.ajax({
         data.forEach(item => {
             // Obtener el mes del formato YYYY-MM
             const [year, month] = item.mes.split('-'); // Descomponer la cadena
-            const mesIndex = parseInt(month) - 1; // Convertir a índice de 0 (Enero = 0)
+            const mesIndex = parseInt(month) - 1;
 
             // Sumar las ventas al mes correspondiente
-            ventas[mesIndex] += item.ventas; // Asumimos que item.ventas ya tiene el valor correcto
+            ventas[mesIndex] += item.ventas;
         });
 
         const ctx = document.getElementById('totalVentas').getContext('2d');

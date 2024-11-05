@@ -1,4 +1,3 @@
-//Hola
 $(document).ready(function() {
     $('#uploadForm').on('submit', function(event) {
         event.preventDefault();

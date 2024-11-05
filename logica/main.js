@@ -57,7 +57,7 @@ function buscar() {
         } else {
             
             products = jsonData; // Una vez leído los datos, actualizamos
-            actualizar(); // Asegúrate de que esta función esté definida
+            actualizar(); 
         }
     })
     .catch(error => {
@@ -316,17 +316,6 @@ function nuevoCarrito() {
 
 
 let carrito = [];
-/*function obtenerProductosCarrito(){
-    fetch('../persistencia/obtenerCarrito.php')
-    .then(response => response.text())
-    .then(data => {
-        //Pasamos datos a JSON
-        const jsonData = JSON.parse(data);
-        carrito = jsonData; // Una vez leido los datos acutalizamos
-        const productosJSON = JSON.stringify(carrito);
-        localStorage.setItem('carrito', productosJSON);
-    });
-}*/
 
 function agregarOActualizarProductoEnCarrito(idProducto, cantidad, precio, aplicaAOferta) {
     let descuento = 0;
@@ -378,7 +367,7 @@ function añadir(){
             alert("La cantidad que desea ingresar supera el stock!");
             return;
         }
-        carrito[index].cantidad++; // Increase quantity
+        carrito[index].cantidad++; 
     } else {
         // Si el producto no está en el carrito, lo agregamos
         producto.cantidad = 1; 

@@ -186,12 +186,12 @@ class ApiPedidos
         $stmt1 = $this->pdo->prepare("SELECT p.idPaquete, d.localidad, d.calle, d.esquina, d.numeroPuerta, d.numeroApto, d.cPostal, p.fecha, p.estadoEnvio, SUM((d2.cantidad * p2.precio) - a.descuento)AS total
             FROM paquete p
             JOIN usuario u ON u.idUsuario = p.idUsuario
-            JOIN direcciones d ON d.idUsuario = u.idUsuario
+            JOIN direcciones d ON d.idDireccion = p.idDireccion
             JOIN detalle_pedido d2 ON d2.idPaquete = p.idPaquete
             JOIN producto p2 ON p2.id = d2.idProducto
             JOIN almacena a ON a.idCarrito = p.idCarrito AND p2.id = a.id
             WHERE u.idUsuario = ?
-            GROUP BY p.idPaquete;"); // No olvides agregar GROUP BY para las funciones de agregación
+            GROUP BY p.idPaquete;"); 
         $stmt1->execute([$idUsuario]);
         $result1 = $stmt1->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
 
@@ -200,7 +200,7 @@ class ApiPedidos
             FROM detalle_pedido d2
             JOIN producto p ON p.id = d2.idProducto
             WHERE d2.idPaquete IN (SELECT idPaquete FROM paquete WHERE idUsuario = ?)
-            ;"); // Ajustar para que tome todos los paquetes del usuario
+            ;");
         $stmt2->execute([$idUsuario]);
         $result2 = $stmt2->fetchAll(PDO::FETCH_ASSOC); // Obtiene resultados como array asociativo
 
@@ -219,7 +219,6 @@ class ApiPedidos
         // Construir la consulta con la columna validada
         $stmt = $this->pdo->prepare("UPDATE paquete SET $columna = :dato WHERE idPaquete = :idPaquete");
     
-        // Bindear los parámetros
         $stmt->bindParam(':dato', $dato);
         $stmt->bindParam(':idPaquete', $idPaquete, PDO::PARAM_INT);
     
@@ -248,7 +247,6 @@ class ApiPedidos
     $stmt = $this->pdo->prepare("DELETE FROM detalle_pedido WHERE idPaquete = ?");
     $stmt->execute([$idPaquete]);
 
-    // Check how many rows were affected
     if ($stmt->rowCount() > 0) {
         $stmt = $this->pdo->prepare("DELETE FROM paquete WHERE idPaquete = ?");
         $stmt->execute([$idPaquete]);

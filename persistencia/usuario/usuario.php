@@ -259,7 +259,7 @@ $pdo = $conexionDB->getPdo();
 $usuario = new ApiUsuarios($pdo);
 
 /////////////////////////////////////////////////////////////////////
-// Manejo de solicitudos GET, POST, PUT, y DELETE como ya lo tienes implementado
+// Manejo de solicitudos GET, POST, PUT, y DELETE
 if($_SERVER['REQUEST_METHOD'] == 'GET'){
     $accion = $_GET['accion'];
     switch($accion)
@@ -283,7 +283,7 @@ if($_SERVER['REQUEST_METHOD'] == 'GET'){
             break;
         
         case 'buscarPorNombre':
-            $dato = isset($_GET['dato']) ? $_GET['dato'] : null; // Verifica que 'dato' esté definido
+            $dato = isset($_GET['dato']) ? $_GET['dato'] : null;
             if ($dato !== null) {
                 $usuarios = $usuario->buscarPorNombre($dato);
                 // Verifica si se encontraron usuarios

@@ -57,7 +57,6 @@ $(document).ready(function() {
         var name = $('#name').val();
         var amount = $('#amount').val();
 
-        // Guardar los datos en una cookie
         $.cookie('paymentInfo', JSON.stringify({ name: name, amount: amount }), { path: '/', expires: 1 }); // La cookie durará 1 día
         devolver();
     });

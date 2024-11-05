@@ -14,7 +14,7 @@ $conexionDB = new ConexionDB($host, $dbname, $username, $password);
 $pdo = $conexionDB->getPdo();
 
 // Recibir el correo electrónico del formulario
-$email = $_POST['email']; // Asegúrate de validar y sanitizar esta entrada
+$email = $_POST['email'];
 
 
 $stmt = $pdo->prepare("SELECT idUsuario, COUNT(*) as count FROM usuario WHERE correo = ?");
@@ -51,7 +51,7 @@ if ($result['count'] < 1) {
         $mail->Host = 'smtp.gmail.com';
         $mail->SMTPAuth = true;
         $mail->Username = 'noreplyaxiemarket@gmail.com';
-        $mail->Password = 'munxlimofkyyfskn'; // Asegúrate de usar la contraseña de aplicación aquí
+        $mail->Password = 'munxlimofkyyfskn';
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 

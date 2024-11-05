@@ -1,4 +1,3 @@
-//holaaa
 let productos = [];
 // Obtenemos productos de la BD
 function cargarDatos(){
@@ -62,19 +61,19 @@ function buscarPaquete() {
                 return response.json(); // Parse response as JSON
             })
             .then(jsonData => {
-                if (!jsonData.success) { // Check for success flag
+                if (!jsonData.success) {
                     console.error(jsonData.message);
-                    alert(jsonData.message); // Show error message if package not found
+                    alert(jsonData.message); 
                     return;
                 }
 
-                // Retrieve the data correctly
+                
                 envios = jsonData.data;
                 console.log("Paquete encontrado:", envios);
 
-                // Ensure the function exists and can display the data
+                //Verifica que exista la funcion antes de llamarla
                 if (typeof mostrarPedidoBuscado === 'function') {
-                    mostrarPedidoBuscado(envios); // Pass data to the display function
+                    mostrarPedidoBuscado(envios);
                 } else {
                     console.warn("mostrarPedidoBuscado function not found or not defined.");
                 }
@@ -1160,9 +1159,8 @@ function eliminarReseña() {
             index = reseñas.findIndex(reseña => Number(reseña.idReseña) === idReseña);
             reseñas.splice(index, 1);
             alert("Reseña eliminada!");
-            // Aquí puedes agregar el código para actualizar la interfaz, como eliminar la fila de la tabla
         } else {
-            alert(data.error);  // Opcional: muestra el mensaje de error en una alerta
+            alert(data.error);
         }
     })
     .catch(error => {

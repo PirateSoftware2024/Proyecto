@@ -1,10 +1,10 @@
 $(document).ready(function() {
     $.ajax({
-        url: '../persistencia/usuario/usuario.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
+        url: '../persistencia/usuario/usuario.php?accion=grafica',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
-            // Crear arreglos para los nombres y las compras
+            
             const nombres = data.map(item => `${item.nombre} (ID: ${item.idUsuario})`);
             const compras = data.map(item => item.compras);
 
@@ -63,7 +63,7 @@ $(document).ready(function() {
 
 
     $.ajax({
-        url: '../persistencia/producto/producto.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
+        url: '../persistencia/producto/producto.php?accion=grafica',
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -126,7 +126,7 @@ $(document).ready(function() {
 
 
     $.ajax({
-        url: '../persistencia/empresa/empresa.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
+        url: '../persistencia/empresa/empresa.php?accion=grafica', 
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -188,7 +188,7 @@ $(document).ready(function() {
     });
 
     $.ajax({
-        url: '../persistencia/pedidos/pedidos.php?accion=grafica', // Cambia esta ruta a tu archivo PHP
+        url: '../persistencia/pedidos/pedidos.php?accion=grafica', 
         method: 'GET',
         dataType: 'json',
         success: function(data) {
@@ -204,7 +204,7 @@ $(document).ready(function() {
     
             const ctx = document.getElementById('total').getContext('2d');
             const ventasPastel = new Chart(ctx, {
-                type: 'pie', // Cambia a 'doughnut' si prefieres un gráfico de dona
+                type: 'pie',
                     data: {
                         labels: nombres,
                         datasets: [{
@@ -254,31 +254,4 @@ $(document).ready(function() {
         console.error('Error en la solicitud:', error);
     }
 });
-});    
-/*
-const ctx = document.getElementById('myChart');
-const names = ['Carlos', 'Pedro', 'Maria'];
-const ages = [24, 10, 24];
-
-const myChart = new Chart(ctx, {
-    type: 'bar',
-    data: {
-        labels: names,
-        datasets: [{
-            label: 'Edad',
-            data: ages, 
-            backgroundColor: [
-                'rgba(255, 99, 132, 0.2)',
-                'rgba(54, 162, 235, 0.2)',
-                'rgba(255, 206, 86, 0.2)'
-            ],
-            borderColor: [
-                'rgba(255, 99, 132, 1)',
-                'rgba(54, 162, 235, 1)',
-                'rgba(255, 206, 86, 1)'
-            ],
-            borderWidth: 1.5
-        }]
-    }
 });
-*/

@@ -188,7 +188,6 @@ function cargarDatos(){
     fetch('../persistencia/usuario/usuario.php?accion=datosUsuario')
     .then(response => response.text())
     .then(data => {
-        //Pasamos datos a JSON
         const jsonData = JSON.parse(data);
         usuario= jsonData; // Una vez leido los datos acutalizamos
         actualizar();
@@ -246,7 +245,7 @@ function modificarUsuario(dato, columna) {
         if (!response.ok) {
             throw new Error('Error en la respuesta del servidor'); // Lanza un error si la respuesta no es ok
         }
-        return response.json(); // Asegúrate de parsear como JSON
+        return response.json(); 
     })
     .then(data => {
         if (data.success) {
@@ -285,8 +284,7 @@ function validareContra(contra) {
             alert("Contraseña correcta!");
             nuevaContra();
         } else {
-            console.error(data.message); // Contraseña incorrecta o error
-            // Mostrar el mensaje de error al usuario
+            console.error(data.message);
             alert(data.message);
         }
     })

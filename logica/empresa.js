@@ -96,7 +96,7 @@ function validacion(nombre, descripcion, precio, stock, oferta, categoria, condi
 }
 
     $('#uploadForm').on('submit', function(event) {
-        event.preventDefault(); // Evitar el envío del formulario por defect
+        event.preventDefault(); // Evitar el envío del formulario por defecto
 
         let nombre = $("#nombre").val();
         let descripcion = $("#descripcion").val();
@@ -110,13 +110,13 @@ function validacion(nombre, descripcion, precio, stock, oferta, categoria, condi
 
         var formData = new FormData(this); // Crear un nuevo FormData con el formulario
         formData.append('accion', 'agregar'); // Agregar el parámetro 'accion' para que entre en el switch
-        formData.append('idEmpresa', 1); // Agregar el parámetro 'accion' para que entre en el switch
+        formData.append('idEmpresa', 1);
         $.ajax({
             url: '../persistencia/producto/producto.php',
             type: 'POST',
             data: formData,
             contentType: false, // No establecer el tipo de contenido
-            processData: false, // No procesar los datos (FormData se encarga)
+            processData: false, 
             success: function(data) {
                 if (data.success) {
                     alert("Producto publicado!");
@@ -127,7 +127,7 @@ function validacion(nombre, descripcion, precio, stock, oferta, categoria, condi
                     $('#oferta').val('');
                     $('#categoria').val('');
                     $('#condicion').val('');
-                    $('#imagen').val(''); // Limpia el campo de la imagen si es necesario
+                    $('#imagen').val(''); // Limpia el campo de la si es necesario
                 } else {
                     alert("Error: "+data.error);
                 }
@@ -165,7 +165,7 @@ function modificarEstado(idPaquete, valor) {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ 
-            id: idPaquete,  // Asegúrate de que estás pasando el ID correcto
+            id: idPaquete,
             valor: valor
         })
     })
@@ -314,15 +314,6 @@ function ventas(ventas) {
     }
 }
 
-/*
-SELECT c.idCarrito, u.nombre, p.nombre, a.cantidad, a.cantidad * a.precio Total, c.idPaquete, c.fecha
-FROM almacena a
-JOIN producto p ON p.id = a.id
-JOIN carrito c ON c.idCarrito = a.idCarrito
-JOIN usuario u ON u.idUsuario = c.idUsuario
-WHERE c.estadoCarrito = 'Confirmado' AND idEmpresa = 1;
-*/
-
 let categorias = [];
 function cargarCategorias(){
     fetch('../persistencia/producto/producto.php?accion=categorias')
@@ -421,14 +412,14 @@ function eliminarProducto() {
         },
         body: JSON.stringify({ 
             id: idProducto,
-            accion: "producto"  // Asegúrate de incluir la clave 'accion'
+            accion: "producto" 
         })
     })
-    .then(response => response.text())  // Cambia a .text() temporalmente para ver la respuesta cruda
+    .then(response => response.text())
     .then(data => {
-        console.log(data);  // Verificar la respuesta sin procesar
+        console.log(data);
         try {
-            const jsonData = JSON.parse(data);  // Convertir a JSON si es válido
+            const jsonData = JSON.parse(data);
             if (jsonData.success) {
                 alert('Producto eliminado exitosamente');
                 eliminarFila(idProducto);
